@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patrick Sliz</title>
+  <meta name="description" content="Patrick Sliz — Harvard '27, computational neuroscience and economics.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fbfaf8;
+      --fg: #1a1a1a;
+      --muted: #6b6b6b;
+      --rule: #e4e2dd;
+      --accent: #a51c30;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121212;
+        --fg: #ececec;
+        --muted: #9a9a9a;
+        --rule: #2a2a2a;
+        --accent: #e0636f;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 17px/1.6 Inter, system-ui, sans-serif;
+    }
+    main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 96px 20px 64px;
+    }
+    h1 {
+      font-family: Newsreader, Georgia, serif;
+      font-weight: 500;
+      font-size: 44px;
+      line-height: 1.1;
+      margin: 0 0 8px;
+    }
+    .tagline { color: var(--muted); margin: 0 0 40px; }
+    h2 {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 48px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--rule);
+    }
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { margin: 0 0 14px; }
+    .role { font-weight: 500; }
+    .where { color: var(--muted); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .links { display: flex; gap: 20px; flex-wrap: wrap; }
+    footer { margin-top: 72px; font-size: 14px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Patrick Sliz</h1>
+    <p class="tagline">Harvard College '27 · Neuroscience (computational) with a secondary in Economics</p>
+
+    <p>I work at the intersection of neural data, quantitative analysis, and finance. Previously decoded speech from single-neuron recordings at MGH; currently on the strategic finance team at GoTo.</p>
+
+    <h2>Experience</h2>
+    <ul>
+      <li><span class="role">Strategic Finance</span> <span class="where">— GoTo</span></li>
+      <li><span class="role">Vice President</span> <span class="where">— The Harvard Independent</span></li>
+      <li><span class="role">Research Assistant, Williams Lab</span> <span class="where">— Massachusetts General Hospital</span></li>
+    </ul>
+
+    <h2>Contact</h2>
+    <div class="links">
+      <a href="https://www.linkedin.com/in/patrick-sliz">LinkedIn</a>
+      <a href="https://github.com/psliz05">GitHub</a>
+    </div>
+
+    <footer>© 2026 Patrick Sliz</footer>
+  </main>
+</body>
+</html>
