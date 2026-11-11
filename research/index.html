@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Research / Patrick Sliz</title>
+<meta name="description" content="Research experience of Patrick Sliz.">
+<meta name="theme-color" content="#e6e6e1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23141414'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%23ff4a00'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #e6e6e1;
+    --plate: #f3f3ef;
+    --ink: #141414;
+    --steel: #66665f;
+    --hair: #b9b9b2;
+    --given: #d6d6cf;
+    --signal: #ff4a00;
+    --f-sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; border-radius: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.55 var(--f-sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .mono { font: 500 12px/1.4 var(--f-mono); letter-spacing: 0.05em; text-transform: uppercase; }
+
+  .bar { border-bottom: 2px solid var(--ink); background: var(--plate); }
+  .bar .wrap { display: flex; justify-content: space-between; gap: 12px; }
+  .bar a { display: block; padding: 11px 0; font: 700 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; }
+  .bar a:hover { color: var(--signal); }
+  :focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+
+  .raster { background: var(--ink); border-bottom: 2px solid var(--ink); }
+  .raster canvas { display: block; width: 100%; height: 168px; }
+  .raster-cap { display: flex; justify-content: space-between; gap: 12px; padding-block: 6px 0; color: var(--steel); }
+
+  main { padding-block: 22px 48px; display: grid; gap: 26px; }
+  .mast { border-top: 6px solid var(--ink); border-bottom: 2px solid var(--ink); padding-block: 8px 10px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 12px; }
+  .mast h1 { margin: 0; font: 800 clamp(40px, 9vw, 60px)/0.92 var(--f-sans); font-stretch: 70%; text-transform: uppercase; letter-spacing: -0.01em; }
+  .mast .ids { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+
+  dl.sheet { margin: 0; border: 2px solid var(--ink); background: var(--plate); display: grid; grid-template-columns: 124px 1fr; }
+  dl.sheet dt, dl.sheet dd { margin: 0; padding: 9px 12px; border-top: 1px solid var(--hair); min-width: 0; }
+  dl.sheet dt:first-of-type, dl.sheet dt:first-of-type + dd { border-top: 0; }
+  dl.sheet dt { font: 500 11.5px/1.7 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--steel); border-right: 1px solid var(--hair); }
+  dl.sheet dd { font-size: 15px; }
+
+  .record { border: 2px solid var(--ink); background: var(--plate); break-inside: avoid; }
+  .record > header { display: grid; grid-template-columns: auto 1fr; border-bottom: 2px solid var(--ink); }
+  .record .no { background: var(--ink); color: var(--plate); padding: 10px 14px; font: 800 44px/0.9 var(--f-sans); font-stretch: 70%; display: grid; align-content: center; }
+  .record .head { padding: 10px 12px; min-width: 0; display: grid; gap: 3px; align-content: center; }
+  .record h2 { margin: 0; font: 750 24px/1.05 var(--f-sans); font-stretch: 75%; text-transform: uppercase; letter-spacing: 0.01em; text-wrap: balance; }
+  .record .inst { color: var(--steel); }
+  .record dl.sheet { border: 0; background: transparent; }
+  .record ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+  .record li { padding-left: 16px; position: relative; max-width: 62ch; }
+  .record li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 7px; height: 7px; background: var(--ink); }
+  .record ul.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .record .tags li { padding: 3px 7px; border: 1px solid var(--ink); font: 500 12px/1.4 var(--f-mono); max-width: none; }
+  .record .tags li::before { display: none; }
+
+  h3.rule { margin: 0 0 -14px; padding-bottom: 6px; border-bottom: 2px solid var(--ink); font: 700 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  @media (max-width: 520px) {
+    dl.sheet { grid-template-columns: 1fr; }
+    dl.sheet dt { border-right: 0; padding-bottom: 0; }
+    dl.sheet dd { border-top: 0; padding-top: 2px; }
+    dl.sheet dt:first-of-type + dd { border-top: 0; }
+    .record .no { font-size: 34px; padding: 10px; }
+    .record h2 { font-size: 21px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .bar { display: none; }
+    .raster canvas { height: 96px; }
+    .record, dl.sheet { background: #fff; }
+    main { padding-top: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="bar" aria-label="Site">
+  <div class="wrap">
+    <a href="../">&larr; Back to room</a>
+    <a id="linkedin" href="https://www.linkedin.com/in/patrick-sliz" target="_blank" rel="noopener">LinkedIn &nearr;</a>
+  </div>
+</nav>
+
+<div class="raster">
+  <canvas id="raster" role="img" aria-label="Animated spike raster. Simulated, for illustration only."></canvas>
+</div>
+<div class="wrap raster-cap mono"><span>Simulated activity &mdash; illustrative</span><span>Not recorded data</span></div>
+
+<main class="wrap">
+  <header class="mast">
+    <h1>Research</h1>
+    <div class="ids mono"><span>Patrick Sliz</span><span>3 records</span></div>
+  </header>
+
+  <dl class="sheet">
+    <dt>Education</dt><dd>Harvard College, Cambridge, MA. A.B. candidate in Computational Neuroscience, secondary in Economics. May 2027.</dd>
+    <dt>Coursework</dt><dd>Computational Neuroscience, Biological Signal Processing, Memory Models, Linear Algebra</dd>
+  </dl>
+
+  <article class="record">
+    <header>
+      <div class="no" aria-hidden="true">01</div>
+      <div class="head">
+        <h2>Speech and language decoding from single neurons</h2>
+        <span class="mono inst">January 2026 &ndash; Present</span>
+      </div>
+    </header>
+    <dl class="sheet">
+      <dt>Lab</dt><dd>Ziv Williams Laboratory</dd>
+      <dt>Institution</dt><dd>Harvard Medical School / Massachusetts General Hospital, Department of Neurosurgery. Boston, MA.</dd>
+      <dt>Role</dt><dd>Undergraduate Researcher</dd>
+      <dt>Methods</dt><dd><ul class="tags"><li>Intracranial single-neuron recordings (Neuropixels)</li><li>Python</li><li>Transformer language-model representations</li></ul></dd>
+      <dt>Work</dt><dd><ul>
+        <li>Decode speech and language from intracranial single-neuron (Neuropixels) recordings in patients undergoing awake neurosurgical monitoring. Build the analysis pipelines in Python.</li>
+        <li>Map transformer language-model representations onto neural firing to test how linguistic structure and meaning are encoded at single-cell resolution.</li>
+        <li>Diagnosed a generalization failure in the decoding pipeline as a word- vs. sentence-level representational mismatch, and rebuilt the train/test framework to correct it.</li>
+      </ul></dd>
+    </dl>
+  </article>
+
+  <article class="record">
+    <header>
+      <div class="no" aria-hidden="true">02</div>
+      <div class="head">
+        <h2>Economic growth from night-time satellite imagery</h2>
+        <span class="mono inst">Summers 2024 &ndash; 2025</span>
+      </div>
+    </header>
+    <dl class="sheet">
+      <dt>Advisor</dt><dd>Professor Piotr W&oacute;jcik</dd>
+      <dt>Institution</dt><dd>University of Warsaw, Department of Quantitative Finance. Warsaw, Poland.</dd>
+      <dt>Role</dt><dd>Research Internship</dd>
+      <dt>Methods</dt><dd><ul class="tags"><li>XGBoost</li><li>LASSO</li><li>R</li><li>Python</li><li>Night-time satellite imagery</li><li>Explainable-AI methods</li></ul></dd>
+      <dt>Work</dt><dd><ul>
+        <li>Built ML models (XGBoost, LASSO) in R and Python predicting county- and state-level U.S. economic growth from night-time satellite imagery.</li>
+        <li>Applied explainable-AI methods to assess feature importance.</li>
+      </ul></dd>
+    </dl>
+  </article>
+
+  <article class="record">
+    <header>
+      <div class="no" aria-hidden="true">03</div>
+      <div class="head">
+        <h2>Cryo-electron tomography software</h2>
+        <span class="mono inst">Summers 2022 &ndash; 2023</span>
+      </div>
+    </header>
+    <dl class="sheet">
+      <dt>Advisor</dt><dd>Professor Axel Brunger</dd>
+      <dt>Institution</dt><dd>Stanford University, Neurosciences Institute, HHMI Laboratory. Palo Alto, CA.</dd>
+      <dt>Role</dt><dd>Software Developer in Cryo-electron Tomography (Cryo-ET)</dd>
+      <dt>Methods</dt><dd><ul class="tags"><li>Subtomogram averaging</li><li>MATLAB</li><li>Python</li><li>3D signal processing</li><li>Multi-threading and parallelization</li><li>Cross-correlation</li></ul></dd>
+      <dt>Work</dt><dd><ul>
+        <li>Developed a subtomogram-averaging pipeline for high-resolution molecular imaging. Translated MATLAB to Python and optimized 3D signal-processing routines with multi-threading and parallelization.</li>
+        <li>Built visualization, parsing, and cross-correlation tooling used by lab members to inspect reconstructions, working directly with structural biologists to turn experimental requirements into working software.</li>
+      </ul></dd>
+    </dl>
+  </article>
+
+  <h3 class="rule">Toolkit</h3>
+  <dl class="sheet">
+    <dt>Programming</dt><dd>Python (pandas, NumPy, scikit-learn), R, MATLAB, C, Bash, Git</dd>
+    <dt>Methods</dt><dd>Time-series forecasting, Ridge/LASSO/logistic regression, PCA, SVM, LDA, permutation testing</dd>
+  </dl>
+</main>
+
+<script>
+(() => {
+  "use strict";
+  // Edit the LinkedIn link here (kept in sync with CONFIG.LINKEDIN_URL in /index.html).
+  const LINKEDIN_URL = "https://www.linkedin.com/in/patrick-sliz";
+  document.getElementById("linkedin").href = LINKEDIN_URL;
+
+  // ---- simulated spike raster (illustrative only; not data) ----
+  const cv = document.getElementById("raster"), g = cv.getContext("2d");
+  const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ROWS = 26, SPEED = 46; // px per second, scrolling left
+  let W = 0, H = 0, dpr = 1, spikes = [], rates = [], burst = null, nextBurst = 1.5, last = 0, raf = 0, t = 0;
+  for (let r = 0; r < ROWS; r++) rates.push(1.2 + Math.pow(Math.random(), 2) * 9); // spikes per second per row
+
+  function size() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function step(dt) {
+    t += dt;
+    if (!burst && t > nextBurst) burst = { t0: t, lo: Math.floor(Math.random() * (ROWS - 8)), n: 6 + Math.floor(Math.random() * 10), dur: 0.35 + Math.random() * 0.4 };
+    if (burst && t > burst.t0 + burst.dur) { burst = null; nextBurst = t + 1.2 + Math.random() * 3.2; }
+    for (let r = 0; r < ROWS; r++) {
+      let rate = rates[r] * (0.75 + 0.25 * Math.sin(t * 0.6 + r));
+      if (burst && r >= burst.lo && r < burst.lo + burst.n) rate *= 7;
+      if (Math.random() < rate * dt) spikes.push({ r, x: W + 2 });
+    }
+    const dx = SPEED * dt; let k = 0;
+    for (let i = 0; i < spikes.length; i++) { const s = spikes[i]; s.x -= dx; if (s.x > -3) spikes[k++] = s; }
+    spikes.length = k;
+  }
+  function draw() {
+    const pad = 12, rh = (H - pad * 2) / ROWS;
+    g.fillStyle = "#141414"; g.fillRect(0, 0, W, H);
+    g.fillStyle = "#2b2b29";
+    for (let x = W - ((t * SPEED) % 92); x > 0; x -= 92) g.fillRect(Math.round(x), 0, 1, H); // time grid
+    g.fillStyle = "#f3f3ef";
+    for (const s of spikes) g.fillRect(Math.round(s.x), pad + s.r * rh + 1, 2, Math.max(2, rh - 2));
+    g.fillStyle = "#ff4a00"; g.fillRect(W - 3, 0, 3, H); // write head
+  }
+  function frame(now) {
+    raf = requestAnimationFrame(frame);
+    const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
+    step(dt); draw();
+  }
+  function prefill() { spikes = []; for (let i = 0; i < Math.ceil(W / SPEED / 0.02); i++) step(0.02); }
+  function start() { if (!raf && !REDUCED && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+  function stop() { cancelAnimationFrame(raf); raf = 0; }
+
+  size(); prefill(); draw(); start();
+  let rz = 0;
+  window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { size(); prefill(); draw(); }, 120); });
+  document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+})();
+</script>
+</body>
+</html>
