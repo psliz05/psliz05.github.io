@@ -263,7 +263,7 @@ async function boot() {
   el.panelList.addEventListener("click", () => showList());
   el.listEnter.addEventListener("click", () => { hideList(); room.enterFromList(); });
   if (location.hash === "#list") showList();
-  else if (location.hash === "#return" || (performance.getEntriesByType && (performance.getEntriesByType("navigation")[0] || {}).type === "back_forward")) {
+  else if (location.hash === "#return" || /^\/(research|logic)\//.test((() => { try { const u = new URL(document.referrer); return u.origin === location.origin ? u.pathname : ""; } catch (e) { return ""; } })()) || (performance.getEntriesByType && (performance.getEntriesByType("navigation")[0] || {}).type === "back_forward")) {
     try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* ignore */ }
     if (!room.resume()) room.start();
   } else room.start();
