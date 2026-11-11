@@ -121,6 +121,50 @@
   .bar .in { max-width: 520px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .bar a { display: inline-block; padding: 11px 0; color: var(--ink); font: 700 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; }
   .bar a:hover { color: var(--signal); }
+
+  /* views: puzzles / archive / leaderboard */
+  .amark { display: flex; justify-content: space-between; gap: 12px; background: var(--ink); color: var(--plate); padding: 8px 12px; font: 700 12px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: -16px; }
+  .amark a { color: var(--plate); text-decoration: none; }
+  .amark a:hover { color: var(--signal); }
+  .views { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 2px solid var(--ink); margin-bottom: -18px; }
+  .views a { background: var(--plate); color: var(--ink); text-decoration: none; padding: 8px 10px; border-left: 2px solid var(--ink); font: 700 12px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; min-width: 0; overflow: hidden; text-overflow: clip; }
+  .views a:first-child { border-left: 0; }
+  .views a[aria-current="page"] { background: var(--ink); color: var(--plate); }
+  .views a:hover:not([aria-current]) { color: var(--signal); }
+  .views a:focus-visible, .arow:focus-visible, .lbsent a:focus-visible, .amark a:focus-visible { outline: 3px solid var(--signal); outline-offset: -3px; }
+
+  .atable, .lbtable { border: 2px solid var(--ink); background: var(--plate); font: 500 12px var(--f-mono); letter-spacing: 0.04em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+  .ahead, .arow { display: grid; grid-template-columns: 40px 1fr repeat(3, 62px); column-gap: 6px; padding: 7px 10px; }
+  .ahead, .lbhead { color: var(--steel); border-bottom: 2px solid var(--ink); font-size: 11px; }
+  .ahead .t, .arow .t { text-align: right; }
+  .arow { color: var(--ink); text-decoration: none; border-top: 1px solid var(--hair); }
+  .arow:first-child { border-top: 0; }
+  .arow .t { color: var(--hair); }
+  .arow .t.done { color: inherit; font-weight: 700; }
+  .arow:hover { background: var(--ink); color: var(--plate); }
+  .arow:hover .t { color: var(--steel); }
+  .arow:hover .t.done { color: inherit; }
+  .aempty, .lbnote { padding: 9px 10px; color: var(--steel); }
+
+  .lbhead, .lbrow { display: grid; grid-template-columns: 64px 1fr auto; padding: 7px 10px; }
+  .lbrow { border-top: 1px solid var(--hair); font-size: 14px; font-weight: 700; }
+  .lbrow:first-child { border-top: 0; }
+  .lbrow.out { border-top: 2px solid var(--ink); }
+  .lbrow.me { color: var(--signal); }
+
+  .lbform, .lbsent { max-width: 440px; width: 100%; margin: 0 auto; border: 2px solid var(--ink); background: var(--plate); display: grid; align-items: stretch; font: 700 12px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+  .lbform { grid-template-columns: 1fr auto auto auto; }
+  .lbform .lbl, .lbform .tm { display: grid; align-items: center; padding: 0 12px; min-width: 0; }
+  .lbform .tm { font-size: 14px; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+  .inits { display: flex; }
+  .inits input { appearance: none; width: 38px; height: 40px; margin: 0; padding: 0; border: 0; border-left: 2px solid var(--ink); background: var(--paper); color: var(--ink); text-align: center; text-transform: uppercase; font: 700 18px var(--f-mono); }
+  .inits input:last-child { border-right: 2px solid var(--ink); }
+  .inits input:focus { outline: 3px solid var(--signal); outline-offset: -3px; }
+  .lbform .ctl { border-left: 2px solid var(--ink); }
+  .lbsent { grid-template-columns: 1fr auto; }
+  .lbsent span, .lbsent a { padding: 11px 12px; }
+  .lbsent a { border-left: 2px solid var(--ink); color: var(--ink); text-decoration: none; }
+  .lbsent a:hover { background: var(--ink); color: var(--plate); }
 </style>
 </head>
 <body>
@@ -131,19 +175,47 @@
     <div class="ids"><span id="no"></span><span id="date"></span></div>
   </header>
 
+  <div class="amark" id="amark" hidden><span id="amarktext"></span><a href="#">Today &rarr;</a></div>
+
+  <nav class="views" id="views" aria-label="Views">
+    <a data-v="play" href="#">Puzzles</a><a data-v="archive" href="#archive">Archive</a><a data-v="board" href="#board" hidden>Leaderboard</a>
+  </nav>
+
   <nav class="tabs" id="tabs" role="tablist" aria-label="Puzzles"></nav>
 
   <section id="panel" style="display:grid;gap:12px">
     <div class="meta"><span id="gmeta"></span><span class="clock" id="clock">00:00</span></div>
     <div id="boardslot"></div>
     <div class="solvedbar" id="solved" hidden><span>Solved</span><span id="solvedtime"></span></div>
+    <form class="lbform" id="lbform" hidden autocomplete="off">
+      <span class="lbl">Initials</span>
+      <span class="inits"><input aria-label="First initial" maxlength="3" autocapitalize="characters" autocorrect="off" spellcheck="false"><input aria-label="Second initial" maxlength="3" autocapitalize="characters" autocorrect="off" spellcheck="false"><input aria-label="Third initial" maxlength="3" autocapitalize="characters" autocorrect="off" spellcheck="false"></span>
+      <span class="tm" id="lbtime"></span>
+      <button class="ctl" id="lbsubmit" type="submit" disabled>Submit</button>
+    </form>
+    <div class="lbsent" id="lbsent" hidden><span id="lbsenttext"></span><a id="lbsentlink" href="#board">Leaderboard &rarr;</a></div>
     <div class="controls"><button class="ctl" id="undo">Undo</button><button class="ctl" id="clear">Clear</button></div>
     <div class="rules"><p id="rules"></p><span class="taps" id="taps"></span></div>
   </section>
 
+  <section id="archive" hidden>
+    <div class="atable">
+      <div class="ahead"><span>No.</span><span>Date</span><span class="t">Sectors</span><span class="t">Binary</span><span class="t">Weights</span></div>
+      <div id="arows"></div>
+    </div>
+  </section>
+
+  <section id="board" hidden style="display:grid;gap:12px">
+    <div class="meta"><span id="lbmeta"></span><span id="lbcount"></span></div>
+    <div class="lbtable">
+      <div class="lbhead"><span>Rank</span><span>Initials</span><span>Time</span></div>
+      <div id="lbrows"></div>
+    </div>
+  </section>
+
   <section class="summary" id="summary" hidden>
     <pre id="sharetext"></pre>
-    <div class="row"><span class="next">Next set in <span id="cd"></span></span><button class="ctl" id="copy">Copy</button></div>
+    <div class="row"><span class="next" id="next"></span><button class="ctl" id="copy">Copy</button></div>
     <textarea id="sharebox" rows="5" readonly hidden aria-label="Result to copy"></textarea>
   </section>
 
@@ -405,10 +477,17 @@ if (typeof module !== "undefined") module.exports = DL;
 <script>
 (() => {
   "use strict";
+  // ---------- leaderboard backend (Supabase REST). Leave either empty to switch the leaderboard off. ----------
+  const SUPABASE_URL = "";
+  const SUPABASE_ANON_KEY = "";
+
   const $ = (s) => document.querySelector(s);
-  const LAUNCH = new Date(2026, 10, 7);
+  const LAUNCH = new Date(2026, 10, 7); // 2026-11-07. Must match the date in supabase.sql (daily_logic_day).
   const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const dayNo = (d = new Date()) => Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - LAUNCH) / 864e5) + 1;
+  const dateOf = (no) => new Date(LAUNCH.getFullYear(), LAUNCH.getMonth(), LAUNCH.getDate() + no - 1);
+  const pad3 = (n) => String(n).padStart(3, "0");
+  const dots = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
   const fmt = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
   const store = {
     get(k, f) { try { const v = localStorage.getItem("dl2:" + k); return v ? JSON.parse(v) : f; } catch (e) { return f; } },
@@ -568,10 +647,68 @@ if (typeof module !== "undefined") module.exports = DL;
 
   const GAMES = [SECTORS, BINARY, WEIGHTS];
 
+  // ---------- leaderboard client ----------
+  const LB = {
+    on: !!(SUPABASE_URL && SUPABASE_ANON_KEY),
+    cache: new Map(),
+    headers(extra) {
+      const h = { apikey: SUPABASE_ANON_KEY, ...extra };
+      if (SUPABASE_ANON_KEY.startsWith("eyJ")) h.Authorization = "Bearer " + SUPABASE_ANON_KEY; // legacy JWT anon key
+      return h;
+    },
+    url: (q) => SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/scores" + q,
+    async list(day, game, force) {
+      const k = day + ":" + game, hit = this.cache.get(k);
+      if (hit && !force && Date.now() - hit.at < 20000) return hit.rows;
+      const r = await fetch(this.url(`?select=initials,ms&day=eq.${day}&game=eq.${game}&order=ms.asc,created_at.asc&limit=1000`), { headers: this.headers() });
+      if (!r.ok) throw new Error("list " + r.status);
+      const rows = (await r.json()).filter((x) => x && /^[A-Z]{1,3}$/.test(x.initials) && Number.isFinite(x.ms));
+      this.cache.set(k, { at: Date.now(), rows });
+      return rows;
+    },
+    async submit(row) {
+      const r = await fetch(this.url(""), { method: "POST", headers: this.headers({ "Content-Type": "application/json", Prefer: "return=minimal" }), body: JSON.stringify(row) });
+      if (!r.ok && r.status !== 409) throw new Error("submit " + r.status); // 409: this device already has a time for this puzzle
+      this.cache.delete(row.day + ":" + row.game);
+    },
+  };
+  function deviceId() {
+    let id = store.get("device", null);
+    if (!id) { id = (crypto.randomUUID ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, "0")).join("")); store.set("device", id); }
+    return id;
+  }
+
   // ---------- state ----------
-  let key, puzzles, saves, active = 0, els = [], history = [], ticker = null, errTimer = null;
+  let todayNo = 0, viewNo = 0, key, puzzles, saves, active = 0, view = "play", els = [], history = [], ticker = null, errTimer = null, dragAbort = null, formFor = null, lbSeq = 0;
+  const genCache = new Map();
+  const isToday = () => viewNo === todayNo;
+  // "#" today, "#004" archive day, "#archive" list, "#board" / "#004/board" leaderboard
+  const hashFor = (v, no = viewNo) => {
+    const d = no === todayNo ? "" : pad3(no);
+    return "#" + (v === "archive" ? "archive" : v === "board" ? (d ? d + "/board" : "board") : d);
+  };
 
   function save(i) { store.set(key + ":" + GAMES[i].id, saves[i]); }
+
+  function loadDay(no) {
+    viewNo = no;
+    const d = dateOf(no);
+    key = dayKey(d);
+    if (!genCache.has(key)) genCache.set(key, GAMES.map((g) => g.gen(key)));
+    puzzles = genCache.get(key);
+    saves = GAMES.map((g, i) => {
+      const s = store.get(key + ":" + g.id, null);
+      const fresh = { cells: g.init(puzzles[i]), elapsed: 0, done: false };
+      return s && Array.isArray(s.cells) && s.cells.length === fresh.cells.length ? s : fresh;
+    });
+    $("#no").textContent = `No. ${pad3(no)}`;
+    $("#date").textContent = dots(d);
+    $("#amark").hidden = isToday();
+    $("#amarktext").textContent = `Archive / No. ${pad3(no)}`;
+    const firstOpen = saves.findIndex((s) => !s.done);
+    active = firstOpen === -1 ? 0 : firstOpen;
+    history = []; formFor = null;
+  }
 
   function renderTabs() {
     $("#tabs").innerHTML = GAMES.map((g, i) => {
@@ -579,11 +716,14 @@ if (typeof module !== "undefined") module.exports = DL;
       return `<button class="tab${s.done ? " done" : ""}" role="tab" aria-selected="${i === active}" data-i="${i}">
         <span class="no">0${i + 1}</span><span class="nm">${g.name}</span><span class="tm">${s.done || s.elapsed ? fmt(s.elapsed) : "--:--"}</span></button>`;
     }).join("");
-    $("#tabs").querySelectorAll(".tab").forEach((t) => (t.onclick = () => open(+t.dataset.i)));
+    $("#tabs").querySelectorAll(".tab").forEach((t) => (t.onclick = () => {
+      if (view === "board") { active = +t.dataset.i; renderTabs(); renderBoard(); } else open(+t.dataset.i);
+    }));
   }
 
   function open(i) {
     clearTimeout(errTimer);
+    if (dragAbort) dragAbort.abort();
     active = i; history = [];
     const g = GAMES[i], p = puzzles[i], s = saves[i];
     const board = document.createElement("div");
@@ -601,6 +741,8 @@ if (typeof module !== "undefined") module.exports = DL;
     });
     if (g.drag) {
       board.classList.add("draggable");
+      dragAbort = new AbortController();
+      const signal = dragAbort.signal;
       let drag = null;
       const cellAt = (x, y) => { const el = document.elementFromPoint(x, y); return el ? els.indexOf(el.closest ? el.closest(".cell") : el) : -1; };
       const apply = (k) => {
@@ -621,7 +763,7 @@ if (typeof module !== "undefined") module.exports = DL;
         if (k < 0 || (k === drag.start && !drag.moved)) return;
         if (!drag.moved) { drag.moved = true; apply(drag.start); }
         apply(k); refresh();
-      });
+      }, { signal });
       const end = () => {
         if (!drag) return;
         const d = drag; drag = null;
@@ -629,8 +771,8 @@ if (typeof module !== "undefined") module.exports = DL;
         if (s.cells.some((v, i) => v !== d.snap[i])) history.push(d.snap);
         refresh();
       };
-      window.addEventListener("pointerup", end);
-      window.addEventListener("pointercancel", end);
+      window.addEventListener("pointerup", end, { signal });
+      window.addEventListener("pointercancel", end, { signal });
     }
     $("#gmeta").textContent = `${g.name} / ${p.n}×${p.n}`;
     $("#rules").textContent = g.rules;
@@ -645,8 +787,8 @@ if (typeof module !== "undefined") module.exports = DL;
     clearTimeout(errTimer);
     const solved = g.paint(p, s.cells, els, delay === 0);
     if (delay && !solved) {
-      const at = active;
-      errTimer = setTimeout(() => { if (active === at) g.paint(p, saves[at].cells, els, true); }, delay);
+      const at = active, atKey = key;
+      errTimer = setTimeout(() => { if (active === at && key === atKey && view === "play") g.paint(p, saves[at].cells, els, true); }, delay);
     }
     if (solved && !s.done) { s.done = true; }
     save(active);
@@ -659,18 +801,19 @@ if (typeof module !== "undefined") module.exports = DL;
     $("#clear").disabled = s.done;
     renderTabs();
     renderSummary();
+    lbForm();
   }
 
   function renderSummary() {
     const all = saves.every((s) => s.done);
-    $("#summary").hidden = !all;
+    $("#summary").hidden = !all || view !== "play";
     if (!all) return;
     $("#sharetext").textContent = shareText();
-    $("#cd").textContent = untilMidnight();
+    $("#next").textContent = isToday() ? `Next set in ${untilMidnight()}` : `Archive / No. ${pad3(viewNo)}`;
   }
   function shareText() {
     const lines = GAMES.map((g, i) => `${g.name.toUpperCase().padEnd(8)} ${fmt(saves[i].elapsed)}`);
-    return `DAILY LOGIC No.${String(dayNo()).padStart(3, "0")}\n${lines.join("\n")}\npatricksliz.com`;
+    return `DAILY LOGIC No.${pad3(viewNo)}${isToday() ? "" : " (ARCHIVE)"}\n${lines.join("\n")}\npatricksliz.com`;
   }
   function untilMidnight() {
     const now = new Date(), next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
@@ -697,9 +840,134 @@ if (typeof module !== "undefined") module.exports = DL;
     catch (e) { fallback(); }
   };
 
+  // ---------- archive ----------
+  function renderArchive() {
+    const rows = [];
+    for (let no = todayNo - 1; no >= 1; no--) {
+      const d = dateOf(no), k = dayKey(d);
+      const cells = GAMES.map((g) => {
+        const s = store.get(k + ":" + g.id, null);
+        return s && s.done ? `<span class="t done">${fmt(s.elapsed)}</span>` : `<span class="t">--:--</span>`;
+      }).join("");
+      rows.push(`<a class="arow" href="#${pad3(no)}"><span>${pad3(no)}</span><span>${dots(d)}</span>${cells}</a>`);
+    }
+    $("#arows").innerHTML = rows.join("") || `<div class="aempty">No past sets yet</div>`;
+  }
+
+  // ---------- leaderboard ----------
+  function lbOff() { // backend unreachable: drop the feature for this visit, keep the puzzles
+    LB.on = false;
+    if (view === "board") { window.history.replaceState(null, "", hashFor("play") === "#" ? location.pathname + location.search : hashFor("play")); show("play"); }
+    else { syncViews(); lbForm(); }
+  }
+  async function renderBoard() {
+    const g = GAMES[active], seq = ++lbSeq, no = viewNo;
+    $("#lbmeta").textContent = `Leaderboard / ${g.name} / No. ${pad3(no)}`;
+    $("#lbcount").textContent = "";
+    $("#lbrows").innerHTML = `<div class="lbnote">Loading</div>`;
+    let rows;
+    try { rows = await LB.list(no, g.id); } catch (e) { if (seq === lbSeq) lbOff(); return; }
+    if (seq !== lbSeq || view !== "board") return;
+    const mine = store.get("lb:" + key + ":" + g.id, null);
+    const me = mine ? rows.findIndex((r) => r.initials === mine.initials && r.ms === mine.ms) : -1;
+    const rank = (i) => 1 + rows.filter((r) => r.ms < rows[i].ms).length; // ties share a rank
+    const line = (i, cls = "") => `<div class="lbrow${i === me ? " me" : ""}${cls}"><span>${String(rank(i)).padStart(2, "0")}</span><span>${rows[i].initials}</span><span>${fmt(Math.round(rows[i].ms / 1000))}</span></div>`;
+    let html = rows.slice(0, 10).map((_, i) => line(i)).join("");
+    if (me >= 10) html += line(me, " out");
+    $("#lbrows").innerHTML = html || `<div class="lbnote">No entries</div>`;
+    $("#lbcount").textContent = `${rows.length} ${rows.length === 1 ? "entry" : "entries"}`;
+  }
+
+  // initials row under a solved board: today's puzzles only, once per puzzle per device
+  const inits = [...document.querySelectorAll("#lbform input")];
+  const initials = () => inits.map((i) => i.value).join("");
+  const syncSubmit = () => { $("#lbsubmit").disabled = !/^[A-Z]{1,3}$/.test(initials()); };
+  inits.forEach((inp, i) => {
+    inp.addEventListener("input", () => {
+      const letters = inp.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 3 - i);
+      inp.value = letters.slice(0, 1);
+      for (let j = 1; j < letters.length; j++) inits[i + j].value = letters[j];
+      if (letters) inits[Math.min(2, i + letters.length)].focus();
+      syncSubmit();
+    });
+    inp.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !inp.value && i > 0) { e.preventDefault(); inits[i - 1].value = ""; inits[i - 1].focus(); syncSubmit(); }
+    });
+    inp.addEventListener("focus", () => inp.select());
+  });
+  function lbForm() {
+    const g = GAMES[active], s = saves[active], id = key + ":" + g.id;
+    const can = LB.on && view === "play" && isToday() && s.done && s.elapsed >= 5 && s.elapsed <= 3600;
+    const sent = can ? store.get("lb:" + id, null) : null;
+    $("#lbform").hidden = !can || !!sent;
+    $("#lbsent").hidden = !sent;
+    if (sent) { $("#lbsenttext").textContent = `Submitted / ${sent.initials} / ${fmt(Math.round(sent.ms / 1000))}`; $("#lbsentlink").href = hashFor("board"); }
+    if (can && !sent && formFor !== id) {
+      formFor = id;
+      const last = String(store.get("initials", "") || "");
+      inits.forEach((inp, i) => (inp.value = /^[A-Z]{1,3}$/.test(last) ? last[i] || "" : ""));
+      $("#lbtime").textContent = fmt(s.elapsed);
+      $("#lbsubmit").textContent = "Submit";
+      syncSubmit();
+    }
+  }
+  $("#lbform").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const g = GAMES[active], s = saves[active], id = key + ":" + g.id, who = initials(), btn = $("#lbsubmit");
+    if (!/^[A-Z]{1,3}$/.test(who) || btn.disabled || !isToday() || !s.done) return;
+    const ms = s.elapsed * 1000;
+    btn.disabled = true; btn.textContent = "Sending";
+    try { await LB.submit({ day: viewNo, game: g.id, initials: who, ms, device: deviceId() }); }
+    catch (err) { btn.disabled = false; btn.textContent = "Retry"; return; }
+    store.set("initials", who);
+    store.set("lb:" + id, { initials: who, ms });
+    lbForm();
+  });
+
+  // ---------- views + routing ----------
+  function syncViews() {
+    $("#views").querySelectorAll("a").forEach((a) => {
+      const v = a.dataset.v;
+      a.href = hashFor(v);
+      if (v === view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      if (v === "board") a.hidden = !LB.on;
+    });
+  }
+  function show(v) {
+    view = v;
+    clearTimeout(errTimer);
+    $("#panel").hidden = v !== "play";
+    $("#archive").hidden = v !== "archive";
+    $("#board").hidden = v !== "board";
+    $("#tabs").hidden = v === "archive";
+    syncViews();
+    if (v === "play") open(active);
+    else { $("#summary").hidden = true; if (v === "archive") renderArchive(); else { renderTabs(); renderBoard(); } }
+  }
+  function route() {
+    todayNo = dayNo();
+    const h = decodeURIComponent(location.hash.slice(1)).toLowerCase();
+    const m = h.match(/^(\d{1,6})(\/board)?$/);
+    let no = todayNo, v = "play";
+    if (h === "archive") { v = "archive"; no = viewNo >= 1 && viewNo <= todayNo ? viewNo : todayNo; }
+    else if (h === "board") v = "board";
+    else if (m && +m[1] >= 1 && +m[1] <= todayNo) { no = +m[1]; if (m[2]) v = "board"; }
+    if (v === "board" && !LB.on) v = "play";
+    const want = hashFor(v, no);
+    if ((location.hash || "#") !== want || (want === "#" && location.href.endsWith("#"))) window.history.replaceState(null, "", want === "#" ? location.pathname + location.search : want);
+    if (no !== viewNo) loadDay(no);
+    show(v);
+  }
+  window.addEventListener("hashchange", route);
+
   function tick() {
-    if (dayKey() !== key) { boot(); return; }
-    if (document.visibilityState === "visible") {
+    if (dayNo() !== todayNo) { // midnight: today's set becomes an archive day
+      const wasToday = isToday();
+      todayNo = dayNo();
+      if (wasToday) { viewNo = 0; route(); return; }
+      $("#amark").hidden = isToday(); syncViews();
+    }
+    if (view === "play" && document.visibilityState === "visible") {
       const s = saves[active];
       if (!s.done) {
         s.elapsed += 1; save(active);
@@ -707,27 +975,11 @@ if (typeof module !== "undefined") module.exports = DL;
         const tm = $("#tabs").querySelector(`[data-i="${active}"] .tm`); if (tm) tm.textContent = fmt(s.elapsed);
       }
     }
-    if (!$("#summary").hidden) $("#cd").textContent = untilMidnight();
+    if (!$("#summary").hidden && isToday()) $("#next").textContent = `Next set in ${untilMidnight()}`;
   }
 
-  function boot() {
-    key = dayKey();
-    const d = new Date();
-    $("#no").textContent = `No. ${String(dayNo()).padStart(3, "0")}`;
-    $("#date").textContent = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
-    puzzles = GAMES.map((g) => g.gen(key));
-    saves = GAMES.map((g, i) => {
-      const s = store.get(key + ":" + g.id, null);
-      const fresh = { cells: g.init(puzzles[i]), elapsed: 0, done: false };
-      return s && Array.isArray(s.cells) && s.cells.length === fresh.cells.length ? s : fresh;
-    });
-    const firstOpen = saves.findIndex((s) => !s.done);
-    open(firstOpen === -1 ? 0 : firstOpen);
-    clearInterval(ticker);
-    ticker = setInterval(tick, 1000);
-  }
-
-  boot();
+  route();
+  ticker = setInterval(tick, 1000);
 })();
 </script>
 </body>

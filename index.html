@@ -154,13 +154,11 @@
 const CONFIG = {
   NAME: "Patrick Sliz",
   LINKEDIN_URL: "https://www.linkedin.com/in/patrick-sliz",
-  GITHUB_URL: "https://github.com/psliz05",
+  ARTICLES_URL: "https://harvardindependent.com/author/patricksliz/",
   SHOW_NAME_ON_WALL: true,            // name in large lettering on the back wall
   WALL_CAPTION: "Harvard College / A.B. candidate, Computational Neuroscience / May 2027", // small line under the name; "" to hide
   INCLUDE_EMAIL_OBJECT: true,         // mailbox object -> mailto
   EMAIL: "patrick.sliz@gmail.com",
-  INCLUDE_INDEPENDENT_OBJECT: false,  // newspaper stack; needs INDEPENDENT_URL
-  INDEPENDENT_URL: null,
   RESUME_PDF: "resume.pdf",           // null to remove the filing cabinet
   RESEARCH_PATH: "research/",
   LOGIC_PATH: "logic/",
@@ -174,9 +172,8 @@ const DEST = [
   { id: "linkedin", label: "LinkedIn", kind: "tab", href: CONFIG.LINKEDIN_URL, shown: pretty(CONFIG.LINKEDIN_URL) },
   { id: "logic", label: "Daily Logic", kind: "nav", href: CONFIG.LOGIC_PATH, shown: "/" + CONFIG.LOGIC_PATH },
   CONFIG.RESUME_PDF && { id: "resume", label: "Résumé", kind: "tab", href: CONFIG.RESUME_PDF, shown: "PDF" },
-  { id: "github", label: "GitHub", kind: "tab", href: CONFIG.GITHUB_URL, shown: pretty(CONFIG.GITHUB_URL) },
+  { id: "articles", label: "Articles", kind: "tab", href: CONFIG.ARTICLES_URL, shown: pretty(CONFIG.ARTICLES_URL) },
   CONFIG.INCLUDE_EMAIL_OBJECT && CONFIG.EMAIL && { id: "email", label: "Email", kind: "mail", href: "mailto:" + CONFIG.EMAIL, shown: CONFIG.EMAIL },
-  CONFIG.INCLUDE_INDEPENDENT_OBJECT && CONFIG.INDEPENDENT_URL && { id: "independent", label: "Harvard Independent", kind: "tab", href: CONFIG.INDEPENDENT_URL, shown: pretty(CONFIG.INDEPENDENT_URL) },
 ].filter(Boolean);
 DEST.forEach((d, i) => (d.no = String(i + 1).padStart(2, "0")));
 function pretty(u) { return String(u).replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""); }
@@ -637,48 +634,64 @@ function buildRoom(THREE) {
     }, dur: 2.8 };
   });
 
-  // --- 05 GITHUB: server rack with a terminal showing a commit graph ---
-  const git = canvasTex(320, 220);
-  const GIT = { rows: [], acc: 2, hex: () => Math.floor(Math.random() * 0xfffffff).toString(16).padStart(7, "0") };
-  for (let i = 0; i < 9; i++) GIT.rows.push({ h: GIT.hex(), lane: i % 4 === 2 ? 1 : 0, w: 40 + Math.random() * 110 });
-  function drawGit() {
-    const { g, c } = git, w = c.width, h = c.height;
-    g.fillStyle = CSS.ink; g.fillRect(0, 0, w, h);
-    g.font = `500 15px ${F_MONO}`; g.textBaseline = "middle";
-    GIT.rows.forEach((r, i) => {
-      const y = 16 + i * 24, x = 18 + r.lane * 18;
-      g.fillStyle = "#4a4a46"; g.fillRect(18 - 1, y - 12, 2, 24);
-      if (r.lane || (GIT.rows[i + 1] && GIT.rows[i + 1].lane) || (GIT.rows[i - 1] && GIT.rows[i - 1].lane)) g.fillRect(36 - 1, y - 12, 2, 24);
-      g.fillStyle = i === 0 ? CSS.signal : CSS.plate; g.fillRect(x - 5, y - 5, 10, 10);
-      g.fillStyle = CSS.hair; g.fillText(r.h, 62, y + 1);
-      g.fillStyle = "#4a4a46"; g.fillRect(140, y - 3, r.w, 6);
+  // --- 05 ARTICLES: folded broadsheet on a steel lectern; unfolds while targeted, flutters on open ---
+  addObject(destOf("articles"), 4.9, 2.0, -Math.PI / 2, 0.9, 0.9, (b) => {
+    const PW = 0.36, PH = 0.5, NEWS = "#fbfbf7";
+    // grey bars standing in for body text (no real or invented copy)
+    const columns = (g, x, y, w, h, n, salt) => {
+      const gap = 14, cw = (w - gap * (n - 1)) / n;
+      for (let c = 0; c < n; c++) for (let yy = y, i = 0; yy < y + h - 6; yy += 13, i++) {
+        const short = (i * 7 + c * 5 + salt) % 9 === 0;
+        g.fillStyle = (i + c + salt) % 11 === 0 ? CSS.steel : CSS.hair;
+        g.fillRect(x + c * (cw + gap), yy, short ? cw * 0.55 : cw, 6);
+      }
+    };
+    const front = canvasTex(720, 1000, (g, w, h) => {
+      g.fillStyle = NEWS; g.fillRect(0, 0, w, h);
+      g.fillStyle = CSS.ink; g.fillRect(40, 40, w - 80, 10);
+      g.font = `800 condensed 190px ${F_SANS}`; g.textBaseline = "alphabetic"; fitText(g, "ARTICLES", w / 2, 222, w - 84, "center");
+      g.fillRect(40, 250, w - 80, 3);
+      g.font = `700 24px ${F_MONO}`; g.textBaseline = "middle"; fitText(g, "PATRICK SLIZ / HARVARD INDEPENDENT", w / 2, 280, w - 170, "center");
+      g.fillRect(40, 306, w - 80, 3);
+      g.fillStyle = CSS.signal; g.fillRect(40, 271, 16, 16);
+      g.fillStyle = CSS.ink; g.fillRect(40, 340, 400, 26); g.fillRect(40, 378, 310, 26);
+      g.fillStyle = CSS.given; g.fillRect(40, 432, 400, 250);
+      columns(g, 470, 340, w - 510, 344, 1, 2);
+      g.fillStyle = CSS.ink; g.fillRect(40, 712, w - 80, 2);
+      columns(g, 40, 738, w - 80, 224, 4, 5);
     });
-    git.t.needsUpdate = true;
-  }
-  drawGit();
-  addObject(destOf("github"), 4.9, 2.0, -Math.PI / 2, 0.9, 0.9, (b) => {
-    const RH = 1.12;
-    b.add(box(0.64, 0.03, 0.62, M.ink, 0, P0 + 0.015, 0), box(0.64, 0.03, 0.62, M.ink, 0, P0 + RH - 0.015, 0), box(0.012, RH, 0.62, M.ink, -0.314, P0 + RH / 2, 0), box(0.012, RH, 0.62, M.ink, 0.314, P0 + RH / 2, 0), box(0.62, RH, 0.012, M.ink, 0, P0 + RH / 2, -0.304));
-    const leds = new THREE.InstancedMesh(new THREE.BoxGeometry(0.02, 0.02, 0.008), new THREE.MeshBasicMaterial({ color: 0xffffff }), 20);
-    const m4 = new THREE.Matrix4(), on = new THREE.Color(C.plate), off = new THREE.Color(0x3a3a37), sig = new THREE.Color(C.signal);
-    for (let u = 0; u < 4; u++) {
-      const y = P0 + 0.17 + u * 0.26;
-      b.add(box(0.58, 0.22, 0.54, u % 2 ? M.given : M.plate, 0, y, 0.0));
-      for (const x of [-0.27, 0.27]) b.add(box(0.016, 0.12, 0.02, M.ink, x, y, 0.28, false));
-      for (let k = 0; k < 4; k++) b.add(box(0.2, 0.012, 0.004, M.ink, 0.12, y - 0.05 + k * 0.034, 0.271, false));
-      for (let k = 0; k < 5; k++) { m4.makeTranslation(-0.21 + k * 0.04, y + 0.05, 0.273); leds.setMatrixAt(u * 5 + k, m4); leds.setColorAt(u * 5 + k, off); }
-    }
-    b.add(leds);
-    const term = new THREE.Group(); term.position.set(0, P0 + RH, 0.02); b.add(term);
-    term.add(box(0.2, 0.03, 0.2, M.ink, 0, 0.015, 0), box(0.46, 0.34, 0.3, M.plate, 0, 0.2, 0), box(0.4, 0.28, 0.01, M.ink, 0, 0.2, 0.151, false));
-    const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.36, 0.2475), new THREE.MeshBasicMaterial({ map: git.t })); scr.position.set(0, 0.2, 0.157); term.add(scr);
-    let acc = 1;
+    const inside = canvasTex(720, 1000, (g, w, h) => {
+      g.fillStyle = NEWS; g.fillRect(0, 0, w, h);
+      g.fillStyle = CSS.ink; g.fillRect(40, 40, w - 80, 4); g.fillRect(40, 78, 360, 30);
+      columns(g, 40, 140, w - 80, 300, 4, 1);
+      g.fillStyle = CSS.given; g.fillRect(40, 468, 313, 210);
+      columns(g, 367, 468, w - 407, 214, 2, 3);
+      g.fillStyle = CSS.ink; g.fillRect(40, 708, w - 80, 2); g.fillRect(40, 730, 250, 22);
+      columns(g, 40, 776, w - 80, 190, 4, 8);
+    });
+    // lectern
+    b.add(box(0.5, 0.024, 0.42, M.steel, 0, P0 + 0.012, 0), box(0.06, 0.92, 0.06, M.steel, 0, P0 + 0.47, -0.04), box(0.3, 0.02, 0.2, M.ink, 0, P0 + 0.93, -0.02));
+    const top = new THREE.Group(); top.position.set(0, P0 + 1.06, 0.0); top.rotation.x = -0.8; b.add(top);
+    top.add(box(0.86, 0.64, 0.024, M.steel, 0, 0, -0.012), box(0.86, 0.03, 0.05, M.ink, 0, -0.305, 0.025));
+    // paper: spine at the group origin; closed = one page wide (centred), open = two-page spread (centred)
+    const paper = new THREE.Group(); paper.position.set(-PW / 2, 0.012, 0); top.add(paper);
+    const sheet = (tex, z) => { const m = decal(tex, PW, PH); m.position.set(PW / 2, 0, z); return m; };
+    paper.add(box(PW, PH, 0.006, M.page, PW / 2, 0, 0.003, false), sheet(inside.t, 0.0066));
+    const leaf = new THREE.Group(); leaf.position.z = 0.008; paper.add(leaf);
+    const leafSheet = sheet(inside.t, 0); leafSheet.material.side = THREE.DoubleSide; leaf.add(leafSheet);
+    const cover = new THREE.Group(); cover.position.z = 0.0105; paper.add(cover);
+    const coverBack = sheet(inside.t, -0.0008); coverBack.rotation.y = Math.PI;
+    cover.add(sheet(front.t, 0.0008), coverBack);
+    let k = 0;
     return { update(dt, time, t) {
-      GIT.acc += dt; if (GIT.acc > 2.2) { GIT.acc = 0; GIT.rows.pop(); GIT.rows.unshift({ h: GIT.hex(), lane: Math.random() < 0.3 ? 1 : 0, w: 40 + Math.random() * 110 }); drawGit(); }
-      acc += dt;
-      if (t >= 0) { const head = Math.floor(seg(t, 0, 0.7) * 20); for (let i = 0; i < 20; i++) leds.setColorAt(i, t < 0.7 ? (i <= head ? on : off) : (Math.floor(t * 8) % 2 ? on : off)); leds.setColorAt(4, sig); leds.instanceColor.needsUpdate = true; acc = 0; }
-      else if (acc > 0.22) { acc = 0; for (let i = 0; i < 20; i++) if (Math.random() < 0.3) leds.setColorAt(i, Math.random() < 0.55 ? on : off); leds.setColorAt(4, sig); leds.instanceColor.needsUpdate = true; }
-    }, dur: 1.3 };
+      const want = target === this || t >= 0 ? 1 : 0;
+      if (k === want && t < 0) return;
+      k = REDUCED ? want : k + Math.sign(want - k) * Math.min(Math.abs(want - k), dt / 0.6);
+      const e = k * k * (3 - 2 * k);
+      cover.rotation.y = -e * (Math.PI - 0.07);
+      paper.position.x = (-PW / 2) * (1 - e);
+      leaf.rotation.y = t >= 0 && !REDUCED ? -Math.abs(Math.sin(seg(t, 0.2, 1.0) * Math.PI * 2)) * 0.8 * e : 0;
+    }, dur: 1.2 };
   });
 
   // --- 06 EMAIL: mailbox; the door drops, the flag goes up, a letter slides out ---
@@ -701,17 +714,6 @@ function buildRoom(THREE) {
       const k = ease(seg(t, 0, 0.35)) - ease(seg(t, 2.3, 2.7)), out = ease(seg(t, 0.3, 0.75)) - ease(seg(t, 2.0, 2.35));
       door.rotation.x = k * (Math.PI / 2 - 0.05); flag.rotation.x = -k * Math.PI / 2; letter.position.z = 0.02 + out * 0.3;
     }, dur: 2.8 };
-  });
-
-  // --- optional: THE HARVARD INDEPENDENT (stack of newspapers) ---
-  if (destOf("independent")) addObject(destOf("independent"), 0, -4.9, 0, 0.9, 0.8, (b) => {
-    const st = new THREE.Group(); st.position.y = P0; b.add(st);
-    for (let i = 0; i < 12; i++) { const p = box(0.4, 0.022, 0.56, i % 2 ? M.page : M.paper, (Math.sin(i * 7.1) * 0.012), 0.011 + i * 0.022, Math.cos(i * 3.3) * 0.012); p.rotation.y = Math.sin(i * 2.3) * 0.05; st.add(p); }
-    const mast = canvasTex(256, 360, (g, w, h) => { g.fillStyle = "#fbfbf7"; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink; g.font = `800 condensed 30px ${F_SANS}`; g.textBaseline = "top"; fitText(g, "THE HARVARD INDEPENDENT", 14, 16, w - 28); g.fillRect(14, 52, w - 28, 3); g.fillStyle = CSS.given; g.fillRect(14, 66, w - 28, 120); g.fillStyle = CSS.hair; for (let y = 200; y < h - 14; y += 10) g.fillRect(14, y, w - 28 - ((y * 13) % 60), 4); });
-    const topY = 12 * 0.022 + 0.001, f = decal(mast.t, 0.4, 0.56); f.rotation.x = -Math.PI / 2; f.position.y = topY; st.add(f);
-    const band = box(0.41, 0.27, 0.03, M.ink, 0, 0.134, 0.05, false); st.add(band);
-    const topSheet = st.children[11];
-    return { update(dt, time, t) { if (t < 0) return; const k = Math.sin(seg(t, 0, 0.9) * Math.PI); topSheet.rotation.x = k * 0.5; f.rotation.x = -Math.PI / 2 + k * 0.5; f.position.y = topY + k * 0.07; topSheet.position.y = 0.253 + k * 0.07; }, dur: 1 };
   });
 
   // ---------- highlight brackets ----------
