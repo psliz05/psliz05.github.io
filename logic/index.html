@@ -107,6 +107,7 @@
 
   .summary { border: 2px solid var(--ink); background: var(--plate); display: grid; }
   .summary pre { margin: 0; padding: 12px; font: 500 13px/1.6 var(--f-mono); white-space: pre; overflow-x: auto; }
+  .summary .token { border-top: 2px solid var(--ink); background: var(--signal); color: var(--ink); padding: 9px 12px; font: 700 12px var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; }
   .summary .row { display: grid; grid-template-columns: 1fr auto; border-top: 2px solid var(--ink); align-items: stretch; }
   .summary .next { font: 500 12px var(--f-mono); text-transform: uppercase; letter-spacing: 0.04em; padding: 11px 12px; color: var(--steel); }
   .summary .ctl { border-left: 2px solid var(--ink); }
@@ -215,6 +216,7 @@
 
   <section class="summary" id="summary" hidden>
     <pre id="sharetext"></pre>
+    <div class="token" id="token" hidden>Waffle token obtained / Redeem at the waffle cabin</div>
     <div class="row"><span class="next" id="next"></span><button class="ctl" id="copy">Copy</button></div>
     <textarea id="sharebox" rows="5" readonly hidden aria-label="Result to copy"></textarea>
   </section>
@@ -809,6 +811,7 @@ if (typeof module !== "undefined") module.exports = DL;
     $("#summary").hidden = !all || view !== "play";
     if (!all) return;
     $("#sharetext").textContent = shareText();
+    $("#token").hidden = !isToday(); // today's three puzzles earn a waffle token (the room reads the same saved results)
     $("#next").textContent = isToday() ? `Next set in ${untilMidnight()}` : `Archive / No. ${pad3(viewNo)}`;
   }
   function shareText() {
