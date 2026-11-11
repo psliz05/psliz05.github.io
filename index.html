@@ -262,7 +262,11 @@ async function boot() {
   el.listBtn.addEventListener("click", () => showList());
   el.panelList.addEventListener("click", () => showList());
   el.listEnter.addEventListener("click", () => { hideList(); room.enterFromList(); });
-  if (location.hash === "#list") showList(); else room.start();
+  if (location.hash === "#list") showList();
+  else if (location.hash === "#return" || (performance.getEntriesByType && (performance.getEntriesByType("navigation")[0] || {}).type === "back_forward")) {
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* ignore */ }
+    if (!room.resume()) room.start();
+  } else room.start();
 }
 
 // =====================================================================
@@ -849,6 +853,7 @@ function buildRoom(THREE) {
   }
   function zoomAndGo(o) {
     state = "busy"; keys.clear(); resetJoy(); setTarget(null); hud();
+    try { sessionStorage.setItem("room:pose", JSON.stringify({ x: player.x, z: player.z, yaw: player.yaw, pitch: player.pitch })); } catch (e) { /* ignore */ }
     const go = () => { el.fade.classList.add("on"); setTimeout(() => { window.location.href = o.dest.href; }, REDUCED ? 0 : 250); };
     if (REDUCED || !o.screen) return go();
     const s = o.screen, p = s.geometry.parameters, c = s.getWorldPosition(new THREE.Vector3()), n = s.getWorldDirection(new THREE.Vector3());
@@ -1014,6 +1019,15 @@ function buildRoom(THREE) {
 
   return {
     start() { state = "start"; showPanel("start"); run(); },
+    resume() { // returning from a sub-page: put the player back where they clicked in
+      let p = null; try { p = JSON.parse(sessionStorage.getItem("room:pose")); } catch (e) { /* ignore */ }
+      if (!p || !isFinite(p.x) || !isFinite(p.z) || !isFinite(p.yaw)) return false;
+      player.x = p.x; player.z = p.z; player.yaw = p.yaw; player.pitch = isFinite(p.pitch) ? p.pitch : -0.04;
+      player.vx = player.vz = player.vy = 0; player.y = 0; entered = true;
+      updatePlayer(0);
+      if (TOUCH || !CAN_LOCK) { state = "play"; hud(); } else { state = "pause"; showPanel("pause"); }
+      run(); return true;
+    },
     leave() { // going to the list view
       if (document.pointerLockElement === el.gl) { state = "list"; document.exitPointerLock(); }
       state = "list"; tween = null; keys.clear(); resetJoy(); setTarget(null); hud(); stop();
