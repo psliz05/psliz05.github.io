@@ -802,10 +802,11 @@ function buildRoom(THREE) {
 
   // --- summit hut (the room, seen from outside) ---
   {
-    const sw = HALF + 0.2 - DOOR.w / 2, zc = HALF + WALL_T / 2 + 0.002;
-    for (const sx of [-1, 1]) { B(sw, CEIL + 0.3, WALL_T, INK, (sx * (HALF + 0.2 + DOOR.w / 2)) / 2, (CEIL + 0.3) / 2, zc); B(0.2, CEIL + 0.3, ROOM + 0.4, INK, sx * (HALF + 0.1), (CEIL + 0.3) / 2, 0); }
-    B(DOOR.w, CEIL + 0.3 - DOOR.h, WALL_T, INK, 0, (CEIL + 0.3 + DOOR.h) / 2, zc);
-    B(ROOM + 0.4, CEIL + 0.3, 0.2, INK, 0, (CEIL + 0.3) / 2, -(HALF + 0.1));
+    // every outer wall sits 4 cm clear of the room's inner wall planes, so the two never share a surface (no flicker)
+    const GAP = 0.04, sw = HALF + 0.2 - DOOR.w / 2, ft = WALL_T - GAP, zc = HALF + GAP + ft / 2;
+    for (const sx of [-1, 1]) { B(sw, CEIL + 0.3, ft, INK, (sx * (HALF + 0.2 + DOOR.w / 2)) / 2, (CEIL + 0.3) / 2, zc); B(0.2 - GAP, CEIL + 0.3, ROOM + 0.4, INK, sx * (HALF + GAP + (0.2 - GAP) / 2), (CEIL + 0.3) / 2, 0); }
+    B(DOOR.w, CEIL + 0.3 - DOOR.h, ft, INK, 0, (CEIL + 0.3 + DOOR.h) / 2, zc);
+    B(ROOM + 0.4, CEIL + 0.3, 0.2 - GAP, INK, 0, (CEIL + 0.3) / 2, -(HALF + GAP + (0.2 - GAP) / 2));
     B(ROOM + 1.4, 0.3, ROOM + 1.4, C.steel, 0, CEIL + 0.2, 0);
     B(DOOR.w, 0.04, WALL_T + 0.3, C.steel, 0, -0.02, HALF + WALL_T / 2 + 0.1); // threshold
   }
