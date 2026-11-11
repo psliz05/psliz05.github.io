@@ -478,8 +478,8 @@ if (typeof module !== "undefined") module.exports = DL;
 (() => {
   "use strict";
   // ---------- leaderboard backend (Supabase REST). Leave either empty to switch the leaderboard off. ----------
-  const SUPABASE_URL = "";
-  const SUPABASE_ANON_KEY = "";
+  const SUPABASE_URL = "https://qoslstgxluhdmzvfqccy.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_iSVvoVHFt0ksvms1RK-U6w_jG3CMbtt";
 
   const $ = (s) => document.querySelector(s);
   const LAUNCH = new Date(2026, 10, 7); // 2026-11-07. Must match the date in supabase.sql (daily_logic_day).
