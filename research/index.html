@@ -96,7 +96,7 @@
 <div class="raster">
   <canvas id="raster" role="img" aria-label="Animated spike raster. Simulated, for illustration only."></canvas>
 </div>
-<div class="wrap raster-cap mono"><span>Simulated activity &mdash; illustrative</span><span>Not recorded data</span></div>
+<div class="wrap raster-cap mono"><span id="rcap">Simulated activity &mdash; illustrative</span><span>Not recorded data</span></div>
 
 <main class="wrap">
   <header class="mast">
@@ -231,18 +231,45 @@
     for (let x = W - ((t * SPEED) % 92); x > 0; x -= 92) g.fillRect(Math.round(x), 0, 1, H); // time grid
     g.fillStyle = "#f3f3ef";
     for (const s of spikes) g.fillRect(Math.round(s.x), pad + s.r * rh + 1, 2, Math.max(2, rh - 2));
+    if (key.on) { // one key-shaped burst hides in the raster
+      g.fillStyle = key.taken ? "#ff4a00" : "#f3f3ef";
+      KEY.forEach((row, r) => { for (let c = 0; c < row.length; c++) if (row[c] === "1") g.fillRect(Math.round(key.x) + c * KPX, key.y + r * KPX, KPX, KPX); });
+    }
     g.fillStyle = "#ff4a00"; g.fillRect(W - 3, 0, 3, H); // write head
   }
+  // ---- hidden key: click it to unlock the door in the room (kept in localStorage as "room:key") ----
+  const KEY = ["0111000000000", "1000111111111", "1000100001001", "0111000001001"], KPX = 3, KW = 13 * KPX, KH = 4 * KPX;
+  const held = () => { try { return localStorage.getItem("room:key") === "1"; } catch (e) { return false; } };
+  const key = { on: false, x: 0, y: 0, taken: false, next: 5, gone: 0 };
+  const rcap = document.getElementById("rcap");
+  if (held()) rcap.textContent = "Key held";
+  function stepKey(dt) {
+    if (key.taken) { if (t > key.gone) key.on = false; return; }
+    if (held()) return;
+    if (!key.on && t > key.next) { key.on = true; key.x = W + 4; key.y = Math.round(H * (0.25 + Math.random() * 0.5)); }
+    if (key.on) { key.x -= SPEED * dt; if (key.x < -KW - 4) { key.on = false; key.next = t + 7; } }
+  }
+  const overKey = (e) => { const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; return key.on && !key.taken && Math.abs(x - (key.x + KW / 2)) < KW / 2 + 12 && Math.abs(y - (key.y + KH / 2)) < KH / 2 + 12; };
+  cv.addEventListener("pointermove", (e) => { cv.style.cursor = overKey(e) ? "pointer" : ""; });
+  cv.addEventListener("click", (e) => {
+    if (!overKey(e)) return;
+    try { localStorage.setItem("room:key", "1"); } catch (err) { /* ignore */ }
+    key.taken = true; key.gone = t + 1.4; cv.style.cursor = "";
+    rcap.textContent = "Key acquired / Something in the room is locked";
+    if (REDUCED) { draw(); setTimeout(() => { key.on = false; draw(); }, 1400); }
+  });
   function frame(now) {
     raf = requestAnimationFrame(frame);
     const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
-    step(dt); draw();
+    step(dt); stepKey(dt); draw();
   }
   function prefill() { spikes = []; for (let i = 0; i < Math.ceil(W / SPEED / 0.02); i++) step(0.02); }
   function start() { if (!raf && !REDUCED && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } }
   function stop() { cancelAnimationFrame(raf); raf = 0; }
 
-  size(); prefill(); draw(); start();
+  size(); prefill();
+  if (REDUCED && !held()) { key.on = true; key.x = Math.round(W * 0.68); key.y = Math.round(H * 0.45); } // no animation: the key sits still
+  draw(); start();
   let rz = 0;
   window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { size(); prefill(); draw(); }, 120); });
   document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));

@@ -57,6 +57,10 @@
   #toast.on { opacity: 1; }
   .touch #toast { bottom: auto; top: calc(56px + var(--st)); }
 
+  #inv { position: absolute; top: calc(12px + var(--st)); left: calc(12px + var(--sl)); display: flex; gap: 6px; pointer-events: none; }
+  #inv span { border: 2px solid var(--ink); background: var(--plate); padding: 6px 10px; font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  #inv #inv-key { background: var(--ink); color: var(--plate); }
+
   .chip { position: absolute; top: calc(12px + var(--st)); right: calc(12px + var(--sr)); appearance: none; border: 2px solid var(--ink); background: var(--plate); padding: 6px 10px; font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; touch-action: manipulation; }
   .chip:hover { background: var(--ink); color: var(--plate); }
   :focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
@@ -120,6 +124,7 @@
   <div id="joy" hidden><div id="joy-knob"></div></div>
   <div id="open" hidden><span id="open-label"></span><button id="open-btn" type="button">Open</button></div>
   <div id="toast" role="status" aria-live="polite"></div>
+  <div id="inv" hidden><span id="inv-key" hidden>Key</span><span id="inv-ski" hidden></span></div>
   <button id="listbtn" class="chip" type="button" hidden>List view</button>
   <div id="panel" hidden>
     <h1 id="panel-title"></h1>
@@ -186,6 +191,7 @@ const el = {
   joy: $("#joy"), knob: $("#joy-knob"), open: $("#open"), openLabel: $("#open-label"), openBtn: $("#open-btn"),
   toast: $("#toast"), listBtn: $("#listbtn"), panel: $("#panel"), panelTitle: $("#panel-title"), panelGo: $("#panel-go"), panelGoText: $("#panel-go-text"),
   panelLegend: $("#panel-legend"), panelList: $("#panel-list"), loader: $("#loader"), pct: $("#pct"), pctBar: $("#pctbar"), fade: $("#fade"),
+  inv: $("#inv"), invKey: $("#inv-key"), invSki: $("#inv-ski"),
   list: $("#list"), listTitle: $("#list-title"), rows: $("#rows"), listEnter: $("#list-enter"), listNote: $("#list-note"),
 };
 const TOUCH = matchMedia("(pointer: coarse)").matches;
@@ -275,18 +281,23 @@ function buildRoom(THREE) {
   const F_SANS = '"Archivo", "Helvetica Neue", Arial, sans-serif';
   const F_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
   const ROOM = 12, HALF = ROOM / 2, CEIL = 4, EYE = 1.6, RADIUS = 0.34, REACH = 3;
+  // Outside the back door: summit deck -> slalom course -> base area, with a chairlift back up. +z is downhill.
+  const DOOR = { w: 1.0, h: 2.15 }, WALL_T = 0.2, OUT0 = HALF + WALL_T + RADIUS;
+  const SKY = 0xdfdfda, DX0 = -10, DX1 = 18, Z0 = HALF + 9, CW = 9, RUN = 200, DROP = 50, Z1 = Z0 + RUN, Z2 = Z1 + 36, BX0 = -14, BX1 = 19;
+  const LX = 14.5, LR = 1.3, ZT = HALF + 4.5, ZB = Z1 + 13, LP = ZB - ZT, LIFT_V = 11, CHAIRS = 14, HANG = 2.7;
 
   // ---------- renderer ----------
   const renderer = new THREE.WebGLRenderer({ canvas: el.gl, antialias: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.setClearColor(C.paper);
+  renderer.setClearColor(SKY);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.shadowMap.autoUpdate = false;
   const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(70, 1, 0.03, 60);
+  scene.fog = new THREE.Fog(SKY, 90, 430);
+  const camera = new THREE.PerspectiveCamera(70, 1, 0.03, 700);
   camera.rotation.order = "YXZ";
   scene.add(camera);
 
@@ -339,6 +350,15 @@ function buildRoom(THREE) {
     ceil.rotation.x = Math.PI / 2; ceil.position.y = CEIL; scene.add(ceil);
     const wallGeo = new THREE.PlaneGeometry(ROOM, CEIL);
     for (const [x, z, ry] of [[0, -HALF, 0], [0, HALF, Math.PI], [-HALF, 0, Math.PI / 2], [HALF, 0, -Math.PI / 2]]) {
+      if (z === HALF) { // back wall: three panels around the doorway
+        const sw = HALF - DOOR.w / 2;
+        for (const [pw, ph, px, py] of [[sw, CEIL, -(HALF + DOOR.w / 2) / 2, CEIL / 2], [sw, CEIL, (HALF + DOOR.w / 2) / 2, CEIL / 2], [DOOR.w + 0.06, CEIL - DOOR.h, 0, (CEIL + DOOR.h) / 2]]) {
+          const m = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), M.wall); m.position.set(px, py, px ? HALF : HALF - 0.003); m.rotation.y = Math.PI; m.receiveShadow = true; scene.add(m);
+        }
+        for (const sx of [-1, 1]) scene.add(box(sw, 0.1, 0.02, M.ink, (sx * (HALF + DOOR.w / 2)) / 2, 0.05, HALF - 0.01, false));
+        scene.add(box(0.05, DOOR.h + 0.05, 0.03, M.ink, -DOOR.w / 2 - 0.025, (DOOR.h + 0.05) / 2, HALF - 0.015, false), box(0.05, DOOR.h + 0.05, 0.03, M.ink, DOOR.w / 2 + 0.025, (DOOR.h + 0.05) / 2, HALF - 0.015, false), box(DOOR.w, 0.05, 0.03, M.ink, 0, DOOR.h + 0.025, HALF - 0.015, false));
+        continue;
+      }
       const w = new THREE.Mesh(wallGeo, M.wall); w.position.set(x, CEIL / 2, z); w.rotation.y = ry; w.receiveShadow = true; scene.add(w);
       const base = box(ROOM, 0.1, 0.02, M.ink, 0, 0.05, 0, false); // baseboard
       base.position.set(x * (1 - 0.01 / HALF), 0.05, z * (1 - 0.01 / HALF)); base.rotation.y = ry; scene.add(base);
@@ -729,6 +749,230 @@ function buildRoom(THREE) {
     }, dur: 2.8 };
   });
 
+  // =====================================================================
+  // OUTSIDE: locked door, summit deck, slalom course, base area, chairlift
+  // =====================================================================
+  const sm = (k) => { k = Math.min(1, Math.max(0, k)); return k * k * (3 - 2 * k); };
+  function hAt(x, z) { // snow height
+    const k = Math.min(1, Math.max(0, (z - Z0) / RUN)), mid = Math.sin(Math.PI * k);
+    const side = Math.max(0, Math.abs(x) - (CW + 3));
+    return -DROP * sm(k) + Math.sin((z - Z0) * 0.16) * 0.7 * mid + Math.min(12, side * side * 0.012) * mid;
+  }
+  const world = new THREE.Group(); world.visible = false; scene.add(world);
+  const lamV = new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true });
+  const INK = 0x1b1b1b;
+  // static scenery is baked into one mesh: parts = { geo, color, matrix }
+  const parts = [];
+  const mat4 = (x, y, z, rx = 0, ry = 0, rz = 0, sc = 1) => new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(rx, ry, rz, "YXZ")), new THREE.Vector3(sc, sc, sc));
+  const B = (w, h, d, color, x, y, z, rx, ry, rz) => parts.push({ geo: new THREE.BoxGeometry(w, h, d), color, m: mat4(x, y, z, rx, ry, rz) });
+  function bake(list) {
+    let n = 0;
+    const gs = list.map((p) => { const g = p.geo.index ? p.geo.toNonIndexed() : p.geo.clone(); if (p.m) g.applyMatrix4(p.m); n += g.attributes.position.count; return g; });
+    const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3), c = new THREE.Color();
+    let o = 0;
+    gs.forEach((g, i) => {
+      const cnt = g.attributes.position.count; pos.set(g.attributes.position.array, o * 3); nor.set(g.attributes.normal.array, o * 3);
+      c.setHex(list[i].color); for (let k = 0; k < cnt; k++) { col[(o + k) * 3] = c.r; col[(o + k) * 3 + 1] = c.g; col[(o + k) * 3 + 2] = c.b; }
+      o += cnt; g.dispose();
+    });
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3)); geo.setAttribute("normal", new THREE.BufferAttribute(nor, 3)); geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+    return geo;
+  }
+  const outColliders = [];
+  const solid = (x, z, hw, hd) => outColliders.push({ minX: x - hw, maxX: x + hw, minZ: z - hd, maxZ: z + hd });
+  let rs = 20261111; const rnd = () => ((rs = (rs * 1664525 + 1013904223) >>> 0) / 4294967296); // fixed seed: same mountain every visit
+
+  // --- snow ---
+  {
+    const x0 = -150, x1 = 150, z0 = -90, z1 = Z2 + 150, nx = 86, nz = 140;
+    const geo = new THREE.PlaneGeometry(x1 - x0, z1 - z0, nx, nz); geo.rotateX(-Math.PI / 2); geo.translate((x0 + x1) / 2, 0, (z0 + z1) / 2);
+    const p = geo.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i), z = p.getZ(i), far = Math.max(0, Math.abs(x) - 40);
+      p.setY(i, hAt(x, z) - 0.04 + (far > 0 ? Math.sin(x * 0.11 + z * 0.07) * Math.min(3, far * 0.08) : 0));
+    }
+    geo.computeVertexNormals();
+    world.add(new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0xf6f6f2, flatShading: true })));
+    for (let i = 0; i < 7; i++) { // far ridges
+      const a = -0.5 + i * 0.5 + rnd() * 0.2, r = 330 + rnd() * 60, h = 70 + rnd() * 70;
+      parts.push({ geo: new THREE.ConeGeometry(110 + rnd() * 60, h, 5, 1), color: 0xcdcdc7, m: mat4(Math.sin(a) * r, -DROP * 0.6 + h / 2 - 12, Z1 * 0.5 + Math.cos(a) * r, 0, rnd() * 3) });
+    }
+  }
+
+  // --- summit hut (the room, seen from outside) ---
+  {
+    const sw = HALF + 0.2 - DOOR.w / 2, zc = HALF + WALL_T / 2 + 0.002;
+    for (const sx of [-1, 1]) { B(sw, CEIL + 0.3, WALL_T, INK, (sx * (HALF + 0.2 + DOOR.w / 2)) / 2, (CEIL + 0.3) / 2, zc); B(0.2, CEIL + 0.3, ROOM + 0.4, INK, sx * (HALF + 0.1), (CEIL + 0.3) / 2, 0); }
+    B(DOOR.w, CEIL + 0.3 - DOOR.h, WALL_T, INK, 0, (CEIL + 0.3 + DOOR.h) / 2, zc);
+    B(ROOM + 0.4, CEIL + 0.3, 0.2, INK, 0, (CEIL + 0.3) / 2, -(HALF + 0.1));
+    B(ROOM + 1.4, 0.3, ROOM + 1.4, C.steel, 0, CEIL + 0.2, 0);
+    B(DOOR.w, 0.04, WALL_T + 0.3, C.steel, 0, -0.02, HALF + WALL_T / 2 + 0.1); // threshold
+  }
+
+  // --- ropes ---
+  function rope(xa, za, xb, zb, step = 5) {
+    const n = Math.max(1, Math.round(Math.hypot(xb - xa, zb - za) / step)); let px, py, pz;
+    for (let i = 0; i <= n; i++) {
+      const x = xa + ((xb - xa) * i) / n, z = za + ((zb - za) * i) / n, y = hAt(x, z);
+      B(0.07, 1.15, 0.07, INK, x, y + 0.55, z);
+      if (i) { const dx = x - px, dy = y - py, dz = z - pz, len = Math.hypot(dx, dy, dz);
+        for (const h of [1.0, 0.55]) B(0.03, 0.03, len, C.signal, (x + px) / 2, (y + py) / 2 + h, (z + pz) / 2, -Math.asin(dy / len), Math.atan2(dx, dz)); }
+      px = x; py = y; pz = z;
+    }
+  }
+  for (const sx of [-1, 1]) rope(sx * CW, Z0, sx * CW, Z1);
+  rope(DX0, HALF + 0.3, DX0, Z0); rope(DX1, HALF + 0.3, DX1, Z0); rope(DX0, Z0, -CW, Z0); rope(CW, Z0, DX1, Z0); rope(DX0, HALF + 0.3, -HALF - 0.3, HALF + 0.3); rope(HALF + 0.3, HALF + 0.3, DX1, HALF + 0.3);
+  rope(BX0, Z1, BX0, Z2); rope(BX1, Z1, BX1, Z2); rope(BX0, Z2, BX1, Z2); rope(BX0, Z1, -CW, Z1); rope(CW, Z1, BX1, Z1);
+
+  // --- slalom gates, start and finish ---
+  const GATES = [];
+  for (let i = 0; i < 10; i++) {
+    const gz = Z0 + 26 + i * 17, gx = (i % 2 ? 1 : -1) * 4.2, color = i % 2 ? INK : C.signal;
+    GATES.push({ x: gx, z: gz });
+    for (const sx of [-1, 1]) { const x = gx + sx * 1.9, y = hAt(x, gz); B(0.06, 1.9, 0.06, color, x, y + 0.95, gz); B(0.6, 0.4, 0.03, color, x - sx * 0.33, y + 1.65, gz); }
+  }
+  const ZS = Z0 + 3, ZF = Z1 - 8;
+  const banner = (text, z) => {
+    const y = hAt(0, z), t = canvasTex(1024, 128, (g, w, h) => { g.fillStyle = CSS.ink; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 104px ${F_SANS}`; g.textBaseline = "middle"; if ("letterSpacing" in g) g.letterSpacing = "14px"; fitText(g, text, w / 2, h / 2 + 6, w - 80, "center"); });
+    for (const sx of [-1, 1]) B(0.16, 4.4, 0.16, INK, sx * (CW + 0.35), y + 2.2, z);
+    for (const ry of [0, Math.PI]) { const d = decal(t.t, 2 * CW + 0.7, 0.9); d.position.set(0, y + 3.9, z); d.rotation.y = ry; world.add(d); }
+  };
+  banner("START", ZS); banner("FINISH", ZF);
+
+  // --- trees ---
+  {
+    const tree = bake([
+      { geo: new THREE.CylinderGeometry(0.16, 0.2, 1.2, 5), color: 0x3a3a36, m: mat4(0, 0.6, 0) },
+      { geo: new THREE.ConeGeometry(1.5, 3.2, 6), color: 0x2f2f2c, m: mat4(0, 2.4, 0) },
+      { geo: new THREE.ConeGeometry(1.15, 2.6, 6), color: 0x45453f, m: mat4(0, 4.0, 0) },
+      { geo: new THREE.ConeGeometry(0.75, 2.0, 6), color: 0xeeeeea, m: mat4(0, 5.4, 0) },
+    ]);
+    const spots = [];
+    for (let i = 0; i < 6000 && spots.length < 560; i++) {
+      const near = rnd() < 0.62, x = (rnd() * 2 - 1) * (near ? 34 : 120), z = -60 + rnd() * (Z2 + 170);
+      if (Math.abs(x) < CW + 2.2 && z > Z0 - 4 && z < Z1 + 3) continue;             // course
+      if (Math.abs(x - LX) < 5 && z > ZT - 6 && z < ZB + 7) continue;                // lift line
+      if (x > DX0 - 2 && x < DX1 + 2 && z > -HALF - 4 && z < Z0 + 1) continue;       // hut and deck
+      if (x > BX0 - 2 && x < BX1 + 2 && z > Z1 - 1 && z < Z2 + 2) continue;         // base area
+      spots.push([x, z]);
+    }
+    const im = new THREE.InstancedMesh(tree, lamV, spots.length);
+    spots.forEach(([x, z], i) => { const far = Math.max(0, Math.abs(x) - 40); im.setMatrixAt(i, mat4(x, hAt(x, z) - 0.3 + (far > 0 ? Math.sin(x * 0.11 + z * 0.07) * Math.min(3, far * 0.08) : 0), z, 0, rnd() * 6.28, 0, 0.8 + rnd() * 1.1)); });
+    im.frustumCulled = false; world.add(im);
+  }
+
+  // --- base area: waffle shack, benches ---
+  const YB = -DROP;
+  const shack = new THREE.Group(); shack.position.set(-7.5, YB, Z1 + 25); world.add(shack);
+  {
+    const sx = -7.5, sz = Z1 + 25, W = 4.6, H = 2.6, D = 3.2;
+    B(W, H, D, 0x55554f, sx, YB + H / 2, sz);
+    for (const s of [-1, 1]) B(W + 0.7, 0.14, D * 0.72, INK, sx, YB + H + 0.55, sz + s * D * 0.3, s * 0.52);
+    B(W, 1.0, 0.1, 0x55554f, sx, YB + H + 0.4, sz - D / 2 + 0.05); B(W, 1.0, 0.1, 0x55554f, sx, YB + H + 0.4, sz + D / 2 - 0.05);
+    B(2.6, 1.0, 0.06, INK, sx - 0.4, YB + 1.55, sz - D / 2 - 0.02);                   // serving window
+    B(3.0, 0.08, 0.5, C.plate, sx - 0.4, YB + 1.02, sz - D / 2 - 0.2);                // counter
+    B(3.2, 0.06, 0.9, C.signal, sx - 0.4, YB + 2.25, sz - D / 2 - 0.42, 0.35);        // awning
+    B(0.8, 1.9, 0.06, INK, sx + 1.7, YB + 0.95, sz - D / 2 - 0.02);                   // door
+    B(0.3, 0.9, 0.3, INK, sx + 1.3, YB + H + 1.2, sz + 0.5);                          // flue
+    const sign = canvasTex(512, 128, (g, w, h) => { g.fillStyle = CSS.plate; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink; g.fillRect(0, 0, w, 8); g.fillRect(0, h - 8, w, 8); g.font = `800 condensed 100px ${F_SANS}`; g.textBaseline = "middle"; fitText(g, "WAFFLES", w / 2, h / 2 + 6, w - 48, "center"); });
+    const d = decal(sign.t, 2.6, 0.65); d.rotation.y = Math.PI; d.position.set(sx - 0.4, YB + H + 0.35, sz - D / 2 - 0.02); world.add(d);
+    solid(sx, sz, W / 2, D / 2);
+    const bench = (x, z, ry) => { B(1.9, 0.07, 0.42, INK, x, YB + 0.46, z, 0, ry); for (const s of [-0.75, 0.75]) B(0.07, 0.44, 0.38, C.steel, x + Math.cos(ry) * s, YB + 0.22, z - Math.sin(ry) * s, 0, ry); solid(x, z, 0.8, 0.5); };
+    bench(-9.6, Z1 + 20.6, 0); bench(-5.2, Z1 + 20.6, 0); bench(-1.5, Z1 + 23.5, Math.PI / 2);
+    B(1.5, 0.07, 0.8, C.plate, 1.6, YB + 0.74, Z1 + 27); B(0.1, 0.72, 0.1, INK, 1.6, YB + 0.36, Z1 + 27); B(1.5, 0.06, 0.3, INK, 1.6, YB + 0.45, Z1 + 26.2); B(1.5, 0.06, 0.3, INK, 1.6, YB + 0.45, Z1 + 27.8); solid(1.6, Z1 + 27, 0.8, 1.0);
+    const hitBox = new THREE.Mesh(new THREE.BoxGeometry(W, H, D)); hitBox.position.y = H / 2; hitBox.visible = false; shack.add(hitBox);
+  }
+
+  // --- chairlift ---
+  const TOWERS = [[ZT, 3.4], [Z0 + 4, 7.6]];
+  for (let z = Z0 + 34; z < Z1 - 10; z += 30) TOWERS.push([z, 8]);
+  TOWERS.push([Z1 + 6, 7], [ZB, 3.4]);
+  TOWERS.forEach((t) => (t[2] = hAt(LX, t[0]) + t[1])); // cable height
+  function cableY(z) {
+    if (z <= ZT) return TOWERS[0][2]; if (z >= ZB) return TOWERS[TOWERS.length - 1][2];
+    let i = 1; while (TOWERS[i][0] < z) i++;
+    const a = TOWERS[i - 1], b = TOWERS[i]; return a[2] + ((b[2] - a[2]) * (z - a[0])) / (b[0] - a[0]);
+  }
+  const LOOP = 2 * LP + 2 * Math.PI * LR;
+  function liftPos(d, out) { // distance along the loop -> cable point + travel direction. 0 = bottom of the uphill side.
+    d = ((d % LOOP) + LOOP) % LOOP;
+    if (d < LP) { out.x = LX - LR; out.z = ZB - d; out.tx = 0; out.tz = -1; }
+    else if (d < LP + Math.PI * LR) { const a = (d - LP) / LR; out.x = LX - Math.cos(a) * LR; out.z = ZT - Math.sin(a) * LR; out.tx = Math.sin(a); out.tz = -Math.cos(a); }
+    else if (d < 2 * LP + Math.PI * LR) { out.x = LX + LR; out.z = ZT + (d - LP - Math.PI * LR); out.tx = 0; out.tz = 1; }
+    else { const a = (d - 2 * LP - Math.PI * LR) / LR; out.x = LX + Math.cos(a) * LR; out.z = ZB + Math.sin(a) * LR; out.tx = -Math.sin(a); out.tz = Math.cos(a); }
+    out.y = cableY(out.z); return out;
+  }
+  TOWERS.forEach(([z, h, cy], i) => {
+    const g = hAt(LX, z), end = i === 0 || i === TOWERS.length - 1;
+    B(end ? 0.5 : 0.36, cy - g + 0.3, end ? 0.5 : 0.36, C.steel, LX, (cy + g + 0.3) / 2, z);
+    if (end) { B(3.6, 0.5, 3.6, INK, LX, cy + 0.45, z); B(3.0, 0.08, 3.0, C.signal, LX, cy + 0.16, z); solid(LX, z, 0.3, 0.3); }
+    else B(3.3, 0.16, 0.3, INK, LX, cy + 0.12, z);
+    if (i) { const a = TOWERS[i - 1], dz = z - a[0], dy = cy - a[2], len = Math.hypot(dz, dy);
+      for (const sx of [-1, 1]) B(0.04, 0.04, len, INK, LX + sx * LR, (cy + a[2]) / 2, (z + a[0]) / 2, -Math.asin(dy / len), 0); }
+  });
+  const chairGeo = bake([
+    { geo: new THREE.BoxGeometry(0.06, HANG - 0.9, 0.06), color: INK, m: mat4(0, -(HANG - 0.9) / 2, 0) },
+    { geo: new THREE.BoxGeometry(1.7, 0.05, 0.05), color: INK, m: mat4(0, -(HANG - 0.9), 0) },
+    { geo: new THREE.BoxGeometry(0.05, 0.9, 0.05), color: INK, m: mat4(-0.85, -(HANG - 0.45), 0.12) },
+    { geo: new THREE.BoxGeometry(0.05, 0.9, 0.05), color: INK, m: mat4(0.85, -(HANG - 0.45), 0.12) },
+    { geo: new THREE.BoxGeometry(1.75, 0.07, 0.5), color: C.steel, m: mat4(0, -HANG, 0) },
+    { geo: new THREE.BoxGeometry(1.75, 0.62, 0.06), color: C.signal, m: mat4(0, -HANG + 0.36, 0.27) },
+    { geo: new THREE.BoxGeometry(1.75, 0.04, 0.04), color: INK, m: mat4(0, -HANG - 0.42, -0.55) },
+    { geo: new THREE.BoxGeometry(0.04, 0.45, 0.04), color: INK, m: mat4(-0.8, -HANG - 0.2, -0.4, 0.6) },
+    { geo: new THREE.BoxGeometry(0.04, 0.45, 0.04), color: INK, m: mat4(0.8, -HANG - 0.2, -0.4, 0.6) },
+  ]);
+  const chairs = new THREE.InstancedMesh(chairGeo, lamV, CHAIRS); chairs.frustumCulled = false; world.add(chairs);
+  const lp = { x: 0, y: 0, z: 0, tx: 0, tz: 0 };
+  let liftD = 0; // metres the cable has travelled
+  const chairD = (i) => liftD + (i * LOOP) / CHAIRS;
+  function updateLiftMesh() {
+    for (let i = 0; i < CHAIRS; i++) { liftPos(chairD(i), lp); chairs.setMatrixAt(i, mat4(lp.x, lp.y, lp.z, 0, Math.atan2(-lp.tx, -lp.tz))); }
+    chairs.instanceMatrix.needsUpdate = true;
+  }
+  updateLiftMesh();
+  // lift hut at the bottom (the thing you press)
+  const liftHut = new THREE.Group(); liftHut.position.set(LX - 5.2, YB, ZB + 1.2); world.add(liftHut);
+  {
+    const x = LX - 5.2, z = ZB + 1.2;
+    B(1.9, 2.3, 1.9, INK, x, YB + 1.15, z); B(2.3, 0.12, 2.3, C.steel, x, YB + 2.36, z); B(1.2, 0.7, 0.05, C.plate, x, YB + 1.55, z - 0.96);
+    const sign = canvasTex(256, 128, (g, w, h) => { g.fillStyle = CSS.signal; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink; g.font = `800 condensed 104px ${F_SANS}`; g.textBaseline = "middle"; fitText(g, "LIFT", w / 2, h / 2 + 6, w - 40, "center"); });
+    const d = decal(sign.t, 1.5, 0.75); d.rotation.y = Math.PI; d.position.set(x, YB + 2.95, z - 0.96); world.add(d); B(1.6, 0.85, 0.06, INK, x, YB + 2.95, z - 0.92); B(0.08, 0.5, 0.08, INK, x, YB + 2.5, z - 0.92);
+    solid(x, z, 0.95, 0.95);
+    const hitBox = new THREE.Mesh(new THREE.BoxGeometry(1.9, 2.3, 1.9)); hitBox.position.y = 1.15; hitBox.visible = false; liftHut.add(hitBox);
+  }
+
+  // --- ski rack on the deck ---
+  const RACK = { x: 3.6, z: HALF + 3.6 };
+  B(1.5, 0.06, 0.06, INK, RACK.x, 1.05, RACK.z); for (const s of [-0.75, 0.75]) { B(0.06, 1.05, 0.06, INK, RACK.x + s, 0.52, RACK.z); B(0.06, 0.04, 0.6, INK, RACK.x + s, 0.02, RACK.z); }
+  solid(RACK.x, RACK.z, 0.8, 0.25);
+  const skiPair = (len) => { const g = new THREE.Group(); for (const sx of [-0.11, 0.11]) g.add(box(0.085, 0.022, len, M.ink, sx, 0, 0, false), box(0.085, 0.022, 0.22, M.signal, sx, 0.028, -len / 2 + 0.06, false), box(0.07, 0.05, 0.2, M.steel, sx, 0.03, 0.08, false)); g.children.filter((c, i) => i % 3 === 1).forEach((tip) => (tip.rotation.x = 0.28)); return g; };
+  const rackSkis = new THREE.Group(); rackSkis.position.set(RACK.x, 0, RACK.z + 0.1); world.add(rackSkis);
+  { const pair = skiPair(1.7); pair.rotation.x = Math.PI / 2 - 0.12; pair.position.set(0, 0.9, 0.06); rackSkis.add(pair); for (const sx of [-0.5, 0.5]) rackSkis.add(box(0.025, 1.2, 0.025, M.steel, sx, 0.62, 0.1, false), box(0.09, 0.012, 0.09, M.ink, sx, 0.1, 0.1, false)); }
+  const mySkis = skiPair(1.7); mySkis.rotation.order = "YXZ"; mySkis.visible = false; world.add(mySkis);
+  world.add(new THREE.Mesh(bake(parts), lamV));
+
+  // --- the door ---
+  const leaf = new THREE.Group(); leaf.position.set(-DOOR.w / 2, 0, HALF + WALL_T / 2); scene.add(leaf);
+  leaf.add(box(DOOR.w - 0.02, DOOR.h - 0.02, 0.05, M.given, DOOR.w / 2, DOOR.h / 2, 0, false));
+  for (const sz of [-1, 1]) {
+    for (const py of [0.58, 1.55]) leaf.add(box(DOOR.w - 0.26, py < 1 ? 0.8 : 0.9, 0.012, M.plate, DOOR.w / 2, py, sz * 0.027, false));
+    leaf.add(box(0.14, 0.03, 0.05, M.ink, DOOR.w - 0.16, 1.02, sz * 0.05, false), box(0.05, 0.14, 0.012, M.ink, DOOR.w - 0.1, 1.02, sz * 0.03, false));
+  }
+  const padlock = new THREE.Group(); padlock.position.set(DOOR.w - 0.1, 1.22, -0.05); leaf.add(padlock);
+  padlock.add(box(0.1, 0.085, 0.035, M.signal, 0, 0, 0, false), box(0.014, 0.07, 0.014, M.ink, -0.028, 0.07, 0, false), box(0.014, 0.07, 0.014, M.ink, 0.028, 0.07, 0, false), box(0.07, 0.014, 0.014, M.ink, 0, 0.105, 0, false), box(0.02, 0.03, 0.004, M.ink, 0, -0.005, -0.019, false));
+  leaf.add(box(0.07, 0.03, 0.02, M.ink, DOOR.w - 0.1, 1.335, -0.035, false)); // hasp
+
+  // props: things you can press that are not links
+  function addProp(dest, root, zone, act, extra) {
+    root.updateMatrixWorld(true);
+    const bb = new THREE.Box3().setFromObject(root), center = bb.getCenter(new THREE.Vector3()), size = bb.getSize(new THREE.Vector3());
+    const hit = new THREE.Mesh(new THREE.BoxGeometry(size.x, size.y, size.z)); hit.position.copy(center); hit.visible = false; hit.updateMatrixWorld(true);
+    const obj = { dest: { kind: "act", ...dest }, root, box: bb, center, frame: { color: new THREE.Color() }, face: { material: {} }, texOff: null, texOn: null, t: -1, zone, act, ...extra };
+    hit.userData.obj = obj; hitMeshes.push(hit); objects.push(obj);
+    return obj;
+  }
+
   // ---------- highlight brackets ----------
   const brackets = new THREE.Group(); brackets.visible = false; scene.add(brackets);
   {
@@ -777,9 +1021,87 @@ function buildRoom(THREE) {
     tmpE.set(player.pitch, player.yaw, 0); out.quat.setFromEuler(tmpE);
   }
 
-  function collide() {
-    const lim = HALF - RADIUS - 0.03;
-    player.x = Math.min(lim, Math.max(-lim, player.x)); player.z = Math.min(lim, Math.max(-lim, player.z));
+  // ---------- outside: key, door, skis, lift ----------
+  const mem = (store, k, v) => { try { if (v === undefined) return store.getItem(k); store.setItem(k, v); } catch (e) { /* ignore */ } return null; };
+  let hasKey = mem(localStorage, "room:key") === "1";
+  let mode = "walk"; // walk | ski | liftwait | lift
+  let doorK = 0, doorState = "shut"; // shut | opening | open
+  let rider = -1, camFrom = null, camT = 0, roll = 0, tilt = 0, hintAt = -9, lastHud = "";
+  const race = { on: false, t: 0, hit: 0, next: 0, best: +(mem(localStorage, "room:skibest") || 0) };
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const fmtRun = (t) => `${String(Math.floor(t / 60)).padStart(2, "0")}:${(t % 60).toFixed(1).padStart(4, "0")}`;
+  const hint = (text) => { if (time - hintAt > 2.5) { hintAt = time; toast(text); } };
+  function blendCam() { camFrom = camera.position.clone(); camT = 0; }
+  function showWorld() { world.visible = true; }
+  function inv() {
+    const playing = state === "play" || state === "pause";
+    el.invKey.hidden = !hasKey; el.invSki.hidden = mode === "walk";
+    el.inv.hidden = !playing || (el.invKey.hidden && el.invSki.hidden);
+  }
+  function skiHud(force) {
+    if (mode === "walk") return;
+    const v = Math.round(Math.hypot(player.vx, player.vz) * 3.6);
+    const text = mode === "lift" || mode === "liftwait" ? "Lift" : race.on ? `Gates ${race.hit}/${GATES.length} / ${fmtRun(race.t)} / ${v} km/h` : `Skis on / ${v} km/h`;
+    if (text !== lastHud || force) { lastHud = text; el.invSki.textContent = text; }
+  }
+  function stowSkis(quiet) {
+    mode = "walk"; rider = -1; race.on = false; mySkis.visible = false; rackSkis.visible = true; roll = 0; tilt = 0;
+    player.vx = player.vz = 0; player.y = 0; player.vy = 0; player.ground = true;
+    if (!quiet) toast("Skis returned to the rack"); inv();
+  }
+  const doorObj = addProp({ id: "door", label: "Door" }, leaf, "in", function () {
+    if (doorState !== "shut") return;
+    if (!hasKey) { this.tries = (this.tries || 0) + 1; this.t = 0; toast(this.tries > 2 ? "Locked / Keys are kept with the research" : "Locked / This door requires a key"); return; }
+    doorState = "opening"; this.t = 0; this.off = true; setTarget(null); showWorld(); mem(sessionStorage, "room:door", "1"); toast("Unlocked");
+  }, { dur: 1.9, update(dt, time, t) {
+    if (doorState === "shut") { leaf.position.x = -DOOR.w / 2 + (t >= 0 && !REDUCED ? Math.sin(t * 46) * 0.008 * (1 - seg(t, 0, 0.45)) : 0); return; } // rattle
+    if (doorState !== "opening") return;
+    if (REDUCED || t < 0) t = 1.9;
+    const drop = seg(t, 0, 0.55); padlock.position.y = 1.22 - drop * drop * 1.3; padlock.rotation.z = drop * 1.4; padlock.visible = drop < 1;
+    doorK = ease(seg(t, 0.5, 1.8)); leaf.rotation.y = -doorK * 1.85;
+    if (t >= 1.85) { doorK = 1; leaf.rotation.y = -1.85; padlock.visible = false; doorState = "open"; }
+  } });
+  if (hasKey && mem(sessionStorage, "room:door") === "1") { doorState = "open"; doorK = 1; leaf.rotation.y = -1.85; padlock.visible = false; doorObj.off = true; showWorld(); }
+  addProp({ id: "skis", label: "Skis" }, rackSkis, "out", () => {
+    if (mode !== "walk") return stowSkis();
+    mode = "ski"; rackSkis.visible = false; mySkis.visible = true; player.vx = player.vz = 0; race.on = false;
+    toast(TOUCH ? "Skis on / Pad: steer, up to push, down to brake" : "Skis on / W push, S brake, A D or mouse to steer"); inv(); skiHud(true);
+  });
+  addProp({ id: "lift", label: "Chairlift" }, liftHut, "out", () => {
+    if (mode !== "ski") return toast("Skis required");
+    mode = "liftwait"; rider = -1; race.on = false; player.vx = player.vz = 0; setTarget(null); toast("Lift / Next chair"); skiHud(true);
+  });
+  addProp({ id: "waffles", label: "Waffles" }, shack, "out", () => toast("Waffles / Back in five minutes"));
+
+  function pushOut(list) {
+    for (const c of list) {
+      const nx = Math.min(c.maxX, Math.max(c.minX, player.x)), nz = Math.min(c.maxZ, Math.max(c.minZ, player.z));
+      let dx = player.x - nx, dz = player.z - nz; const d2 = dx * dx + dz * dz;
+      if (d2 >= RADIUS * RADIUS) continue;
+      if (d2 > 1e-8) { const d = Math.sqrt(d2), push = (RADIUS - d) / d; player.x += dx * push; player.z += dz * push; }
+      else { const l = player.x - c.minX, r = c.maxX - player.x, b = player.z - c.minZ, f = c.maxZ - player.z, m = Math.min(l, r, b, f);
+        if (m === l) player.x = c.minX - RADIUS; else if (m === r) player.x = c.maxX + RADIUS; else if (m === b) player.z = c.minZ - RADIUS; else player.z = c.maxZ + RADIUS; }
+    }
+  }
+  const DWAY = DOOR.w / 2 - RADIUS + 0.12; // half-width you can stand in inside the doorway
+  function collide() { // on foot: room <-> doorway <-> summit deck
+    const lim = HALF - RADIUS - 0.03, open = doorK > 0.85;
+    let zn = player.zone || "room";
+    if (zn === "room") {
+      player.x = clamp(player.x, -lim, lim); player.z = Math.max(-lim, player.z);
+      if (player.z > lim) { if (open && Math.abs(player.x) < 0.6) zn = "door"; else player.z = lim; }
+    }
+    if (zn === "door") { player.x = clamp(player.x, -DWAY, DWAY); if (player.z <= lim) zn = "room"; else if (player.z >= OUT0) zn = "deck"; }
+    if (zn === "deck") {
+      if (player.z < OUT0) { if (open && Math.abs(player.x) < 0.6) { zn = "door"; player.x = clamp(player.x, -DWAY, DWAY); } else player.z = OUT0; }
+      if (zn === "deck") {
+        player.x = clamp(player.x, DX0 + 0.5, DX1 - 0.5);
+        if (player.z > Z0 - 0.8) { player.z = Z0 - 0.8; hint("Skis required / Rack by the door"); }
+      }
+    }
+    player.zone = zn;
+    if (zn === "deck") return pushOut(outColliders);
+    if (zn === "door") return;
     for (const c of colliders) {
       const nx = Math.min(c.maxX, Math.max(c.minX, player.x)), nz = Math.min(c.maxZ, Math.max(c.minZ, player.z));
       let dx = player.x - nx, dz = player.z - nz; const d2 = dx * dx + dz * dz;
@@ -792,7 +1114,89 @@ function buildRoom(THREE) {
     }
   }
 
-  function updatePlayer(dt) {
+  function updateSki(dt) {
+    let f = 0, s = 0;
+    if (state === "play") {
+      f = (keys.has("KeyW") || keys.has("ArrowUp") ? 1 : 0) - (keys.has("KeyS") || keys.has("ArrowDown") ? 1 : 0) - joy.y;
+      s = (keys.has("KeyD") || keys.has("ArrowRight") ? 1 : 0) - (keys.has("KeyA") || keys.has("ArrowLeft") ? 1 : 0) + joy.x;
+    }
+    f = clamp(f, -1, 1); s = clamp(s, -1, 1);
+    const G = 9.2, pz = player.z, sp0 = Math.hypot(player.vx, player.vz);
+    player.yaw -= s * 1.7 * dt * (0.55 + Math.min(1, sp0 / 7) * 0.45);
+    const dx = -Math.sin(player.yaw), dz = -Math.cos(player.yaw), e = 0.3;
+    const gx = (hAt(player.x + e, player.z) - hAt(player.x - e, player.z)) / (2 * e), gz = (hAt(player.x, player.z + e) - hAt(player.x, player.z - e)) / (2 * e);
+    const nn = 1 + gx * gx + gz * gz;
+    player.vx -= (G * gx / nn) * dt; player.vz -= (G * gz / nn) * dt;
+    let along = player.vx * dx + player.vz * dz, lx = player.vx - along * dx, lz = player.vz - along * dz;
+    const grip = Math.exp(-6.5 * dt), scrub = Math.hypot(lx, lz); lx *= grip; lz *= grip;           // edges: sideways speed is scrubbed off
+    const fall = -(gx * dx + gz * dz);                                                            // > 0 when the skis point downhill
+    const drag = ((pz > Z1 ? 0.12 : 0.03) + (f < 0 ? -f * 0.7 : 0)) * G + (f > 0 ? 0.0035 : 0.007) * along * along + scrub * 0.35;
+    const runout = pz > Z1 ? clamp((Math.abs(along) - 3) / 3, 0, 1) * 10 : 0;                      // soft snow in the base area: you always stop before the fence
+    along -= Math.sign(along) * Math.min(Math.abs(along), (drag + runout) * dt);
+    if (f > 0 && along < 4.5 && fall < 0.2) along += 5.5 * f * dt;                                 // skate on the flats
+    player.vx = along * dx + lx; player.vz = along * dz + lz;
+    player.x += player.vx * dt; player.z += player.vz * dt;
+    // bounds: deck, roped course, fenced base area
+    const m = 0.45;
+    if (pz <= Z0) {
+      player.x = clamp(player.x, DX0 + m, DX1 - m);
+      if (player.z < OUT0) { if (doorK > 0.85 && Math.abs(player.x) < 0.6) { player.x = clamp(player.x, -DWAY, DWAY); player.zone = "door"; stowSkis(); return updateWalk(0); } player.z = OUT0; player.vz = Math.max(0, player.vz); }
+      if (player.z > Z0 && Math.abs(player.x) > CW - m) { player.z = Z0; player.vz = Math.min(0, player.vz); }
+    } else if (pz <= Z1) {
+      if (Math.abs(player.x) > CW - m) { player.x = Math.sign(player.x) * (CW - m); player.vx *= -0.3; }
+    } else {
+      if (player.x < BX0 + m || player.x > BX1 - m) { player.x = clamp(player.x, BX0 + m, BX1 - m); player.vx = 0; }
+      if (player.z > Z2 - m) { player.z = Z2 - m; player.vz = 0; }
+      if (player.z < Z1 && Math.abs(player.x) > CW - m) { player.z = Z1; player.vz = Math.max(0, player.vz); }
+    }
+    pushOut(outColliders);
+    player.zone = "deck"; player.y = 0; player.ground = true;
+    // the run: timer from START to FINISH, gates counted as you pass between the poles
+    if (pz < ZS && player.z >= ZS) { race.on = true; race.t = 0; race.hit = 0; race.next = 0; }
+    if (pz > ZS && player.z <= ZS) race.on = false;
+    if (race.on) {
+      race.t += dt;
+      while (race.next < GATES.length && player.z >= GATES[race.next].z) { if (pz < GATES[race.next].z + 1e-6 && Math.abs(player.x - GATES[race.next].x) < 1.95) race.hit++; race.next++; }
+      if (player.z >= ZF) {
+        race.on = false;
+        const clean = race.hit === GATES.length, best = clean && (!race.best || race.t < race.best);
+        if (best) { race.best = race.t; mem(localStorage, "room:skibest", String(race.t)); }
+        toast(`Finish / ${fmtRun(race.t)} / Gates ${race.hit}/${GATES.length}${best ? " / Best" : clean && race.best ? " / Best " + fmtRun(race.best) : ""}`);
+      }
+    }
+    // camera + skis
+    const ground = hAt(player.x, player.z), speed = Math.hypot(player.vx, player.vz), k = 1 - Math.exp(-6 * dt);
+    roll += ((REDUCED ? 0 : -s * 0.1 * Math.min(1, speed / 8)) - roll) * k;
+    tilt += ((REDUCED ? 0 : Math.atan(-fall) * 0.55) - tilt) * k;
+    camera.position.set(player.x, ground + EYE - (f > 0 && speed > 5 ? 0.12 : 0), player.z);
+    camera.rotation.set(player.pitch + tilt, player.yaw, roll);
+    mySkis.position.set(player.x, ground + 0.03, player.z); mySkis.rotation.set(Math.atan(-fall), player.yaw, 0);
+    skiHud();
+  }
+  function updateLift(dt) {
+    const cy = () => lp.y - HANG + 0.8; // seated eye height
+    if (mode === "liftwait") { // shuffle to the loading line and wait for the next chair to come round
+      const k = 1 - Math.exp(-5 * dt); player.x += (LX - LR - player.x) * k; player.z += (ZB - 0.4 - player.z) * k;
+      const ground = hAt(player.x, player.z);
+      camera.position.set(player.x, ground + EYE, player.z); camera.rotation.set(player.pitch, player.yaw, 0);
+      mySkis.position.set(player.x, ground + 0.03, player.z); mySkis.rotation.set(0, player.yaw, 0);
+      for (let i = 0; i < CHAIRS; i++) { const d = ((chairD(i) % LOOP) + LOOP) % LOOP; if (d > 0.2 && d < 1.6) { rider = i; mode = "lift"; blendCam(); break; } }
+      return;
+    }
+    const d = ((chairD(rider) % LOOP) + LOOP) % LOOP;
+    if (d >= LP - 0.6) { // top: slide off onto the deck, skis still on
+      mode = "ski"; rider = -1; blendCam();
+      player.x = LX - LR - 2.4; player.z = ZT + 1.6; player.vx = player.vz = 0; player.zone = "deck";
+      toast("Summit"); skiHud(true); return updateSki(0);
+    }
+    liftPos(d, lp);
+    player.x = lp.x; player.z = lp.z;
+    camera.position.set(lp.x, cy(), lp.z); camera.rotation.set(player.pitch, player.yaw, 0);
+    mySkis.position.set(lp.x, lp.y - HANG - 0.42, lp.z - 0.45); mySkis.rotation.set(0.12, 0, 0);
+    skiHud();
+  }
+  function updatePlayer(dt) { if (mode === "walk") updateWalk(dt); else if (mode === "ski") updateSki(dt); else updateLift(dt); }
+  function updateWalk(dt) {
     let f = 0, s = 0, fast = false;
     if (state === "play") {
       f = (keys.has("KeyW") || keys.has("ArrowUp") ? 1 : 0) - (keys.has("KeyS") || keys.has("ArrowDown") ? 1 : 0) - joy.y;
@@ -824,13 +1228,19 @@ function buildRoom(THREE) {
   function pick(ndc, maxDist) {
     ray.setFromCamera(ndc, camera);
     const hits = ray.intersectObjects(hitMeshes, false);
-    return hits.length && hits[0].distance <= maxDist ? hits[0].object.userData.obj : null;
+    for (const h of hits) { if (h.distance > maxDist) break; if (reachable(h.object.userData.obj)) return h.object.userData.obj; }
+    return null;
+  }
+  function reachable(o) { // room objects from inside, mountain props from outside
+    if (o.off || mode === "lift" || mode === "liftwait") return false;
+    return (o.zone || "in") === (player.z > HALF + 0.1 ? "out" : "in");
   }
   function updateTarget() {
     let t = pick(CENTER, REACH);
     if (!t && TOUCH) { // touch: forgiving cone in front of the camera
       camera.getWorldDirection(tmpF); let best = 0.9;
       for (const o of objects) {
+        if (!reachable(o)) continue;
         tmpV.copy(o.center).sub(camera.position); const flat = Math.hypot(tmpV.x, tmpV.z);
         if (flat > REACH + 0.4) continue;
         tmpV.y = 0; tmpV.normalize();
@@ -847,7 +1257,7 @@ function buildRoom(THREE) {
     brackets.visible = !!t; el.cross.classList.toggle("on", !!t);
     if (t) {
       brackets.userData.set(t.box); t.frame.color.setHex(C.signal); t.face.material.map = t.texOn;
-      const text = `${t.dest.no} / ${t.dest.label}`;
+      const text = t.dest.no ? `${t.dest.no} / ${t.dest.label}` : t.dest.label;
       if (TOUCH) { el.openLabel.textContent = text; el.open.hidden = false; }
       else { el.promptLabel.textContent = text; el.prompt.hidden = false; }
     } else { el.prompt.hidden = true; el.open.hidden = true; }
@@ -861,6 +1271,7 @@ function buildRoom(THREE) {
   function activate(o) {
     if (state !== "play" || !o) return;
     const d = o.dest;
+    if (d.kind === "act") return o.act();
     o.t = 0; shadowDirty = 2;
     if (d.kind === "tab") { window.open(d.href, "_blank", "noopener"); toast(`${d.label} ↗ opened in new tab`); }
     else if (d.kind === "mail") { window.location.href = d.href; toast(`${d.label} ↗ ${CONFIG.EMAIL}`); }
@@ -888,6 +1299,7 @@ function buildRoom(THREE) {
     el.listBtn.hidden = !(playing || state === "pause" || state === "start") || (playing && CAN_LOCK);
     el.panel.hidden = !(state === "start" || state === "pause");
     el.gl.style.cursor = playing && !CAN_LOCK && !TOUCH ? "grab" : "";
+    inv();
   }
   function showPanel(kind) {
     el.panelTitle.textContent = kind === "pause" ? "Paused" : CONFIG.SHOW_NAME_ON_WALL ? CONFIG.NAME : "Room";
@@ -996,6 +1408,8 @@ function buildRoom(THREE) {
     if (state === "start") orbit(time);
     else if (state === "play") updatePlayer(dt);
     else if (state === "intro") updatePlayer(dt);
+    if (world.visible) { if (state === "play") liftD += LIFT_V * dt; updateLiftMesh(); }
+    if (camFrom && state === "play") { camT += dt / 0.4; if (camT >= 1) camFrom = null; else camera.position.lerpVectors(camFrom, camera.position, ease(camT)); }
     if (tween) {
       tween.t += Math.min(0.25, (now - (tween.at || now)) / 1000); tween.at = now; const k = ease(tween.t / tween.dur); // real time, so slow devices still finish on schedule
       if (tween.follow) playerPose(toPose);
