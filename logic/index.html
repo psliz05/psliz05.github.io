@@ -962,6 +962,7 @@ if (typeof module !== "undefined") module.exports = DL;
     show(v);
   }
   window.addEventListener("hashchange", route);
+  window.addEventListener("keydown", (e) => { if (e.key === "Escape") location.href = "../#return"; }); // Esc: back to the room
 
   function tick() {
     if (dayNo() !== todayNo) { // midnight: today's set becomes an archive day

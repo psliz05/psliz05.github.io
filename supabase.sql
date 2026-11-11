@@ -4,13 +4,15 @@
 create table if not exists public.scores (
   id          bigint generated always as identity primary key,
   day         int  not null check (day >= 1),
-  game        text not null check (game in ('sectors', 'binary', 'weights')),
+  game        text not null check (game in ('sectors', 'binary', 'weights', 'ski')),
   initials    text not null check (initials ~ '^[A-Z]{1,3}$'),
   ms          int  not null check (ms between 5000 and 3600000),
   device      text not null check (char_length(device) between 8 and 64),
-  created_at  timestamptz not null default now(),
-  unique (day, game, device)
+  created_at  timestamptz not null default now()
 );
+
+-- One time per device per puzzle per day. Ski runs (game = 'ski') may be posted again when you beat your own time.
+create unique index if not exists scores_one_per_device on public.scores (day, game, device) where game <> 'ski';
 
 create index if not exists scores_day_game_ms on public.scores (day, game, ms, created_at);
 
@@ -37,3 +39,10 @@ create policy "scores insert current day" on public.scores
 revoke all on public.scores from anon;
 grant select (day, game, initials, ms, created_at) on public.scores to anon;
 grant insert (day, game, initials, ms, device) on public.scores to anon;
+
+-- ---------------------------------------------------------------------------------------------------
+-- Already ran the first version of this file? Run only these four lines to add the ski scoreboard:
+--   alter table public.scores drop constraint if exists scores_game_check;
+--   alter table public.scores add constraint scores_game_check check (game in ('sectors', 'binary', 'weights', 'ski'));
+--   alter table public.scores drop constraint if exists scores_day_game_device_key;
+--   create unique index if not exists scores_one_per_device on public.scores (day, game, device) where game <> 'ski';

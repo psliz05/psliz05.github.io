@@ -197,6 +197,7 @@
   // Edit the LinkedIn link here (kept in sync with CONFIG.LINKEDIN_URL in /index.html).
   const LINKEDIN_URL = "https://www.linkedin.com/in/patrick-sliz";
   document.getElementById("linkedin").href = LINKEDIN_URL;
+  window.addEventListener("keydown", (e) => { if (e.key === "Escape") location.href = "../#return"; }); // Esc: back to the room
 
   // ---- simulated spike raster (illustrative only; not data) ----
   const cv = document.getElementById("raster"), g = cv.getContext("2d");
