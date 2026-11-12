@@ -101,7 +101,7 @@
 <main class="wrap">
   <header class="mast">
     <h1>Research</h1>
-    <div class="ids mono"><span>Patrick Sliz</span><span>4 records</span></div>
+    <div class="ids mono"><span>Patrick Sliz</span><span>5 records</span></div>
   </header>
 
   <dl class="sheet">
@@ -135,10 +135,10 @@
       <dt>Lab</dt><dd>Ziv Williams Laboratory</dd>
       <dt>Institution</dt><dd>Harvard Medical School / Massachusetts General Hospital, Department of Neurosurgery. Boston, MA.</dd>
       <dt>Role</dt><dd>Undergraduate Researcher</dd>
-      <dt>Methods</dt><dd><ul class="tags"><li>Intracranial single-neuron recordings (Neuropixels)</li><li>Python</li><li>Transformer language-model representations</li></ul></dd>
+      <dt>Methods</dt><dd><ul class="tags"><li>Intracranial single-neuron recordings (Neuropixels)</li><li>Python</li><li>Ridge encoding models</li><li>GPT-2 representations</li><li>Permutation testing</li></ul></dd>
       <dt>Work</dt><dd><ul>
         <li>Decoded speech and language from intracranial single-neuron (Neuropixels) recordings in patients undergoing awake neurosurgical monitoring. Built the analysis pipelines in Python.</li>
-        <li>Mapped transformer language-model representations onto neural firing to test how linguistic structure and meaning are encoded at single-cell resolution.</li>
+        <li>Fit ridge encoding models mapping all 13 layers of GPT-2 onto prefrontal single-neuron firing rates across three patient cohorts, with permutation-based significance testing (2,000 shuffles).</li>
         <li>Diagnosed a generalization failure in the decoding pipeline as a word- vs. sentence-level representational mismatch, and rebuilt the train/test framework to correct it.</li>
       </ul></dd>
     </dl>
@@ -148,6 +148,24 @@
     <header>
       <div class="no" aria-hidden="true">03</div>
       <div class="head">
+        <h2>AI-assisted protein interaction hypotheses</h2>
+        <span class="mono inst">December 2025 &ndash; January 2026</span>
+      </div>
+    </header>
+    <dl class="sheet">
+      <dt>Institution</dt><dd>Boston Children&rsquo;s Hospital, Manton Center for Orphan Disease Research. Boston, MA.</dd>
+      <dt>Role</dt><dd>Winter Research Intern</dd>
+      <dt>Methods</dt><dd><ul class="tags"><li>Google AI Co-Scientist</li><li>Protein-protein interactions</li></ul></dd>
+      <dt>Work</dt><dd><ul>
+        <li>Used Google&rsquo;s AI Co-Scientist to generate and evaluate protein-protein interaction hypotheses from biological datasets.</li>
+      </ul></dd>
+    </dl>
+  </article>
+
+  <article class="record">
+    <header>
+      <div class="no" aria-hidden="true">04</div>
+      <div class="head">
         <h2>Economic growth from night-time satellite imagery</h2>
         <span class="mono inst">Summers 2024 &ndash; 2025</span>
       </div>
@@ -156,17 +174,17 @@
       <dt>Advisor</dt><dd>Professor Piotr W&oacute;jcik</dd>
       <dt>Institution</dt><dd>University of Warsaw, Department of Quantitative Finance. Warsaw, Poland.</dd>
       <dt>Role</dt><dd>Research Internship</dd>
-      <dt>Methods</dt><dd><ul class="tags"><li>XGBoost</li><li>LASSO</li><li>R</li><li>Python</li><li>Night-time satellite imagery</li><li>Explainable-AI methods</li></ul></dd>
+      <dt>Methods</dt><dd><ul class="tags"><li>LASSO</li><li>SVR</li><li>Random forest</li><li>XGBoost</li><li>LightGBM</li><li>SHAP</li><li>R</li><li>Python</li><li>Night-time satellite imagery</li></ul></dd>
       <dt>Work</dt><dd><ul>
-        <li>Built ML models (XGBoost, LASSO) in R and Python predicting county- and state-level U.S. economic growth from night-time satellite imagery.</li>
-        <li>Applied explainable-AI methods to assess feature importance.</li>
+        <li>Built ML models (LASSO, SVR, random forest, XGBoost, LightGBM) in R and Python predicting U.S. state and county GDP and income from night-time satellite imagery. Interpreted feature importance with SHAP and permutation methods.</li>
+        <li>Co-authored the resulting paper, &ldquo;Where the Light Is,&rdquo; submitted to the Journal of Regional Science (2026).</li>
       </ul></dd>
     </dl>
   </article>
 
   <article class="record">
     <header>
-      <div class="no" aria-hidden="true">04</div>
+      <div class="no" aria-hidden="true">05</div>
       <div class="head">
         <h2>Cryo-electron tomography software</h2>
         <span class="mono inst">Summers 2022 &ndash; 2023</span>
@@ -176,9 +194,9 @@
       <dt>Advisor</dt><dd>Professor Axel Brunger</dd>
       <dt>Institution</dt><dd>Stanford University, Neurosciences Institute, HHMI Laboratory. Palo Alto, CA.</dd>
       <dt>Role</dt><dd>Software Developer in Cryo-electron Tomography (Cryo-ET)</dd>
-      <dt>Methods</dt><dd><ul class="tags"><li>Subtomogram averaging</li><li>MATLAB</li><li>Python</li><li>3D signal processing</li><li>Multi-threading and parallelization</li><li>Cross-correlation</li></ul></dd>
+      <dt>Methods</dt><dd><ul class="tags"><li>Subtomogram averaging</li><li>MATLAB</li><li>Python / Kivy</li><li>3D signal processing</li><li>Multi-threading and parallelization</li><li>Cross-correlation</li></ul></dd>
       <dt>Work</dt><dd><ul>
-        <li>Developed a subtomogram-averaging pipeline for high-resolution molecular imaging. Translated MATLAB to Python and optimized 3D signal-processing routines with multi-threading and parallelization.</li>
+        <li>Developed a subtomogram-averaging pipeline for high-resolution molecular imaging. Rebuilt the lab&rsquo;s MATLAB toolkit as PyCrESTA, a Python/Kivy application, and optimized 3D signal-processing routines with multi-threading and parallelization.</li>
         <li>Built visualization, parsing, and cross-correlation tooling used by lab members to inspect reconstructions, working directly with structural biologists to turn experimental requirements into working software.</li>
       </ul></dd>
     </dl>
@@ -187,7 +205,7 @@
   <h3 class="rule">Toolkit</h3>
   <dl class="sheet">
     <dt>Programming</dt><dd>Python (pandas, NumPy, scikit-learn), R, MATLAB, C, Bash, Git</dd>
-    <dt>Methods</dt><dd>Time-series forecasting, Ridge/LASSO/logistic regression, PCA, SVM, LDA, permutation testing</dd>
+    <dt>Methods</dt><dd>Time-series forecasting, Ridge/LASSO/logistic regression, PCA, SVM, LDA, permutation testing, SHAP</dd>
   </dl>
 </main>
 
