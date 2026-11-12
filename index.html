@@ -286,14 +286,18 @@ async function boot() {
 // THE ROOM
 // =====================================================================
 function buildRoom(THREE) {
-  const C = { paper: 0xe6e6e1, plate: 0xf3f3ef, ink: 0x141414, steel: 0x66665f, hair: 0xb9b9b2, given: 0xd6d6cf, signal: 0xff4a00, wall: 0xefefea, floor: 0xcbcbc4, white: 0xffffff };
+  const C = { paper: 0xe6e6e1, plate: 0xf3f3ef, ink: 0x141414, steel: 0x66665f, hair: 0xb9b9b2, given: 0xd6d6cf, signal: 0xff4a00, wall: 0xfaf5ea, floor: 0xcbcbc4, white: 0xffffff };
   const CSS = { paper: "#e6e6e1", plate: "#f3f3ef", ink: "#141414", steel: "#66665f", hair: "#b9b9b2", given: "#d6d6cf", signal: "#ff4a00" };
+  // world palettes (3D scene only; the HUD and the sub-pages keep the paper-and-ink set above)
+  const TIMBER = { stain: 0x3a2a1f, stainLight: 0x4b3727, beam: 0x3b2a1e, wainscot: 0x7c512c, wainscotAlt: 0x6f4728, rail: 0x4a3020, plank: 0x8f5f36, honey: 0xb67d42, honeyDark: 0x9a6633, endGrain: 0xd8aa6c, chink: 0x4a3322, door: 0x8a5a33, doorPanel: 0x9f6e41, butcher: 0xc99a5b, plinth: 0x2b2622 };
+  const NATURE = { horizon: 0xd9e9f6, skyMid: 0x8fc4f0, zenith: 0x2f7dd4, cloud: 0xffffff, cloudShade: 0xeaf2fa, snow: 0xe6f1ff, snowShade: 0xbfd6f1, spruce: 0x1f4d33, fir: 0x2c6a3f, firLight: 0x3c8149, trunk: 0x5a3d26, rock: 0x6d7d91, rockDark: 0x58677a, treeline: 0x2d5a3d, gateRed: 0xd62828, gateBlue: 0x1d5fbf, liftRed: 0xc8372d, steelPaint: 0x86939c, steelDark: 0x3c464e, roof: 0x3d444b, skiRed: 0xa32a22 };
+  const RUG = { red: "#8e1f1f", cream: "#efe4cb", green: "#24513a", charcoal: "#2a2a2a" };
   const F_SANS = '"Archivo", "Helvetica Neue", Arial, sans-serif';
   const F_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
   const ROOM = 12, HALF = ROOM / 2, CEIL = 4, EYE = 1.6, RADIUS = 0.34, REACH = 3;
   // Outside the back door: summit deck -> slalom course -> base area, with a chairlift back up. +z is downhill.
   const DOOR = { w: 1.0, h: 2.15 }, WALL_T = 0.2, OUT0 = HALF + WALL_T + RADIUS;
-  const SKY = 0xdfdfda, DX0 = -10, DX1 = 18, Z0 = HALF + 9, CW = 9, RUN = 200, DROP = 50, Z1 = Z0 + RUN, Z2 = Z1 + 36, BX0 = -14, BX1 = 19;
+  const SKY = NATURE.horizon, DX0 = -10, DX1 = 18, Z0 = HALF + 9, CW = 9, RUN = 200, DROP = 50, Z1 = Z0 + RUN, Z2 = Z1 + 36, BX0 = -14, BX1 = 19;
   const LX = 14.5, LR = 1.3, ZT = HALF + 4.5, ZB = Z1 + 13, LP = ZB - ZT, LIFT_V = 11, CHAIRS = 14, HANG = 2.7;
 
   // ---------- renderer ----------
@@ -306,15 +310,15 @@ function buildRoom(THREE) {
   const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(SKY, 90, 430);
-  const camera = new THREE.PerspectiveCamera(70, 1, 0.03, 700);
+  scene.fog = new THREE.Fog(SKY, 180, 900);
+  const camera = new THREE.PerspectiveCamera(70, 1, 0.03, 1000);
   camera.rotation.order = "YXZ";
   scene.add(camera);
 
   // ---------- materials ----------
   const lam = (color) => new THREE.MeshLambertMaterial({ color, flatShading: true });
   const M = {
-    plate: lam(C.plate), paper: lam(C.paper), given: lam(C.given), steel: lam(C.steel), hair: lam(C.hair), ink: lam(0x1b1b1b), wall: lam(C.wall), page: lam(0xfafaf6),
+    plate: lam(C.plate), paper: lam(C.paper), given: lam(C.given), steel: lam(C.steel), hair: lam(C.hair), ink: lam(0x1b1b1b), wall: lam(C.wall), page: lam(0xfafaf6), plinth: lam(TIMBER.plinth), door: lam(TIMBER.door), doorPanel: lam(TIMBER.doorPanel),
     inkFlat: new THREE.MeshBasicMaterial({ color: C.ink }),
     signalFlat: new THREE.MeshBasicMaterial({ color: C.signal }),
     signal: lam(C.signal),
@@ -345,19 +349,31 @@ function buildRoom(THREE) {
   const WIN = { z: 0.3, y: 2.75, w: 2.4, h: 1.5 }; // window opening in the left wall
   // ---------- shell: floor, walls, ceiling ----------
   {
-    const floorTex = canvasTex(1024, 1024, (g, w, h) => {
-      g.fillStyle = "#cdcdc6"; g.fillRect(0, 0, w, h);
-      for (let i = 0; i < 5200; i++) { // fine concrete speckle
-        const v = 196 + Math.floor(Math.random() * 18);
-        g.fillStyle = `rgba(${v},${v},${v - 6},${0.35 + Math.random() * 0.4})`;
-        g.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 2.5, 1 + Math.random() * 2.5);
+    // wide boards with staggered end joints and a little grain; no baked shadows
+    const planks = (g, w, h, rows, base, vary, seam) => {
+      let sd = 7; const r = () => ((sd = (sd * 1664525 + 1013904223) >>> 0) / 4294967296);
+      const bh = h / rows;
+      for (let i = 0; i < rows; i++) {
+        const y = Math.round(i * bh);
+        let x = -r() * 300;
+        while (x < w) {
+          const len = 260 + r() * 300, t = (r() - 0.5) * vary;
+          g.fillStyle = `rgb(${Math.round(base[0] + t)},${Math.round(base[1] + t * 0.8)},${Math.round(base[2] + t * 0.6)})`;
+          g.fillRect(x, y, len, Math.ceil(bh));
+          g.fillStyle = "rgba(60,36,16,0.10)";
+          for (let k = 0; k < 5; k++) g.fillRect(x + r() * len * 0.6, y + 2 + r() * (bh - 4), len * (0.2 + r() * 0.4), 1);
+          g.fillStyle = seam; g.fillRect(x + len - 1, y, 2, Math.ceil(bh));
+          x += len;
+        }
+        g.fillStyle = seam; g.fillRect(0, y, w, 1.5);
       }
-      g.fillStyle = "rgba(20,20,20,0.20)"; // slab joints every 3 m
-      for (let i = 1; i < 4; i++) { g.fillRect(Math.round((i * w) / 4) - 1, 0, 2, h); g.fillRect(0, Math.round((i * h) / 4) - 1, w, 2); }
-    });
+    };
+    const floorTex = canvasTex(1024, 1024, (g, w, h) => planks(g, w, h, 56, [184, 135, 82], 26, "rgba(50,30,14,0.55)"));   // oak, boards run towards the name wall
+    const ceilTex = canvasTex(512, 512, (g, w, h) => planks(g, w, h, 30, [214, 182, 136], 14, "rgba(70,46,24,0.4)"));       // pale pine
+    for (const t of [floorTex.t, ceilTex.t]) { t.center.set(0.5, 0.5); t.rotation = Math.PI / 2; }
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM, ROOM), new THREE.MeshLambertMaterial({ map: floorTex.t }));
     floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
-    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(ROOM, ROOM), new THREE.MeshLambertMaterial({ color: 0xe9e9e4 }));
+    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(ROOM, ROOM), new THREE.MeshLambertMaterial({ map: ceilTex.t }));
     ceil.rotation.x = Math.PI / 2; ceil.position.y = CEIL; scene.add(ceil);
     const wallGeo = new THREE.PlaneGeometry(ROOM, CEIL);
     for (const [x, z, ry] of [[0, -HALF, 0], [0, HALF, Math.PI], [-HALF, 0, Math.PI / 2], [HALF, 0, -Math.PI / 2]]) {
@@ -387,8 +403,8 @@ function buildRoom(THREE) {
   // ---------- lights + window ----------
   const PATCH = { x: -2.3, z: 0.9 };
   {
-    scene.add(new THREE.HemisphereLight(0xffffff, 0xe6e6df, 2.75));
-    const sun = new THREE.DirectionalLight(0xfff6ea, 1.05);
+    scene.add(new THREE.HemisphereLight(0xfffaf2, 0xf3e6d2, 2.7)); // warm bounce from the wood indoors, near-white from above
+    const sun = new THREE.DirectionalLight(0xffe6c2, 1.15);
     const dir = new THREE.Vector3(PATCH.x + HALF, -WIN.y, PATCH.z - WIN.z).normalize();
     sun.position.copy(dir).multiplyScalar(-14).add(new THREE.Vector3(0.5, 0, 0));
     sun.target.position.set(0.5, 0, 0);
@@ -415,7 +431,7 @@ function buildRoom(THREE) {
   });
   const patch = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.4), new THREE.MeshBasicMaterial({ map: patchTex.t, transparent: true, opacity: 0.1, depthWrite: false, blending: THREE.AdditiveBlending }));
   patch.geometry.applyMatrix4(new THREE.Matrix4().makeShear(0, 0, 0.25, 0, 0, 0));
-  patch.rotation.x = -Math.PI / 2; patch.rotation.z = Math.PI / 2; patch.position.set(PATCH.x, 0.006, PATCH.z); scene.add(patch);
+  patch.rotation.x = -Math.PI / 2; patch.rotation.z = Math.PI / 2; patch.position.set(PATCH.x, 0.02, PATCH.z); scene.add(patch); // above the rug
   let dust = null;
   if (!REDUCED) {
     const N = 110, pos = new Float32Array(N * 3), seed = new Float32Array(N * 3);
@@ -474,7 +490,7 @@ function buildRoom(THREE) {
     // grounding: soft blob, plinth, painted floor frame
     const blob = new THREE.Mesh(new THREE.PlaneGeometry(pw + 1.0, pd + 1.0), new THREE.MeshBasicMaterial({ map: blobTex.t, transparent: true, depthWrite: false, opacity: 0.5 }));
     blob.rotation.x = -Math.PI / 2; blob.position.y = 0.003; root.add(blob);
-    const plinth = box(pw, P0, pd, M.plate, 0, P0 / 2, 0); body.add(plinth);
+    const plinth = box(pw, P0, pd, M.plinth, 0, P0 / 2, 0); body.add(plinth);
     const fm = frameMat(), fw = pw + 0.3, fd = pd + 0.3, t = 0.022;
     for (const [w, d, fx, fz] of [[fw, t, 0, fd / 2], [fw, t, 0, -fd / 2], [t, fd, fw / 2, 0], [t, fd, -fw / 2, 0]]) {
       const s = new THREE.Mesh(new THREE.BoxGeometry(w, 0.004, d), fm); s.position.set(fx, 0.006, fz); root.add(s);
@@ -792,7 +808,8 @@ function buildRoom(THREE) {
     let o = 0;
     gs.forEach((g, i) => {
       const cnt = g.attributes.position.count; pos.set(g.attributes.position.array, o * 3); nor.set(g.attributes.normal.array, o * 3);
-      c.setHex(list[i].color); for (let k = 0; k < cnt; k++) { col[(o + k) * 3] = c.r; col[(o + k) * 3 + 1] = c.g; col[(o + k) * 3 + 2] = c.b; }
+      if (list[i].colors) col.set(list[i].colors, o * 3); // part brings its own per-vertex colours
+      else { c.setHex(list[i].color); for (let k = 0; k < cnt; k++) { col[(o + k) * 3] = c.r; col[(o + k) * 3 + 1] = c.g; col[(o + k) * 3 + 2] = c.b; } }
       o += cnt; g.dispose();
     });
     const geo = new THREE.BufferGeometry();
@@ -813,26 +830,102 @@ function buildRoom(THREE) {
       p.setY(i, hAt(x, z) - 0.04 + (far > 0 ? Math.sin(x * 0.11 + z * 0.07) * Math.min(3, far * 0.08) : 0));
     }
     geo.computeVertexNormals();
-    world.add(new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0xf6f6f2, flatShading: true })));
-    for (let i = 0; i < 7; i++) { // far ridges
-      const a = -0.5 + i * 0.5 + rnd() * 0.2, r = 330 + rnd() * 60, h = 70 + rnd() * 70;
-      parts.push({ geo: new THREE.ConeGeometry(110 + rnd() * 60, h, 5, 1), color: 0xcdcdc7, m: mat4(Math.sin(a) * r, -DROP * 0.6 + h / 2 - 12, Z1 * 0.5 + Math.cos(a) * r, 0, rnd() * 3) });
+    { // bright white on the flats, a faint blue on the banks
+      const nrm = geo.attributes.normal, col = new Float32Array(p.count * 3), lit = new THREE.Color(NATURE.snow), shade = new THREE.Color(NATURE.snowShade), c = new THREE.Color();
+      for (let i = 0; i < p.count; i++) { c.lerpColors(shade, lit, sm((nrm.getY(i) - 0.8) / 0.12)); col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b; }
+      geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
     }
+    world.add(new THREE.Mesh(geo, lamV));
+    for (let i = 0; i < 35; i++) rnd(); // the old ridges drew 35 numbers here; keep the sequence so every tree stays where it was
+    // far snowfield under everything, out to the mountains
+    parts.push({ geo: new THREE.CylinderGeometry(940, 940, 1, 48), color: NATURE.snow, m: mat4(0, -DROP - 3.5, Z1 * 0.5) });
+    // mountain ranges: a jagged ring of peaks per layer, rock below and snow above, paler with distance
+    const hz = new THREE.Color(NATURE.horizon), cc = new THREE.Color();
+    const range = (r0, r1, hMin, hMax, seed, haze) => {
+      let sd = seed; const rr = () => ((sd = (sd * 1664525 + 1013904223) >>> 0) / 4294967296);
+      const oct = [[3, 0.4], [5, 0.26], [9, 0.18], [17, 0.1], [31, 0.06]].map(([f, a]) => ({ f, a, ph: rr() * 6.283 }));
+      const peak = (th) => oct.reduce((v, o) => v + o.a * Math.pow(1 - Math.abs(Math.sin((th * o.f) / 2 + o.ph)), 1.5), 0); // 0..1 with sharp crests
+      const N = 144, ROWS = [[0, 0], [0.3, 0.1], [0.55, 0.32], [0.75, 0.58], [0.9, 0.84], [1, 1], [1.3, 0.5]], base = -DROP - 6, cz0 = Z1 * 0.5;
+      const P = [], Hs = [];
+      for (let i = 0; i < N; i++) {
+        const th = (i / N) * Math.PI * 2, Hh = hMin + (hMax - hMin) * peak(th); Hs.push(Hh);
+        P.push(ROWS.map(([fr, fh], j) => {
+          const edge = j === 0, a = th + (edge ? 0 : (rr() - 0.5) * 0.6 * ((Math.PI * 2) / N)), r = r0 + (r1 - r0) * (fr + (edge ? 0 : (rr() - 0.5) * 0.1));
+          return new THREE.Vector3(Math.sin(a) * r, base + Hh * fh * (edge || j === 5 ? 1 : 0.82 + rr() * 0.36), cz0 + Math.cos(a) * r);
+        }));
+      }
+      const pos = [], col = [], va = new THREE.Vector3(), vb = new THREE.Vector3(), nn = new THREE.Vector3();
+      const tri = (A, Bv, Cv, Hh) => {
+        nn.crossVectors(va.subVectors(Bv, A), vb.subVectors(Cv, A));
+        if (nn.y < 0) { const t = Bv; Bv = Cv; Cv = t; nn.negate(); } // every face looks up and out
+        nn.normalize();
+        const rel = ((A.y + Bv.y + Cv.y) / 3 - base) / Hh, k = rr();
+        if (rel > 0.5 + k * 0.22 || (rel > 0.34 && nn.y > 0.78)) cc.setHex(nn.x < 0.15 ? NATURE.snow : NATURE.snowShade);
+        else if (rel < 0.16 + k * 0.08) cc.setHex(NATURE.treeline);
+        else cc.setHex(k > 0.5 ? NATURE.rock : NATURE.rockDark);
+        cc.lerp(hz, haze);
+        for (const v of [A, Bv, Cv]) { pos.push(v.x, v.y, v.z); col.push(cc.r, cc.g, cc.b); }
+      };
+      for (let i = 0; i < N; i++) {
+        const a = P[i], b = P[(i + 1) % N], Hh = (Hs[i] + Hs[(i + 1) % N]) / 2;
+        for (let j = 0; j < ROWS.length - 1; j++) {
+          if ((i + j) % 2) { tri(a[j], b[j], b[j + 1], Hh); tri(a[j], b[j + 1], a[j + 1], Hh); }
+          else { tri(a[j], b[j], a[j + 1], Hh); tri(b[j], b[j + 1], a[j + 1], Hh); }
+        }
+      }
+      const mg = new THREE.BufferGeometry(); mg.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); mg.computeVertexNormals();
+      parts.push({ geo: mg, colors: new Float32Array(col) });
+    };
+    range(240, 330, 50, 190, 11, 0.1); range(310, 420, 80, 280, 23, 0.26); range(400, 520, 120, 380, 37, 0.44);
+  }
+
+  // --- sky: gradient dome and a few flat clouds in one mesh, re-centred on the camera every frame ---
+  {
+    const R = 850, dome = new THREE.SphereGeometry(R, 24, 14).toNonIndexed(), n = dome.attributes.position.count;
+    const list = [{ geo: dome, color: NATURE.zenith }];
+    let sd = 99; const rr = () => ((sd = (sd * 1664525 + 1013904223) >>> 0) / 4294967296);
+    for (let i = 0; i < 9; i++) {
+      const a = rr() * 6.283, elev = 0.2 + rr() * 0.36, d = R * 0.8, x = Math.cos(elev) * Math.sin(a) * d, y = Math.sin(elev) * d, z = Math.cos(elev) * Math.cos(a) * d;
+      for (let k = 0; k < 3; k++) {
+        const off = (k - 1) * 46;
+        list.push({ geo: new THREE.BoxGeometry(70 + rr() * 60, 9 + rr() * 6, 34 + rr() * 24), color: k === 1 ? NATURE.cloud : NATURE.cloudShade, m: mat4(x + Math.cos(a) * off, y + (k === 1 ? 6 : 0), z - Math.sin(a) * off, 0, a) });
+      }
+    }
+    const sg = bake(list), col = sg.attributes.color, pos = sg.attributes.position, c = new THREE.Color(), top = new THREE.Color(NATURE.zenith), mid = new THREE.Color(NATURE.skyMid), low = new THREE.Color(NATURE.horizon);
+    for (let i = 0; i < n; i++) { // deep blue overhead, pale at the horizon
+      const t = Math.max(0, pos.getY(i) / R);
+      if (t < 0.28) c.lerpColors(low, mid, Math.pow(t / 0.28, 0.8)); else c.lerpColors(mid, top, (t - 0.28) / 0.72);
+      col.setXYZ(i, c.r, c.g, c.b);
+    }
+    const sky = new THREE.Mesh(sg, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide, fog: false, depthWrite: false, depthTest: false }));
+    sky.renderOrder = -10; sky.frustumCulled = false;
+    sky.onBeforeRender = (r, sc, cam) => { sky.position.copy(cam.position); sky.updateMatrixWorld(); };
+    scene.add(sky);
   }
 
   // --- summit hut (the room, seen from outside) ---
   {
     // every outer wall sits 4 cm clear of the room's inner wall planes, so the two never share a surface (no flicker)
     const GAP = 0.04, sw = HALF + 0.2 - DOOR.w / 2, ft = WALL_T - GAP, zc = HALF + GAP + ft / 2;
-    for (const sx of [-1, 1]) { B(sw, CEIL + 0.3, ft, INK, (sx * (HALF + 0.2 + DOOR.w / 2)) / 2, (CEIL + 0.3) / 2, zc); if (sx > 0) B(0.2 - GAP, CEIL + 0.3, ROOM + 0.4, INK, HALF + GAP + (0.2 - GAP) / 2, (CEIL + 0.3) / 2, 0); }
+    for (const sx of [-1, 1]) { B(sw, CEIL + 0.3, ft, TIMBER.stain, (sx * (HALF + 0.2 + DOOR.w / 2)) / 2, (CEIL + 0.3) / 2, zc); if (sx > 0) B(0.2 - GAP, CEIL + 0.3, ROOM + 0.4, TIMBER.stain, HALF + GAP + (0.2 - GAP) / 2, (CEIL + 0.3) / 2, 0); }
     { // left outer wall, open at the window
       const xw = -(HALF + GAP + (0.2 - GAP) / 2), tw = 0.2 - GAP, za = WIN.z - WIN.w / 2, zb = WIN.z + WIN.w / 2, ya = WIN.y - WIN.h / 2, yb = WIN.y + WIN.h / 2, zl = HALF + 0.2, top = CEIL + 0.3;
-      B(tw, top, za + zl, INK, xw, top / 2, (za - zl) / 2); B(tw, top, zl - zb, INK, xw, top / 2, (zb + zl) / 2);
-      B(tw, ya, WIN.w, INK, xw, ya / 2, WIN.z); B(tw, top - yb, WIN.w, INK, xw, (top + yb) / 2, WIN.z);
+      B(tw, top, za + zl, TIMBER.stain, xw, top / 2, (za - zl) / 2); B(tw, top, zl - zb, TIMBER.stain, xw, top / 2, (zb + zl) / 2);
+      B(tw, ya, WIN.w, TIMBER.stain, xw, ya / 2, WIN.z); B(tw, top - yb, WIN.w, TIMBER.stain, xw, (top + yb) / 2, WIN.z);
     }
-    B(DOOR.w, CEIL + 0.3 - DOOR.h, ft, INK, 0, (CEIL + 0.3 + DOOR.h) / 2, zc);
-    B(ROOM + 0.4, CEIL + 0.3, 0.2 - GAP, INK, 0, (CEIL + 0.3) / 2, -(HALF + GAP + (0.2 - GAP) / 2));
-    B(ROOM + 1.4, 0.3, ROOM + 1.4, C.steel, 0, CEIL + 0.2, 0);
+    B(DOOR.w, CEIL + 0.3 - DOOR.h, ft, TIMBER.stain, 0, (CEIL + 0.3 + DOOR.h) / 2, zc);
+    B(ROOM + 0.4, CEIL + 0.3, 0.2 - GAP, TIMBER.stain, 0, (CEIL + 0.3) / 2, -(HALF + GAP + (0.2 - GAP) / 2));
+    B(ROOM + 1.4, 0.3, ROOM + 1.4, NATURE.roof, 0, CEIL + 0.2, 0);          // metal roof
+    B(ROOM + 1.2, 0.14, ROOM + 1.2, NATURE.snow, 0, CEIL + 0.42, 0);         // snow on it
+    { // board-and-batten: a vertical batten every 0.6 m, clear of the doorway and the window
+      const top = CEIL + 0.3, out = HALF + 0.2 + 0.012, za = WIN.z - WIN.w / 2, zb = WIN.z + WIN.w / 2;
+      for (let u = -HALF; u <= HALF + 1e-6; u += 0.6) {
+        B(0.07, top, 0.03, TIMBER.stainLight, u, top / 2, -out);
+        if (Math.abs(u) > 0.95) B(0.07, top, 0.03, TIMBER.stainLight, u, top / 2, out);
+        B(0.03, top, 0.07, TIMBER.stainLight, out, top / 2, u);
+        if (u < za - 0.12 || u > zb + 0.12) B(0.03, top, 0.07, TIMBER.stainLight, -out, top / 2, u);
+      }
+    }
     B(DOOR.w, 0.05, 0.5, C.steel, 0, -0.035, HALF + 0.26); // threshold: starts just past the room floor and sits below it, so the two never overlap
   }
 
@@ -854,7 +947,7 @@ function buildRoom(THREE) {
   // --- slalom gates, start and finish ---
   const GATES = [];
   for (let i = 0; i < 10; i++) {
-    const gz = Z0 + 26 + i * 17, gx = (i % 2 ? 1 : -1) * 4.2, color = i % 2 ? INK : C.signal;
+    const gz = Z0 + 26 + i * 17, gx = (i % 2 ? 1 : -1) * 4.2, color = i % 2 ? NATURE.gateBlue : NATURE.gateRed;
     GATES.push({ x: gx, z: gz });
     for (const sx of [-1, 1]) { const x = gx + sx * 1.9, y = hAt(x, gz); B(0.06, 1.9, 0.06, color, x, y + 0.95, gz); B(0.6, 0.4, 0.03, color, x - sx * 0.33, y + 1.65, gz); }
   }
@@ -869,10 +962,12 @@ function buildRoom(THREE) {
   // --- trees ---
   {
     const tree = bake([
-      { geo: new THREE.CylinderGeometry(0.16, 0.2, 1.2, 5), color: 0x3a3a36, m: mat4(0, 0.6, 0) },
-      { geo: new THREE.ConeGeometry(1.5, 3.2, 6), color: 0x2f2f2c, m: mat4(0, 2.4, 0) },
-      { geo: new THREE.ConeGeometry(1.15, 2.6, 6), color: 0x45453f, m: mat4(0, 4.0, 0) },
-      { geo: new THREE.ConeGeometry(0.75, 2.0, 6), color: 0xeeeeea, m: mat4(0, 5.4, 0) },
+      { geo: new THREE.CylinderGeometry(0.16, 0.2, 1.2, 5), color: NATURE.trunk, m: mat4(0, 0.6, 0) },
+      { geo: new THREE.ConeGeometry(1.5, 3.2, 6), color: NATURE.spruce, m: mat4(0, 2.4, 0) },
+      { geo: new THREE.ConeGeometry(1.15, 2.6, 6), color: NATURE.fir, m: mat4(0, 4.0, 0) },
+      { geo: new THREE.ConeGeometry(0.75, 2.0, 6), color: NATURE.firLight, m: mat4(0, 5.4, 0) },
+      { geo: new THREE.ConeGeometry(0.6, 1.35, 6), color: NATURE.snow, m: mat4(0, 4.675, 0) },  // snow collar on the middle tier
+      { geo: new THREE.ConeGeometry(0.5, 1.35, 6), color: NATURE.snow, m: mat4(0, 5.775, 0) },  // snow cap
     ]);
     const spots = [];
     for (let i = 0; i < 6000 && spots.length < 560; i++) {
@@ -885,6 +980,8 @@ function buildRoom(THREE) {
     }
     const im = new THREE.InstancedMesh(tree, lamV, spots.length);
     spots.forEach(([x, z], i) => { const far = Math.max(0, Math.abs(x) - 40); im.setMatrixAt(i, mat4(x, hAt(x, z) - 0.3 + (far > 0 ? Math.sin(x * 0.11 + z * 0.07) * Math.min(3, far * 0.08) : 0), z, 0, rnd() * 6.28, 0, 0.8 + rnd() * 1.1)); });
+    const tints = [0xffffff, 0xe4f1e2, 0xf3f0df, 0xd9ebdc], tc = new THREE.Color(); // a few greens, chosen by index so no random numbers are used up
+    spots.forEach((sp, i) => im.setColorAt(i, tc.setHex(tints[(i * 7 + (i >> 3)) % 4])));
     im.frustumCulled = false; world.add(im);
   }
 
@@ -892,40 +989,57 @@ function buildRoom(THREE) {
   const YB = -DROP, CAB = { x: -7.5, z: Z1 + 26, w: 6.4, d: 5.2, h: 2.8, door: 2.2 };
   const robot = new THREE.Group(), robotHead = new THREE.Group(), robotArm = new THREE.Group(), waffle = new THREE.Group();
   {
-    const { x: cx, z: cz, w: W, d: D, h: H } = CAB, T = 0.16, WOOD = 0x55554f, zf = cz - D / 2, zk = cz + D / 2, seg = (W - CAB.door) / 2;
-    const wall = (w, h, d, x, y, z) => { B(w, h, d, WOOD, x, y, z); solid(x, z, w / 2, d / 2); };
+    const { x: cx, z: cz, w: W, d: D, h: H } = CAB, T = 0.16, WOOD = TIMBER.plank, zf = cz - D / 2, zk = cz + D / 2, seg = (W - CAB.door) / 2;
+    const wall = (w, h, d, x, y, z) => { B(w, h, d, TIMBER.chink, x, y, z); solid(x, z, w / 2, d / 2); }; // core wall + collider; the logs below are visual only
     wall(W, H, T, cx, YB + H / 2, zk); wall(T, H, D, cx - W / 2 + T / 2, YB + H / 2, cz); wall(T, H, D, cx + W / 2 - T / 2, YB + H / 2, cz);
     for (const sx of [-1, 1]) wall(seg, H, T, cx + sx * (CAB.door / 2 + seg / 2), YB + H / 2, zf);
-    B(CAB.door, H - 2.2, T, WOOD, cx, YB + 2.2 + (H - 2.2) / 2, zf);
-    // pale lining inside, floor
-    const IN = C.plate, i = T / 2 + 0.02;
-    B(W - 2 * T, H, 0.02, IN, cx, YB + H / 2, zk - i); B(0.02, H, D - 2 * T, IN, cx - W / 2 + T + 0.01, YB + H / 2, cz); B(0.02, H, D - 2 * T, IN, cx + W / 2 - T - 0.01, YB + H / 2, cz);
-    for (const sx of [-1, 1]) B(seg - T, H, 0.02, IN, cx + sx * (CAB.door / 2 + seg / 2 + T / 2), YB + H / 2, zf + i);
-    B(CAB.door, H - 2.2, 0.02, IN, cx, YB + 2.2 + (H - 2.2) / 2, zf + i);
-    B(W - 2 * T, 0.05, D - 2 * T, C.given, cx, YB - 0.015, cz);
-    // roof: ridge runs left-right, gables at the ends
+    B(CAB.door, H - 2.2, T, TIMBER.chink, cx, YB + 2.2 + (H - 2.2) / 2, zf);
+    // stacked logs around the core walls. Side walls sit half a row higher than front and back, so the ends cross at the corners.
+    const LOGR = 0.15, LOGROWS = 10, LSTEP = H / LOGROWS, OVER = 0.32;
+    const log = (axis, x, y, z, len, k) => {
+      const along = axis === "x";
+      parts.push({ geo: new THREE.CylinderGeometry(LOGR, LOGR, len, 8), color: k % 3 ? TIMBER.honey : TIMBER.honeyDark, m: along ? mat4(x, y, z, 0, 0, Math.PI / 2) : mat4(x, y, z, Math.PI / 2) });
+      for (const e of [-1, 1]) parts.push({ geo: new THREE.CylinderGeometry(LOGR * 0.86, LOGR * 0.86, 0.02, 8), color: TIMBER.endGrain, m: along ? mat4(x + (e * len) / 2, y, z, 0, 0, Math.PI / 2) : mat4(x, y, z + (e * len) / 2, Math.PI / 2) });
+    };
+    for (let k = 0; k < LOGROWS; k++) {
+      const y = YB + LSTEP * (k + 0.5);
+      log("x", cx, y, zk, W + 2 * OVER, k);
+      if (y - YB > 2.14) log("x", cx, y, zf, W + 2 * OVER, k + 1);                                         // above the door
+      else for (const sx of [-1, 1]) log("x", cx + sx * (CAB.door / 2 + (seg + OVER) / 2), y, zf, seg + OVER, k + 1);
+      if (k < LOGROWS - 1) for (const sx of [-1, 1]) log("z", cx + sx * (W / 2 - T / 2), y + LSTEP / 2, cz, k < LOGROWS - 2 ? D + 2 * OVER : D, k + 2); // top one stays under the eaves
+    }
+    for (const sx of [-1, 1]) B(0.16, 2.2, 0.38, TIMBER.stain, cx + sx * (CAB.door / 2 - 0.06), YB + 1.1, zf); // door posts
+    B(CAB.door + 0.2, 0.14, 0.4, TIMBER.stain, cx, YB + 2.27, zf);                                           // lintel
+    B(W - 2 * T, 0.05, D - 2 * T, TIMBER.plank, cx, YB - 0.015, cz);                                         // plank floor
+    // roof: ridge runs left-right, gables at the ends; dark shingle with snow on it
     const rise = 1.3, ang = Math.atan(rise / (D / 2)), over = 0.45, len = (D / 2 + over) / Math.cos(ang);
-    for (const sz of [-1, 1]) B(W + 0.8, 0.14, len, INK, cx, YB + H + rise - ((D / 2 + over) / 2) * Math.tan(ang) + 0.07, cz + (sz * (D / 2 + over)) / 2, sz * ang);
+    for (const sz of [-1, 1]) {
+      const ry = YB + H + rise - ((D / 2 + over) / 2) * Math.tan(ang) + 0.07, rz = cz + (sz * (D / 2 + over)) / 2;
+      B(W + 0.8, 0.14, len, NATURE.roof, cx, ry, rz, sz * ang);
+      B(W + 0.5, 0.1, len - 0.35, NATURE.snow, cx, ry + Math.cos(ang) * 0.115, rz + sz * Math.sin(ang) * 0.115, sz * ang);
+    }
     for (const sx of [-1, 1]) { const tri = new THREE.Shape(); tri.moveTo(-D / 2, 0); tri.lineTo(D / 2, 0); tri.lineTo(0, rise); tri.closePath();
       const g = new THREE.ExtrudeGeometry(tri, { depth: T, bevelEnabled: false }); g.translate(0, 0, -T / 2); parts.push({ geo: g, color: WOOD, m: mat4(cx + sx * (W / 2 - T / 2), YB + H, cz, 0, Math.PI / 2) }); }
     for (const z of [zf, zk]) B(W, 0.34, T, WOOD, cx, YB + H + 0.1, z);                         // close the gap between the wall tops and the eaves
-    B(0.3, 0.9, 0.3, INK, cx + 2.0, YB + H + 1.2, cz + 1.0);                                   // flue
-    B(CAB.door + 0.5, 0.06, 0.9, C.signal, cx, YB + 2.45, zf - 0.4, 0.35);                      // awning over the door
+    B(0.3, 0.9, 0.3, NATURE.steelDark, cx + 2.0, YB + H + 1.2, cz + 1.0);                       // flue
+    B(CAB.door + 0.5, 0.06, 0.9, NATURE.liftRed, cx, YB + 2.45, zf - 0.4, 0.35);                // awning over the door
+    { const glow = new THREE.PointLight(0xffc98a, 10, 7.5, 2); glow.position.set(cx, YB + 2.4, cz - 0.6); world.add(glow); } // warm lamp; reaches the cabin only
     // counter across the room, kitchen behind it
     const zc = cz + 0.5;
-    B(W - 2 * T, 0.98, 0.55, INK, cx, YB + 0.49, zc); B(W - 2 * T, 0.06, 0.75, C.plate, cx, YB + 1.01, zc - 0.05); solid(cx, zc, W / 2, 0.3);
-    B(W - 2 * T - 0.4, 0.05, 0.4, INK, cx, YB + 1.42, zk - T - 0.25); B(W - 2 * T - 0.4, 0.9, 0.5, WOOD, cx, YB + 0.45, zk - T - 0.3); // shelf, back bench
+    B(W - 2 * T, 0.98, 0.55, TIMBER.stain, cx, YB + 0.49, zc); B(W - 2 * T, 0.06, 0.75, TIMBER.butcher, cx, YB + 1.01, zc - 0.05); solid(cx, zc, W / 2, 0.3);
+    B(W - 2 * T - 0.4, 0.05, 0.4, TIMBER.stain, cx, YB + 1.42, zk - T - 0.25); B(W - 2 * T - 0.4, 0.9, 0.5, WOOD, cx, YB + 0.45, zk - T - 0.3); // shelf, back bench
     for (let k = 0; k < 6; k++) B(0.16, 0.2 + (k % 3) * 0.05, 0.16, k % 2 ? C.given : C.steel, cx - 2.2 + k * 0.42, YB + 1.55 + (k % 3) * 0.025, zk - T - 0.25);
     B(0.5, 0.16, 0.42, INK, cx + 1.9, YB + 0.98, zk - T - 0.3); B(0.5, 0.05, 0.42, C.steel, cx + 1.9, YB + 1.12, zk - T - 0.3, -0.5); B(0.05, 0.05, 0.02, C.signal, cx + 1.7, YB + 0.98, zk - T - 0.52); // waffle iron
     B(0.05, 0.5, 0.05, INK, cx, YB + H + 0.55, cz - 0.9); B(0.5, 0.12, 0.5, INK, cx, YB + H + 0.25, cz - 0.9);                   // lamp
     const sign = canvasTex(512, 128, (g, w, h) => { g.fillStyle = CSS.plate; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink; g.fillRect(0, 0, w, 8); g.fillRect(0, h - 8, w, 8); g.font = `800 condensed 100px ${F_SANS}`; g.textBaseline = "middle"; fitText(g, "WAFFLES", w / 2, h / 2 + 6, w - 48, "center"); });
     const d1 = decal(sign.t, 2.6, 0.65); d1.rotation.y = Math.PI; d1.position.set(cx, YB + H + 0.42, zf - 0.56); world.add(d1); B(2.7, 0.75, 0.06, INK, cx, YB + H + 0.42, zf - 0.52); for (const sx of [-1, 1]) B(0.06, 0.5, 0.06, INK, cx + sx * 1.1, YB + H + 0.1, zf - 0.5);
     const menu = canvasTex(512, 256, (g, w, h) => { g.fillStyle = CSS.ink; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 84px ${F_SANS}`; g.textBaseline = "top"; fitText(g, "WISDOM WAFFLE", 28, 26, w - 56); g.fillRect(28, 122, w - 56, 4); g.font = `700 34px ${F_MONO}`; fitText(g, "1 WAFFLE TOKEN", 28, 148, w - 56); g.fillStyle = CSS.signal; g.font = `500 26px ${F_MONO}`; fitText(g, "ONE PER DAY / FRESH DAILY", 28, 200, w - 56); });
-    const d2 = decal(menu.t, 2.0, 1.0); d2.rotation.y = Math.PI; d2.position.set(cx - 0.6, YB + 2.27, zk - T / 2 - 0.045); world.add(d2);
+    const d2 = decal(menu.t, 2.0, 1.0); d2.rotation.y = Math.PI; d2.position.set(cx - 0.6, YB + 2.27, zk - 0.2); world.add(d2);
+    B(2.12, 1.12, 0.05, INK, cx - 0.6, YB + 2.27, zk - 0.17); // board behind the menu, proud of the logs
     // benches and a table outside
-    const bench = (x, z, ry) => { B(1.9, 0.07, 0.42, INK, x, YB + 0.46, z, 0, ry); for (const s of [-0.75, 0.75]) B(0.07, 0.44, 0.38, C.steel, x + Math.cos(ry) * s, YB + 0.22, z - Math.sin(ry) * s, 0, ry); solid(x, z, 0.8, 0.5); };
+    const bench = (x, z, ry) => { B(1.9, 0.07, 0.42, TIMBER.plank, x, YB + 0.46, z, 0, ry); for (const s of [-0.75, 0.75]) B(0.07, 0.44, 0.38, C.steel, x + Math.cos(ry) * s, YB + 0.22, z - Math.sin(ry) * s, 0, ry); solid(x, z, 0.8, 0.5); };
     bench(-10.6, Z1 + 21.4, 0); bench(-4.4, Z1 + 21.4, 0); bench(-1.5, Z1 + 25.5, Math.PI / 2);
-    B(1.5, 0.07, 0.8, C.plate, 1.6, YB + 0.74, Z1 + 27); B(0.1, 0.72, 0.1, INK, 1.6, YB + 0.36, Z1 + 27); B(1.5, 0.06, 0.3, INK, 1.6, YB + 0.45, Z1 + 26.2); B(1.5, 0.06, 0.3, INK, 1.6, YB + 0.45, Z1 + 27.8); solid(1.6, Z1 + 27, 0.8, 1.0);
+    B(1.5, 0.07, 0.8, TIMBER.butcher, 1.6, YB + 0.74, Z1 + 27); B(0.1, 0.72, 0.1, INK, 1.6, YB + 0.36, Z1 + 27); B(1.5, 0.06, 0.3, TIMBER.plank, 1.6, YB + 0.45, Z1 + 26.2); B(1.5, 0.06, 0.3, TIMBER.plank, 1.6, YB + 0.45, Z1 + 27.8); solid(1.6, Z1 + 27, 0.8, 1.0);
     // the robot: built facing -z (towards the customer)
     robot.position.set(cx + 0.4, YB + 0.01, zc + 1.0); world.add(robot);
     for (const sx of [-0.11, 0.11]) robot.add(box(0.12, 0.72, 0.12, M.steel, sx, 0.36, 0, false), box(0.16, 0.06, 0.24, M.ink, sx, 0.03, -0.03, false));
@@ -973,9 +1087,9 @@ function buildRoom(THREE) {
   }
   TOWERS.forEach(([z, h, cy], i) => {
     const g = hAt(LX, z), end = i === 0 || i === TOWERS.length - 1;
-    B(end ? 0.5 : 0.36, cy - g + 0.3, end ? 0.5 : 0.36, C.steel, LX, (cy + g + 0.3) / 2, z);
-    if (end) { B(3.6, 0.5, 3.6, INK, LX, cy + 0.45, z); B(3.0, 0.08, 3.0, C.signal, LX, cy + 0.16, z); solid(LX, z, 0.3, 0.3); }
-    else B(3.3, 0.16, 0.3, INK, LX, cy + 0.12, z);
+    B(end ? 0.5 : 0.36, cy - g + 0.3, end ? 0.5 : 0.36, NATURE.steelPaint, LX, (cy + g + 0.3) / 2, z);
+    if (end) { B(3.6, 0.5, 3.6, NATURE.steelDark, LX, cy + 0.45, z); B(3.0, 0.08, 3.0, C.signal, LX, cy + 0.16, z); solid(LX, z, 0.3, 0.3); }
+    else B(3.3, 0.16, 0.3, NATURE.steelDark, LX, cy + 0.12, z);
     if (i) { const a = TOWERS[i - 1], dz = z - a[0], dy = cy - a[2], len = Math.hypot(dz, dy);
       for (const sx of [-1, 1]) B(0.04, 0.04, len, INK, LX + sx * LR, (cy + a[2]) / 2, (z + a[0]) / 2, -Math.asin(dy / len), 0); }
   });
@@ -985,7 +1099,7 @@ function buildRoom(THREE) {
     { geo: new THREE.BoxGeometry(0.05, 0.9, 0.05), color: INK, m: mat4(-0.85, -(HANG - 0.45), 0.12) },
     { geo: new THREE.BoxGeometry(0.05, 0.9, 0.05), color: INK, m: mat4(0.85, -(HANG - 0.45), 0.12) },
     { geo: new THREE.BoxGeometry(1.75, 0.07, 0.5), color: C.steel, m: mat4(0, -HANG, 0) },
-    { geo: new THREE.BoxGeometry(1.75, 0.62, 0.06), color: C.signal, m: mat4(0, -HANG + 0.36, 0.27) },
+    { geo: new THREE.BoxGeometry(1.75, 0.62, 0.06), color: NATURE.liftRed, m: mat4(0, -HANG + 0.36, 0.27) },
     { geo: new THREE.BoxGeometry(1.75, 0.04, 0.04), color: INK, m: mat4(0, -HANG - 0.42, -0.55) },
     { geo: new THREE.BoxGeometry(0.04, 0.45, 0.04), color: INK, m: mat4(-0.8, -HANG - 0.2, -0.4, 0.6) },
     { geo: new THREE.BoxGeometry(0.04, 0.45, 0.04), color: INK, m: mat4(0.8, -HANG - 0.2, -0.4, 0.6) },
@@ -1003,7 +1117,7 @@ function buildRoom(THREE) {
   const liftHut = new THREE.Group(); liftHut.position.set(LX - 5.2, YB, ZB + 1.2); world.add(liftHut);
   {
     const x = LX - 5.2, z = ZB + 1.2;
-    B(1.9, 2.3, 1.9, INK, x, YB + 1.15, z); B(2.3, 0.12, 2.3, C.steel, x, YB + 2.36, z); B(1.2, 0.7, 0.05, C.plate, x, YB + 1.55, z - 0.96);
+    B(1.9, 2.3, 1.9, TIMBER.stainLight, x, YB + 1.15, z); B(2.3, 0.12, 2.3, NATURE.roof, x, YB + 2.36, z); B(2.1, 0.1, 2.1, NATURE.snow, x, YB + 2.47, z); B(1.2, 0.7, 0.05, C.plate, x, YB + 1.55, z - 0.96);
     const sign = canvasTex(256, 128, (g, w, h) => { g.fillStyle = CSS.signal; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink; g.font = `800 condensed 104px ${F_SANS}`; g.textBaseline = "middle"; fitText(g, "LIFT", w / 2, h / 2 + 6, w - 40, "center"); });
     const d = decal(sign.t, 1.5, 0.75); d.rotation.y = Math.PI; d.position.set(x, YB + 2.95, z - 0.96); world.add(d); B(1.6, 0.85, 0.06, INK, x, YB + 2.95, z - 0.92); B(0.08, 0.5, 0.08, INK, x, YB + 2.5, z - 0.92);
     solid(x, z, 0.95, 0.95);
@@ -1012,7 +1126,7 @@ function buildRoom(THREE) {
 
   // --- ski rack on the deck ---
   const RACK = { x: 3.6, z: HALF + 3.6 };
-  B(1.5, 0.06, 0.06, INK, RACK.x, 1.05, RACK.z); for (const s of [-0.75, 0.75]) { B(0.06, 1.05, 0.06, INK, RACK.x + s, 0.52, RACK.z); B(0.06, 0.04, 0.6, INK, RACK.x + s, 0.02, RACK.z); }
+  B(1.5, 0.06, 0.06, TIMBER.plank, RACK.x, 1.05, RACK.z); for (const s of [-0.75, 0.75]) { B(0.06, 1.05, 0.06, TIMBER.plank, RACK.x + s, 0.52, RACK.z); B(0.06, 0.04, 0.6, TIMBER.plank, RACK.x + s, 0.02, RACK.z); }
   solid(RACK.x, RACK.z, 0.8, 0.25);
   const skiPair = (len) => { const g = new THREE.Group(); for (const sx of [-0.11, 0.11]) g.add(box(0.085, 0.022, len, M.ink, sx, 0, 0, false), box(0.085, 0.022, 0.22, M.signal, sx, 0.028, -len / 2 + 0.06, false), box(0.07, 0.05, 0.2, M.steel, sx, 0.03, 0.08, false)); g.children.filter((c, i) => i % 3 === 1).forEach((tip) => (tip.rotation.x = 0.28)); return g; };
   const rackSkis = new THREE.Group(); rackSkis.position.set(RACK.x, 0, RACK.z + 0.1); world.add(rackSkis);
@@ -1020,11 +1134,69 @@ function buildRoom(THREE) {
   const mySkis = skiPair(1.7); mySkis.rotation.order = "YXZ"; mySkis.visible = false; world.add(mySkis);
   world.add(new THREE.Mesh(bake(parts), lamV));
 
+  // --- lodge interior: decoration only. One baked mesh, no colliders, nothing targetable. ---
+  {
+    const inParts = [], glowParts = [];
+    const I = (w, h, d, color, x, y, z, rx, ry, rz) => inParts.push({ geo: new THREE.BoxGeometry(w, h, d), color, m: mat4(x, y, z, rx, ry, rz) });
+    // wainscot: boards 3 cm proud of the walls (in front of the old baseboards, never in a wall plane), chair rail, skirting
+    const WH = 1.0, BW = 0.2, DCLR = 0.6; // DCLR: keep clear of the door frame
+    for (let i = 0; i < ROOM / BW; i++) {
+      const u = -HALF + BW * (i + 0.5), col = (i * 7) % 3 ? TIMBER.wainscot : TIMBER.wainscotAlt;
+      I(BW, WH, 0.028, col, u, WH / 2, -HALF + 0.016);
+      if (Math.abs(u) - BW / 2 > DCLR - 1e-6) I(BW, WH, 0.028, col, u, WH / 2, HALF - 0.016);
+      I(0.028, WH, BW, col, -HALF + 0.016, WH / 2, u); I(0.028, WH, BW, col, HALF - 0.016, WH / 2, u);
+    }
+    for (const [h, d, y] of [[0.07, 0.05, WH + 0.035], [0.14, 0.045, 0.07]]) {
+      I(ROOM, h, d, TIMBER.rail, 0, y, -HALF + d / 2 + 0.002);
+      for (const sx of [-1, 1]) { I(HALF - DCLR, h, d, TIMBER.rail, (sx * (HALF + DCLR)) / 2, y, HALF - d / 2 - 0.002); I(d, h, ROOM, TIMBER.rail, sx * (HALF - d / 2 - 0.002), y, 0); }
+    }
+    // ceiling: dark beams across the room, black steel tie-rods under them near the side walls
+    const BEAMS = [-4, -2, 0, 2, 4];
+    for (const z of BEAMS) I(ROOM, 0.3, 0.22, TIMBER.beam, 0, CEIL - 0.13, z);
+    for (const sx of [-1, 1]) {
+      I(0.03, 0.03, ROOM, INK, sx * 4.6, 3.6, 0); I(0.07, 0.07, 0.32, C.steel, sx * 4.6, 3.6, 1.0);
+      for (const z of BEAMS) I(0.02, 0.14, 0.02, INK, sx * 4.6, 3.66, z);
+    }
+    // pendant lamps: black shades, warm glow underneath (unlit material, no extra lights)
+    for (const [x, z] of [[-3.2, -2], [3.2, -2], [0, 2]]) {
+      I(0.012, 0.44, 0.012, INK, x, 3.5, z);
+      inParts.push({ geo: new THREE.CylinderGeometry(0.06, 0.24, 0.2, 12), color: INK, m: mat4(x, 3.2, z) });
+      glowParts.push({ geo: new THREE.CylinderGeometry(0.2, 0.2, 0.008, 12), color: 0xffd9a0, m: mat4(x, 3.092, z) });
+    }
+    // crossed vintage skis on the right wall, between the cabinet and the lectern
+    I(0.02, 0.34, 0.34, TIMBER.rail, HALF - 0.012, 2.75, 0.25);
+    I(0.025, 1.75, 0.085, NATURE.skiRed, HALF - 0.045, 2.75, 0.25, 0.55); I(0.025, 1.75, 0.085, NATURE.spruce, HALF - 0.08, 2.75, 0.25, -0.55);
+    // rug: wool, Nordic border. Its top sits 16 mm above the floor, clear of every floor frame, plinth and painted number.
+    const rugTex = canvasTex(1024, 683, (g, w, h) => {
+      const diamond = (x, y, r, c) => { g.fillStyle = c; g.beginPath(); g.moveTo(x, y - r); g.lineTo(x + r, y); g.lineTo(x, y + r); g.lineTo(x - r, y); g.closePath(); g.fill(); };
+      g.fillStyle = RUG.charcoal; g.fillRect(0, 0, w, h);
+      g.fillStyle = RUG.cream; g.fillRect(14, 14, w - 28, h - 28);
+      g.fillStyle = RUG.red; g.fillRect(26, 26, w - 52, h - 52);
+      const m = 44, band = 70;
+      g.fillStyle = RUG.green; g.fillRect(m, m, w - 2 * m, band); g.fillRect(m, h - m - band, w - 2 * m, band); g.fillRect(m, m, band, h - 2 * m); g.fillRect(w - m - band, m, band, h - 2 * m);
+      const nx = 15, ny = 9, x0 = m + band / 2, y0 = m + band / 2, dx = (w - 2 * x0) / (nx - 1), dy = (h - 2 * y0) / (ny - 1);
+      for (let i = 0; i < nx; i++) for (const y of [y0, h - y0]) { diamond(x0 + i * dx, y, 26, RUG.cream); diamond(x0 + i * dx, y, 11, RUG.charcoal); }
+      for (let j = 1; j < ny - 1; j++) for (const x of [x0, w - x0]) { diamond(x, y0 + j * dy, 26, RUG.cream); diamond(x, y0 + j * dy, 11, RUG.charcoal); }
+      const f = m + band + 12; // inner field
+      g.strokeStyle = RUG.cream; g.lineWidth = 5; g.strokeRect(f, f, w - 2 * f, h - 2 * f);
+      for (const sx of [0, 1]) for (const [o, c2, t] of [[26, RUG.cream, 12], [46, RUG.charcoal, 8], [62, RUG.green, 16], [86, RUG.cream, 6]]) { g.fillStyle = c2; g.fillRect(sx ? w - f - o - t : f + o, f + 14, t, h - 2 * f - 28); }
+      for (const [x, big] of [[w / 2, 1], [w / 2 - 232, 0], [w / 2 + 232, 0]]) {
+        const r = big ? 150 : 104;
+        diamond(x, h / 2, r, RUG.cream); diamond(x, h / 2, r - 14, RUG.green); diamond(x, h / 2, r - 50, RUG.cream); diamond(x, h / 2, r - 62, RUG.red); diamond(x, h / 2, r - 92, RUG.charcoal);
+      }
+    });
+    const rug = new THREE.Mesh(new THREE.PlaneGeometry(4.5, 3), new THREE.MeshLambertMaterial({ map: rugTex.t }));
+    rug.rotation.x = -Math.PI / 2; rug.position.set(0, 0.016, -0.2); rug.receiveShadow = true; scene.add(rug);
+    I(4.5, 0.008, 3, 0x2a2a2a, 0, 0.008, -0.2); // its edge
+    const decor = new THREE.Mesh(bake(inParts), lamV); decor.receiveShadow = true; scene.add(decor);
+    scene.add(new THREE.Mesh(bake(glowParts), new THREE.MeshBasicMaterial({ vertexColors: true })));
+  }
+
   // --- the door ---
   const leaf = new THREE.Group(); leaf.position.set(-DOOR.w / 2, 0, HALF + WALL_T / 2); scene.add(leaf);
-  leaf.add(box(DOOR.w - 0.02, DOOR.h - 0.02, 0.05, M.given, DOOR.w / 2, DOOR.h / 2, 0, false));
+  leaf.add(box(DOOR.w - 0.02, DOOR.h - 0.02, 0.05, M.door, DOOR.w / 2, DOOR.h / 2, 0, false));
   for (const sz of [-1, 1]) {
-    for (const py of [0.58, 1.55]) leaf.add(box(DOOR.w - 0.26, py < 1 ? 0.8 : 0.9, 0.012, M.plate, DOOR.w / 2, py, sz * 0.027, false));
+    for (const py of [0.58, 1.55]) leaf.add(box(DOOR.w - 0.26, py < 1 ? 0.8 : 0.9, 0.012, M.doorPanel, DOOR.w / 2, py, sz * 0.027, false));
     leaf.add(box(0.14, 0.03, 0.05, M.ink, DOOR.w - 0.16, 1.02, sz * 0.05, false), box(0.05, 0.14, 0.012, M.ink, DOOR.w - 0.1, 1.02, sz * 0.03, false));
   }
   const padlock = new THREE.Group(); padlock.position.set(DOOR.w - 0.1, 1.22, -0.05); leaf.add(padlock);
