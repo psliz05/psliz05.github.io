@@ -23,6 +23,7 @@
     --signal: #1f3f86;
     --signal-hi: #7fa6ec;   /* the accent on dark surfaces */
     --on-signal: #f3f3ef;   /* text on the accent */
+    --error: #c62828;       /* failures only */
     --f-sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
     --sl: env(safe-area-inset-left, 0px);
@@ -51,7 +52,7 @@
   #crosshair::after { left: 0; top: 7px; width: 15px; height: 1px; }
   #crosshair.on::before, #crosshair.on::after { background: var(--signal-hi); outline-color: var(--ink); }
 
-  #tag { position: absolute; left: 50%; bottom: calc(74px + var(--sb)); transform: translateX(-50%); display: flex; align-items: stretch; border: 2px solid var(--ink); background: var(--plate); white-space: nowrap; }
+  #tag { z-index: 4; position: absolute; left: 50%; bottom: calc(74px + var(--sb)); transform: translateX(-50%); display: flex; align-items: stretch; border: 2px solid var(--ink); background: var(--plate); white-space: nowrap; }
   #tag span { padding: 8px 10px; font: 700 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; }
   #tag input { width: 74px; border: 0; border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); background: var(--paper); color: var(--ink); text-align: center; text-transform: uppercase; font: 700 16px var(--f-mono); letter-spacing: 0.2em; padding: 0; border-radius: 0; outline: none; }
   #tag button { appearance: none; border: 0; background: var(--ink); color: var(--plate); padding: 8px 12px; font: 700 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
@@ -67,7 +68,7 @@
   #inv { position: absolute; top: calc(12px + var(--st)); left: calc(12px + var(--sl)); display: flex; gap: 6px; pointer-events: none; }
   #inv span { border: 2px solid var(--ink); background: var(--plate); padding: 6px 10px; font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; font-variant-numeric: tabular-nums; }
   #inv #inv-key { background: var(--ink); color: var(--plate); }
-  #inv #inv-waffle { background: var(--signal); color: var(--on-signal); }
+  #inv #inv-waffle, #inv #inv-coffee { background: var(--signal); color: var(--on-signal); }
 
   .chip { position: absolute; top: calc(12px + var(--st)); right: calc(12px + var(--sr)); appearance: none; border: 2px solid var(--ink); background: var(--plate); padding: 6px 10px; font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; touch-action: manipulation; }
   .chip:hover { background: var(--ink); color: var(--plate); }
@@ -102,6 +103,72 @@
   #panel .legend { margin: 0; padding: 10px 14px; border-top: 2px solid var(--ink); color: var(--steel); font: 500 11px/1.6 var(--f-mono); letter-spacing: 0.05em; text-transform: uppercase; }
   #panel .alt { appearance: none; border: 0; border-top: 2px solid var(--ink); background: transparent; padding: 10px 14px; font: 700 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; text-align: left; cursor: pointer; display: flex; justify-content: space-between; touch-action: manipulation; }
   #panel .alt:hover { background: var(--ink); color: var(--plate); }
+
+  /* café: order card, shift cards and the shift game */
+  .card { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(440px, calc(100% - 24px)); max-height: calc(100% - 16px); overflow: auto; background: var(--plate); border: 2px solid var(--ink); border-top-width: 6px; display: grid; z-index: 3; }
+  .card h1 { margin: 0; padding: 10px 14px 8px; font: 800 32px/0.95 var(--f-sans); font-stretch: 70%; text-transform: uppercase; letter-spacing: -0.01em; border-bottom: 2px solid var(--ink); }
+  .card .row { display: grid; grid-template-columns: 96px 1fr; border-bottom: 1px solid var(--hair); }
+  .card .row > span { padding: 0 8px 0 14px; align-self: center; color: var(--steel); font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+  .card .seg { display: flex; border-left: 1px solid var(--hair); }
+  .card .seg label { flex: 1 1 0; position: relative; cursor: pointer; min-width: 0; }
+  .card .seg input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .card .seg b { display: block; padding: 9px 2px; text-align: center; border-right: 1px solid var(--hair); font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+  .card .seg label:last-child b { border-right: 0; }
+  .card .seg input:checked + b { background: var(--ink); color: var(--plate); }
+  .card .seg input:checked + b::before { content: "\2713\00a0"; }
+  .card .seg input:focus-visible + b { outline: 3px solid var(--signal); outline-offset: -3px; }
+  .card .seg input:checked:focus-visible + b { outline-color: var(--signal-hi); }
+  .card .name { margin: 0; padding: 10px 14px; min-height: 2.6em; border-bottom: 2px solid var(--ink); font: 750 19px/1.15 var(--f-sans); font-stretch: 75%; letter-spacing: 0.01em; text-transform: uppercase; }
+  .card .txt { margin: 0; padding: 9px 14px; border-bottom: 1px solid var(--hair); color: var(--steel); font: 500 11px/1.6 var(--f-mono); letter-spacing: 0.05em; text-transform: uppercase; }
+  .card .stats { margin: 0; display: grid; grid-template-columns: 1fr auto; font: 700 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+  .card .stats dt, .card .stats dd { margin: 0; padding: 7px 14px; border-bottom: 1px solid var(--hair); } .card .stats dt { color: var(--steel); } .card .stats dd { text-align: right; }
+  .card .go { appearance: none; border: 0; background: var(--ink); color: var(--plate); padding: 14px; font: 800 22px/1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.04em; text-transform: uppercase; text-align: left; cursor: pointer; display: flex; justify-content: space-between; touch-action: manipulation; }
+  .card .go:hover { background: var(--signal); color: var(--on-signal); } .card .go:focus-visible { outline-color: var(--signal-hi); outline-offset: -5px; }
+  .card .alt { appearance: none; border: 0; border-top: 2px solid var(--ink); background: transparent; padding: 10px 14px; font: 700 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; text-align: left; cursor: pointer; display: flex; justify-content: space-between; touch-action: manipulation; }
+  .card .alt:hover { background: var(--ink); color: var(--plate); }
+  .card .go + .alt { border-top: 0; }
+  #shift { position: absolute; inset: 0; pointer-events: none; font: 700 10px/1.3 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+  #shift-top { position: absolute; top: calc(10px + var(--st)); left: calc(10px + var(--sl)); right: calc(10px + var(--sr)); display: flex; gap: 8px; align-items: flex-start; }
+  .touch #shift-top { right: calc(118px + var(--sr)); }
+  #shift-hud { flex: none; display: grid; grid-template-columns: 1fr auto; min-width: 150px; border: 2px solid var(--ink); background: var(--plate); pointer-events: auto; font-variant-numeric: tabular-nums; font-size: 11px; }
+  #sh-time { background: var(--ink); color: var(--plate); padding: 5px 9px 3px; font: 800 30px/1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.02em; }
+  #sh-time.last { background: var(--error); }
+  #sh-pause { appearance: none; border: 0; border-left: 2px solid var(--plate); background: var(--ink); color: var(--plate); padding: 0 12px; font: 700 12px var(--f-mono); cursor: pointer; }
+  #sh-pause:focus-visible { outline-color: var(--signal-hi); outline-offset: -4px; }
+  #sh-tips { grid-column: span 2; padding: 5px 9px 3px; font: 800 22px/1 var(--f-sans); font-stretch: 75%; }
+  #sh-streak, #sh-served { grid-column: span 2; padding: 4px 9px; border-top: 1px solid var(--hair); }
+  #shift-tickets { flex: 1; min-width: 0; display: flex; gap: 6px; }
+  .tk { flex: 1 1 0; min-width: 0; max-width: 200px; appearance: none; display: grid; align-content: start; padding: 0; border: 2px solid var(--ink); background: #fbfbf7; color: var(--ink); text-align: left; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; pointer-events: auto; touch-action: manipulation; }
+  .tk .who { display: flex; justify-content: space-between; gap: 6px; background: var(--ink); color: var(--plate); padding: 3px 7px; white-space: nowrap; overflow: hidden; }
+  .tk .nm { padding: 5px 7px 2px; font: 750 13px/1.1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.01em; }
+  .tk .cmp { display: flex; flex-wrap: wrap; gap: 0 7px; padding: 0 7px 5px; color: var(--steel); }
+  .tk .cmp i { font-style: normal; } .tk .cmp i.ok { color: var(--ink); text-decoration: line-through; }
+  .tk .bar { display: block; height: 7px; border-top: 2px solid var(--ink); background: var(--given); } .tk .bar b { display: block; height: 100%; background: var(--ink); transform-origin: left; }
+  .tk.low { border-color: var(--error); } .tk.low .who, .tk.low .bar b { background: var(--error); } .tk.low .bar { border-color: var(--error); }
+  .tk.fit { outline: 3px solid var(--signal-hi); outline-offset: 0; }
+  .tk:hover .nm { text-decoration: underline; }
+  #shift-bottom { position: absolute; left: calc(10px + var(--sl)); right: calc(10px + var(--sr)); bottom: calc(10px + var(--sb)); display: grid; gap: 6px; }
+  #shift-cups { display: flex; gap: 6px; }
+  .cupc { appearance: none; flex: 0 1 230px; min-width: 0; padding: 0; border: 2px solid var(--ink); background: var(--plate); color: var(--ink); text-align: left; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; pointer-events: auto; touch-action: manipulation; }
+  .cupc u { display: block; padding: 3px 7px; background: var(--given); text-decoration: none; } .cupc.on u { background: var(--signal); color: var(--on-signal); }
+  .cupc span { display: block; padding: 4px 7px; min-height: 2.9em; }
+  #shift-stations { display: grid; grid-template-columns: repeat(16, 1fr); gap: 4px; pointer-events: auto; }
+  #shift-stations button { appearance: none; min-width: 0; overflow: hidden; display: grid; justify-items: center; gap: 1px; padding: 6px 1px 4px; border: 2px solid var(--ink); background: rgba(243, 243, 239, 0.95); color: var(--ink); font: inherit; letter-spacing: 0.03em; text-transform: inherit; cursor: pointer; touch-action: manipulation; }
+  #shift-stations kbd { font: inherit; opacity: 0.6; }
+  #shift-stations button:hover, #shift-stations button:active { background: var(--ink); color: var(--plate); }
+  #shift-stations button.serve { background: var(--signal); color: var(--on-signal); } #shift-stations button.serve:hover { background: var(--ink); }
+  #shift-stations button:focus-visible, .tk:focus-visible, .cupc:focus-visible { outline: 3px solid var(--signal-hi); outline-offset: -1px; }
+  .touch #shift-stations { grid-template-columns: repeat(8, 1fr); } .touch #shift-stations button { padding: 10px 1px 9px; } .touch #shift-stations kbd { display: none; }
+  #shift-say { position: absolute; transform: translate(-50%, -100%); max-width: 250px; border: 2px solid var(--ink); background: var(--plate); padding: 5px 8px; font-size: 11px; text-align: center; }
+  #shift-flash { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); background: var(--error); color: #fff; padding: 8px 14px; font: 800 26px/1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.04em; }
+  .pop { position: absolute; transform: translate(-50%, -50%); background: var(--ink); color: var(--plate); padding: 3px 6px; white-space: nowrap; font: 800 18px/1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.02em; animation: pop 1s ease-out forwards; }
+  .pop.bad { background: var(--error); color: #fff; }
+  @keyframes pop { from { opacity: 1; margin-top: 0; } 70% { opacity: 1; } to { opacity: 0; margin-top: -44px; } }
+  #room.shift #toast { bottom: auto; top: calc(132px + var(--st)); }
+  @media (max-width: 760px) { #shift-stations { grid-template-columns: repeat(8, 1fr); } .tk .cmp { display: none; } }
+  @media (max-height: 460px) { .card { width: min(560px, calc(100% - 24px)); } .card h1 { font-size: 22px; padding: 7px 14px 5px; } .card .seg b { padding: 6px 2px; } .card .name { padding: 6px 14px; min-height: 0; font-size: 16px; } .card .txt { padding: 5px 14px; line-height: 1.45; } .card .go { padding: 10px 14px; font-size: 19px; } .card .alt { padding: 7px 14px; } .card .stats { grid-template-columns: 1fr auto 1fr auto; } .card .stats dt, .card .stats dd { padding: 4px 14px; }
+    #sh-time { font-size: 22px; } #sh-tips { font-size: 17px; } #sh-streak, #sh-served { padding: 2px 9px; } .tk .nm { font-size: 12px; } .cupc span { min-height: 1.4em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .touch #shift-stations button { padding: 7px 1px 6px; } #room.shift #toast { top: calc(104px + var(--st)); } }
+  @media (prefers-reduced-motion: reduce) { .pop { animation: none; } }
 
   #loader { position: absolute; inset: 0; background: var(--paper); display: grid; place-content: center; gap: 8px; font: 700 13px/1 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; z-index: 5; }
   #loader .bar { width: 180px; height: 6px; border: 1px solid var(--ink); }
@@ -145,14 +212,21 @@
   <div id="toast" role="status" aria-live="polite"></div>
   <div id="fly-help" hidden><b>Flight</b><div class="k"><span>W / S</span><span>Throttle</span></div><div class="k"><span>Mouse / Arrows</span><span>Pitch and roll, up is nose up</span></div><div class="k"><span>A / D</span><span>Roll</span></div><div class="k"><span>R</span><span>Respawn</span></div><div class="k"><span>E</span><span>Exit when stopped</span></div><div class="k"><span>H</span><span>Hide this</span></div><div class="t"><span>Left pad</span><span>Pitch and roll, up is nose up</span></div><div class="t"><span>Throttle + / −</span><span>Hold to change power</span></div></div>
   <div id="fly-touch" hidden><button class="thr" type="button" data-k="KeyW">Throttle +</button><button class="thr" type="button" data-k="KeyS">Throttle −</button><button type="button" id="fly-respawn">Respawn</button><button type="button" id="fly-exit">Exit</button></div>
-  <div id="inv" hidden><span id="inv-key" hidden>Key</span><span id="inv-waffle" hidden>Waffle token</span><span id="inv-ski" hidden></span></div>
+  <div id="inv" hidden><span id="inv-key" hidden>Key</span><span id="inv-waffle" hidden>Waffle token</span><span id="inv-coffee" hidden></span><span id="inv-ski" hidden></span></div>
   <button id="listbtn" class="chip" type="button" hidden>List view</button>
   <div id="panel" hidden>
     <h1 id="panel-title"></h1>
     <button class="go" id="panel-go" type="button"><span id="panel-go-text"></span><span aria-hidden="true">&rarr;</span></button>
     <p class="legend" id="panel-legend"></p>
+    <button class="alt" id="panel-quit" type="button" hidden><span>Quit shift</span><span aria-hidden="true">&rarr;</span></button>
     <button class="alt" id="panel-list" type="button"><span>List view</span><span aria-hidden="true">&rarr;</span></button>
   </div>
+  <div id="shift" hidden>
+    <div id="shift-top"><div id="shift-hud"><span id="sh-time">3:00</span><button id="sh-pause" type="button" aria-label="Pause the shift">P</button><span id="sh-tips">$0.00</span><span id="sh-streak">Streak 0 / ×1</span><span id="sh-served">0 served</span></div><div id="shift-tickets" aria-label="Orders, oldest first"></div></div>
+    <div id="shift-bottom"><div id="shift-cups"></div><div id="shift-stations" role="toolbar" aria-label="Stations"></div></div>
+    <div id="shift-say" hidden></div><div id="shift-flash" role="alert" hidden></div><div id="shift-pops" aria-hidden="true"></div>
+  </div>
+  <div id="cafe-card" class="card" role="dialog" aria-modal="true" aria-labelledby="card-title" hidden></div>
   <div id="loader" role="status"><span>Loading <span id="pct">0</span>%</span><div class="bar"><i id="pctbar"></i></div></div>
   <div id="fade"></div>
 </div>
@@ -216,6 +290,8 @@ const el = {
   toast: $("#toast"), listBtn: $("#listbtn"), panel: $("#panel"), panelTitle: $("#panel-title"), panelGo: $("#panel-go"), panelGoText: $("#panel-go-text"),
   panelLegend: $("#panel-legend"), panelList: $("#panel-list"), loader: $("#loader"), pct: $("#pct"), pctBar: $("#pctbar"), fade: $("#fade"),
   flyHelp: $("#fly-help"), flyTouch: $("#fly-touch"), flyRespawn: $("#fly-respawn"), flyExit: $("#fly-exit"),
+  card: $("#cafe-card"), shiftUi: $("#shift"), shiftBottom: $("#shift-bottom"), tickets: $("#shift-tickets"), cups: $("#shift-cups"), stations: $("#shift-stations"), say: $("#shift-say"), flash: $("#shift-flash"), pops: $("#shift-pops"),
+  shTime: $("#sh-time"), shTips: $("#sh-tips"), shStreak: $("#sh-streak"), shServed: $("#sh-served"), shPause: $("#sh-pause"), panelQuit: $("#panel-quit"), invCoffee: $("#inv-coffee"),
   inv: $("#inv"), invKey: $("#inv-key"), invWaffle: $("#inv-waffle"), invSki: $("#inv-ski"),
   list: $("#list"), listTitle: $("#list-title"), rows: $("#rows"), listEnter: $("#list-enter"), listNote: $("#list-note"),
 };
@@ -317,6 +393,8 @@ function buildRoom(THREE) {
   // airfield west of the deck: runway along x, apron and hangar at its east end. GAP = the opening in the west deck rope.
   const AIR = { x0: -112, xa: -36, x1: -16, z0: 0, z1: 12, za: -3, y: 0.08, sx: -26, sz: 6 }, GAP = { z0: 9.5, z1: 12.5 }, HGR = { x0: -34, x1: -22, z0: -15, z1: -3.5 }, FB = { x: -15.5, z: -3.9, w: 5, h: 3.125 };
   const onPave = (x, z) => z < AIR.z1 && ((x > AIR.x0 && x <= AIR.xa && z > AIR.z0) || (x > AIR.xa && x < AIR.x1 && z > AIR.za));
+  // café annex east of the room: AZ = the cased opening in the right wall, CF = the café's interior
+  const AZ = { z0: 2.9, z1: 4.4, h: 2.2 }, CF = { x0: 6.6, x1: 13.6, z0: -3.4, z1: 6.0, h: 3.2 };
   const LX = 14.5, LR = 1.3, ZT = HALF + 4.5, ZB = Z1 + 13, LP = ZB - ZT, LIFT_V = 11, CHAIRS = 14, HANG = 2.7;
 
   // ---------- renderer ----------
@@ -439,6 +517,13 @@ function buildRoom(THREE) {
           const m = new THREE.Mesh(new THREE.PlaneGeometry(z1 - z0, y1 - y0), M.wall); m.position.set(-HALF + dx, (y0 + y1) / 2, (z0 + z1) / 2); m.rotation.y = ry; m.receiveShadow = true; scene.add(m);
         }
         const base = box(ROOM, 0.1, 0.02, M.ink, -HALF + 0.01, 0.05, 0, false); base.rotation.y = ry; scene.add(base);
+        continue;
+      }
+      if (x === HALF) { // right wall: three panels around the opening to the café (the casing covers their edges)
+        for (const [z0, z1, y0, y1] of [[-HALF, AZ.z0, 0, CEIL], [AZ.z1, HALF, 0, CEIL], [AZ.z0, AZ.z1, AZ.h, CEIL]]) {
+          const m = new THREE.Mesh(new THREE.PlaneGeometry(z1 - z0, y1 - y0), M.wall); m.position.set(HALF, (y0 + y1) / 2, (z0 + z1) / 2); m.rotation.y = ry; m.receiveShadow = true; scene.add(m);
+        }
+        for (const [z0, z1] of [[-HALF, AZ.z0 - 0.1], [AZ.z1 + 0.1, HALF]]) scene.add(box(0.02, 0.1, z1 - z0, M.ink, HALF - 0.01, 0.05, (z0 + z1) / 2, false));
         continue;
       }
       const w = new THREE.Mesh(wallGeo, M.wall); w.position.set(x, CEIL / 2, z); w.rotation.y = ry; w.receiveShadow = true; scene.add(w);
@@ -993,7 +1078,8 @@ function buildRoom(THREE) {
   {
     // every outer wall sits 4 cm clear of the room's inner wall planes, so the two never share a surface (no flicker)
     const GAP = 0.04, sw = HALF + 0.2 - DOOR.w / 2, ft = WALL_T - GAP, zc = HALF + GAP + ft / 2;
-    for (const sx of [-1, 1]) { B(sw, CEIL + 0.3, ft, TIMBER.stain, (sx * (HALF + 0.2 + DOOR.w / 2)) / 2, (CEIL + 0.3) / 2, zc); if (sx > 0) B(0.2 - GAP, CEIL + 0.3, ROOM + 0.4, TIMBER.stain, HALF + GAP + (0.2 - GAP) / 2, (CEIL + 0.3) / 2, 0); }
+    for (const sx of [-1, 1]) { B(sw, CEIL + 0.3, ft, TIMBER.stain, (sx * (HALF + 0.2 + DOOR.w / 2)) / 2, (CEIL + 0.3) / 2, zc); if (sx > 0) { const xe = HALF + GAP + (0.2 - GAP) / 2, te = 0.2 - GAP, top = CEIL + 0.3, zl = HALF + 0.2; // east wall, open at the passage to the café
+        B(te, top, AZ.z0 - 0.05 + zl, TIMBER.stain, xe, top / 2, (AZ.z0 - 0.05 - zl) / 2); B(te, top, zl - AZ.z1 - 0.05, TIMBER.stain, xe, top / 2, (AZ.z1 + 0.05 + zl) / 2); B(te, top - AZ.h - 0.1, AZ.z1 - AZ.z0 + 0.1, TIMBER.stain, xe, (top + AZ.h + 0.1) / 2, (AZ.z0 + AZ.z1) / 2); } }
     { // left outer wall, open at the window
       const xw = -(HALF + GAP + (0.2 - GAP) / 2), tw = 0.2 - GAP, za = WIN.z - WIN.w / 2, zb = WIN.z + WIN.w / 2, ya = WIN.y - WIN.h / 2, yb = WIN.y + WIN.h / 2, zl = HALF + 0.2, top = CEIL + 0.3;
       B(tw, top, za + zl, TIMBER.stain, xw, top / 2, (za - zl) / 2); B(tw, top, zl - zb, TIMBER.stain, xw, top / 2, (zb + zl) / 2);
@@ -1008,7 +1094,7 @@ function buildRoom(THREE) {
       for (let u = -HALF; u <= HALF + 1e-6; u += 0.6) {
         B(0.07, top, 0.03, TIMBER.stainLight, u, top / 2, -out);
         if (Math.abs(u) > 0.95) B(0.07, top, 0.03, TIMBER.stainLight, u, top / 2, out);
-        B(0.03, top, 0.07, TIMBER.stainLight, out, top / 2, u);
+        if (u < AZ.z0 - 0.12 || u > AZ.z1 + 0.12) B(0.03, top, 0.07, TIMBER.stainLight, out, top / 2, u);
         if (u < za - 0.12 || u > zb + 0.12) B(0.03, top, 0.07, TIMBER.stainLight, -out, top / 2, u);
       }
     }
@@ -1027,7 +1113,7 @@ function buildRoom(THREE) {
     }
   }
   for (const sx of [-1, 1]) rope(sx * CW, Z0, sx * CW, Z1);
-  rope(DX0, HALF + 0.3, DX0, GAP.z0, 3.2); rope(DX0, GAP.z1, DX0, Z0, 2.5); /* the gap between them leads to the airfield */ rope(DX1, HALF + 0.3, DX1, Z0); rope(DX0, Z0, -CW, Z0); rope(CW, Z0, DX1, Z0); rope(DX0, HALF + 0.3, -HALF - 0.3, HALF + 0.3); rope(HALF + 0.3, HALF + 0.3, DX1, HALF + 0.3);
+  rope(DX0, HALF + 0.3, DX0, GAP.z0, 3.2); rope(DX0, GAP.z1, DX0, Z0, 2.5); /* the gap between them leads to the airfield */ rope(DX1, HALF + 0.3, DX1, Z0); rope(DX0, Z0, -CW, Z0); rope(CW, Z0, DX1, Z0); rope(DX0, HALF + 0.3, -HALF - 0.3, HALF + 0.3); rope(CF.x1 + 0.6, HALF + 0.3, DX1, HALF + 0.3); /* the café annex fills the rest of this side */
   rope(BX0, Z1, BX0, Z2); rope(BX1, Z1, BX1, Z2); rope(BX0, Z2, BX1, Z2); rope(BX0, Z1, -CW, Z1); rope(CW, Z1, BX1, Z1);
 
   // --- slalom gates, start and finish ---
@@ -1068,7 +1154,7 @@ function buildRoom(THREE) {
     const im = new THREE.InstancedMesh(tree, lamV, spots.length);
     spots.forEach(([x, z], i) => { // the random numbers are drawn exactly as before, so every other tree stays where it was
       const far = Math.max(0, Math.abs(x) - 40), y = hAt(x, z) - 0.3 + (far > 0 ? Math.sin(x * 0.11 + z * 0.07) * Math.min(3, far * 0.08) : 0), ry = rnd() * 6.28, sc = 0.8 + rnd() * 1.1;
-      const cleared = x < -7 && z > -22 && z < 27; // airfield, its approach and climb-out
+      const cleared = (x < -7 && z > -22 && z < 27) || (x > HALF && x < CF.x1 + 1.7 && z > CF.z0 - 1.7 && z < HALF + 1.7); // airfield, its approach and climb-out; the café annex
       im.setMatrixAt(i, mat4(x, cleared ? -400 : y, z, 0, ry, 0, cleared ? 0.001 : sc));
       if (!cleared) TREES.push({ x, z, y, r: 1.5 * sc, h: 6.4 * sc });
     });
@@ -1310,11 +1396,19 @@ function buildRoom(THREE) {
       const u = -HALF + BW * (i + 0.5), col = (i * 7) % 3 ? TIMBER.wainscot : TIMBER.wainscotAlt;
       I(BW, WH, 0.028, col, u, WH / 2, -HALF + 0.016);
       if (Math.abs(u) - BW / 2 > DCLR - 1e-6) I(BW, WH, 0.028, col, u, WH / 2, HALF - 0.016);
-      I(0.028, WH, BW, col, -HALF + 0.016, WH / 2, u); I(0.028, WH, BW, col, HALF - 0.016, WH / 2, u);
+      I(0.028, WH, BW, col, -HALF + 0.016, WH / 2, u);
+      if (u < AZ.z0 - 0.1 || u > AZ.z1 + 0.1) I(0.028, WH, BW, col, HALF - 0.016, WH / 2, u);
     }
     for (const [h, d, y] of [[0.07, 0.05, WH + 0.035], [0.14, 0.045, 0.07]]) {
       I(ROOM, h, d, TIMBER.rail, 0, y, -HALF + d / 2 + 0.002);
-      for (const sx of [-1, 1]) { I(HALF - DCLR, h, d, TIMBER.rail, (sx * (HALF + DCLR)) / 2, y, HALF - d / 2 - 0.002); I(d, h, ROOM, TIMBER.rail, sx * (HALF - d / 2 - 0.002), y, 0); }
+      for (const sx of [-1, 1]) { I(HALF - DCLR, h, d, TIMBER.rail, (sx * (HALF + DCLR)) / 2, y, HALF - d / 2 - 0.002); if (sx < 0) I(d, h, ROOM, TIMBER.rail, sx * (HALF - d / 2 - 0.002), y, 0); else for (const [z0, z1] of [[-HALF, AZ.z0 - 0.1], [AZ.z1 + 0.1, HALF]]) I(d, h, z1 - z0, TIMBER.rail, HALF - d / 2 - 0.002, y, (z0 + z1) / 2); }
+    }
+    I(0.028, WH, 0.1, TIMBER.wainscotAlt, HALF - 0.016, WH / 2, AZ.z1 + 0.15); // filler board beside the casing
+    { // cased opening to the café: jambs and header line the full depth of the passage, the sill bridges the two floors
+      const x0 = HALF - 0.06, x1 = CF.x0 + 0.06, xc = (x0 + x1) / 2, dx = x1 - x0;
+      for (const z of [AZ.z0 - 0.05, AZ.z1 + 0.05]) I(dx, AZ.h + 0.16, 0.1, TIMBER.beam, xc, (AZ.h + 0.16) / 2, z);
+      I(dx + 0.04, 0.18, AZ.z1 - AZ.z0 + 0.36, TIMBER.beam, xc, AZ.h + 0.09, (AZ.z0 + AZ.z1) / 2);
+      I(CF.x0 - HALF, 0.1, AZ.z1 - AZ.z0, TIMBER.plank, (HALF + CF.x0) / 2, -0.05, (AZ.z0 + AZ.z1) / 2);
     }
     // ceiling: dark beams across the room, black steel tie-rods under them near the side walls
     const BEAMS = [-4, -2, 0, 2, 4];
@@ -1521,7 +1615,8 @@ function buildRoom(THREE) {
   function inv() {
     const playing = state === "play" || state === "pause";
     el.invKey.hidden = !hasKey; el.invSki.hidden = mode === "walk"; el.invWaffle.hidden = !(puzzlesDone() && !waffleEaten());
-    el.inv.hidden = !playing || (el.invKey.hidden && el.invSki.hidden && el.invWaffle.hidden);
+    el.invCoffee.hidden = !lastCoffee;
+    el.inv.hidden = !playing || ui === "shift" || ui === "end" || (el.invKey.hidden && el.invSki.hidden && el.invWaffle.hidden && el.invCoffee.hidden);
   }
   function skiHud(force) {
     if (mode === "walk") return;
@@ -1578,8 +1673,9 @@ function buildRoom(THREE) {
   function drawBoard(b = SKIB) {
     const { g, c } = b.tex, W = c.width, H = c.height, me = myInitials(), mine = b.mine;
     let rows = b.rows.map((r) => ({ ...r, me: !!(mine && me && r.initials === me && r.ms === mine.posted) }));
-    if (mine && !rows.some((r) => r.me && r.ms <= mine.ms)) rows.push({ initials: me || "???", ms: mine.ms, me: true }); // my time, even before it is posted
-    rows.sort((a, b) => a.ms - b.ms);
+    const ahead = (x, y) => (b.desc ? x > y : x < y), show = b.fmt || ((ms) => fmtRun(ms / 1000)); // ski and flight: lower is better. café tips: higher is better
+    if (mine && !rows.some((r) => r.me && !ahead(mine.ms, r.ms))) rows.push({ initials: me || "???", ms: mine.ms, me: true }); // my result, even before it is posted
+    rows.sort((p, q) => (b.desc ? q.ms - p.ms : p.ms - q.ms));
     const mi = rows.findIndex((r) => r.me); let top = rows.slice(0, 8); if (mi >= 8) top[7] = rows[mi];
     g.fillStyle = "#0e0e0e"; g.fillRect(0, 0, W, H);
     const flap = (ch, x, y, w, h, color) => { // one split-flap tile
@@ -1591,9 +1687,9 @@ function buildRoom(THREE) {
     word(b.title, Math.round((W - (b.title.length * 50 - 6)) / 2), 26, 44, 58, 6, CSS.plate);
     for (let i = 0; i < 8; i++) {
       const r = top[i], y = 108 + i * 61, col = r && r.me ? CSS.signalHi : CSS.plate;
-      let x = word(r ? String(Math.min(9, 1 + rows.filter((q) => q.ms < r.ms).length)) : " ", 165, y, 52, 52, 6, col) + 28;
+      let x = word(r ? String(Math.min(9, 1 + rows.filter((q) => ahead(q.ms, r.ms)).length)) : " ", 165, y, 52, 52, 6, col) + 28;
       x = word(r ? r.initials.padEnd(3, " ") : "   ", x, y, 52, 52, 6, col) + 28;
-      word(r ? fmtRun(r.ms / 1000) : "       ", x, y, 52, 52, 6, col);
+      word(r ? show(r.ms).padStart(7, " ").slice(-7) : "       ", x, y, 52, 52, 6, col);
     }
     g.textAlign = "left"; g.textBaseline = "alphabetic"; g.font = `700 22px ${F_MONO}`; g.fillStyle = CSS.steel;
     g.fillText(b.note, 165, H - 18); g.textAlign = "right"; g.fillText(SB.on ? `NO. ${String(skiDay()).padStart(3, "0")}` : "LOCAL TIMES", W - 165, H - 18); g.textAlign = "left";
@@ -1603,7 +1699,7 @@ function buildRoom(THREE) {
     if (!SB.on) return drawBoard(b);
     const now = performance.now(); if (!force && now - b.at < 45000) return drawBoard(b); b.at = now;
     try {
-      const r = await fetch(sbUrl(`?select=initials,ms&day=eq.${skiDay()}&game=eq.${b.game}&order=ms.asc,created_at.asc&limit=1000`), { headers: sbHead() });
+      const r = await fetch(sbUrl(`?select=initials,ms&day=eq.${skiDay()}&game=eq.${b.game}&order=ms.${b.desc ? "desc" : "asc"},created_at.asc&limit=1000`), { headers: sbHead() });
       if (r.ok) { const seen = new Set(); b.rows = (await r.json()).filter((x) => x && /^[A-Z]{1,3}$/.test(x.initials) && Number.isFinite(x.ms) && !seen.has(x.initials) && seen.add(x.initials)); } // best run per set of initials
     } catch (e) { /* offline: keep what we have */ }
     drawBoard(b);
@@ -1615,13 +1711,13 @@ function buildRoom(THREE) {
     try {
       const r = await fetch(sbUrl(""), { method: "POST", headers: sbHead({ "Content-Type": "application/json", Prefer: "return=minimal" }), body: JSON.stringify({ day: mine.day, game: b.game, initials: who, ms, device: deviceId() }) });
       if (!r.ok) return;
-      mine.posted = ms; jset(b.key, mine); toast(`Posted / ${who} / ${fmtRun(ms / 1000)}`); loadBoard(true, b);
+      mine.posted = ms; jset(b.key, mine); toast(`Posted / ${who} / ${(b.fmt || ((v) => fmtRun(v / 1000)))(ms)}`); loadBoard(true, b);
     } catch (e) { /* offline: the time stays on this device */ }
   }
   function startEntry() { entry = { text: "" }; el.tagIn.value = ""; keys.clear(); hud(); if (TOUCH || document.pointerLockElement !== el.gl) el.tagIn.focus(); }
   function endEntry(post) {
     const text = entry ? entry.text : ""; entry = null; el.tagIn.blur(); hud();
-    if (post && /^[A-Z]{1,3}$/.test(text)) { jset("dl2:initials", text); postTime(SKIB); postTime(FLYB); }
+    if (post && /^[A-Z]{1,3}$/.test(text)) { jset("dl2:initials", text); postTime(SKIB); postTime(FLYB); postTime(CAFEB); if (ui === "end") { const b = el.card.querySelector("#card-post"); if (b) b.hidden = true; } }
   }
   el.tagIn.addEventListener("input", () => { if (!entry) return; entry.text = el.tagIn.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 3); el.tagIn.value = entry.text; if (entry.text.length === 3) endEntry(true); });
   el.tagIn.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); endEntry(true); } e.stopPropagation(); });
@@ -1885,6 +1981,612 @@ function buildRoom(THREE) {
     robotArm.rotation.x = t >= 0 && this.anim === "serve" ? (ease(seg(t, 0, 0.35)) - ease(seg(t, 1.3, 1.75))) * 1.25 : 0;
   } });
 
+  // =====================================================================
+  // CAFÉ ANNEX: order a coffee from the robot, or work a three-minute shift behind the bar
+  // =====================================================================
+  const CTR = { x0: 10.2, x1: 10.8, top: 1.0 }, BAR = { x0: 13.0, z0: -1.9, z1: 5.7, top: 0.92 };
+  // one station per option, along the back bar (z); the same table drives the robot, the game and the 3D click targets
+  // (south to north, so they read left to right from behind the bar)
+  const ST = { hs: { z: 5.46, n: "Hot S", k: "1" }, hl: { z: 5.14, n: "Hot L", k: "2" }, is: { z: 4.76, n: "Iced S", k: "3" }, il: { z: 4.44, n: "Iced L", k: "4" }, ice: { z: 3.71, n: "Ice", k: "I", w: 0.56 }, shot: { z: 2.66, n: "Shot", k: "E", w: 0.92 },
+    whole: { z: 0.48, n: "Whole", k: "M", w: 0.26 }, oat: { z: 0.22, n: "Oat", k: "O", w: 0.26 }, vanilla: { z: -0.34, n: "Vanilla", k: "V", w: 0.2 }, caramel: { z: -0.56, n: "Caramel", k: "C", w: 0.2 }, mocha: { z: -0.78, n: "Mocha", k: "K", w: 0.2 },
+    whip: { z: -1.12, n: "Whip", k: "W", w: 0.2 }, cinnamon: { z: -1.32, n: "Cinnamon", s: "Cinn.", k: "N", w: 0.2 }, lid: { z: -1.6, n: "Lid", k: "L", w: 0.3 }, serve: { n: "Serve", k: "Enter" }, trash: { z: -2.45, n: "Trash", k: "X", w: 0.46 } };
+  const MATS = [{ x: 13.22, z: 1.58 }, { x: 13.22, z: 1.14 }]; // the two cup slots on the work mat
+  const cafeG = new THREE.Group(); scene.add(cafeG);            // interior: drawn only from the lodge, the passage or the café itself
+  const cafeTop = new THREE.Group(); cafeG.add(cafeTop);        // beams and pendants: hidden in the shift view, which looks in from above
+  const cafeColliders = [];
+  const cafeTex = canvasTex(1024, 640);                         // the "best shift" board
+  const cafeBoard = new THREE.Group(); cafeBoard.position.set(8.4, 1.85, CF.z0); cafeG.add(cafeBoard);
+  const lamVD = lamV.clone(); lamVD.side = THREE.DoubleSide;    // open cups and thin sheet parts
+  const cupGlass = new THREE.MeshBasicMaterial({ color: 0xe6f4ff, transparent: true, opacity: 0.3, depthWrite: false, side: THREE.DoubleSide });
+  const hitBox = (w, h, d, x, y, z) => { const g = new THREE.Group(), m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d)); m.visible = false; g.position.set(x, y, z); g.add(m); cafeG.add(g); return g; };
+  let annexShell = null, ticketRail = null, cafeTip = null;
+  {
+    const k = kit(), glass = [], glow = [], top = kit();
+    const plane = (w, h, color, x, y, z, rx, ry) => k.g(new THREE.PlaneGeometry(w, h), color, mat4(x, y, z, rx, ry));
+    const zc = (CF.z0 + CF.z1) / 2, xc = (CF.x0 + CF.x1) / 2, CW2 = CF.x1 - CF.x0, CD = CF.z1 - CF.z0, H = CF.h;
+    // shell, seen from inside: single-sided planes, so the shift camera can look in through the east wall and the ceiling
+    for (let i = 0; i < CW2 / 0.2 - 1e-6; i++) plane(0.2, CD, [0xb8874f, 0xa97a45, 0xc19258, 0xb08049][(i * 7 + (i >> 2)) % 4], CF.x0 + 0.1 + i * 0.2, 0, zc, -Math.PI / 2);     // floor boards
+    plane(CW2, CD, 0xdcc49c, xc, H, zc, Math.PI / 2);                                                                                                                         // ceiling
+    plane(CD, H, C.wall, CF.x1, H / 2, zc, 0, -Math.PI / 2); plane(CW2, H, C.wall, xc, H / 2, CF.z0, 0, 0); plane(CW2, H, C.wall, xc, H / 2, CF.z1, 0, Math.PI);             // east, north, south
+    for (const [z0, z1, y0, y1] of [[CF.z0, AZ.z0, 0, H], [AZ.z1, CF.z1, 0, H], [AZ.z0, AZ.z1, AZ.h, H]]) plane(z1 - z0, y1 - y0, C.wall, CF.x0, (y0 + y1) / 2, (z0 + z1) / 2, 0, Math.PI / 2); // west, around the passage
+    // wainscot 2 cm proud of the walls, rail on top (not behind the back bar)
+    const WH = 1.0;
+    for (const [z0, z1] of [[CF.z0, AZ.z0 - 0.1], [AZ.z1 + 0.1, CF.z1]]) { k.b(0.02, WH, z1 - z0, TIMBER.wainscot, CF.x0 + 0.012, WH / 2, (z0 + z1) / 2); k.b(0.045, 0.07, z1 - z0, TIMBER.rail, CF.x0 + 0.024, WH + 0.035, (z0 + z1) / 2); }
+    for (const [z, s] of [[CF.z0, 1], [CF.z1, -1]]) { k.b(CW2, WH, 0.02, TIMBER.wainscot, xc, WH / 2, z + s * 0.012); k.b(CW2, 0.07, 0.045, TIMBER.rail, xc, WH + 0.035, z + s * 0.024); }
+    for (let x = CF.x0 + 0.4; x < CF.x1; x += 0.4) for (const [z, s] of [[CF.z0, 1], [CF.z1, -1]]) k.b(0.012, WH, 0.008, TIMBER.wainscotAlt, x, WH / 2, z + s * 0.026);
+    // front counter: stub, staff gate, long run with the register and the pickup shelf
+    const cx = (CTR.x0 + CTR.x1) / 2, GZ0 = -2.4, GZ1 = -1.4;
+    for (const [z0, z1] of [[CF.z0, GZ0], [GZ1, CF.z1]]) {
+      k.b(0.5, CTR.top - 0.04, z1 - z0, TIMBER.wainscot, cx, (CTR.top - 0.04) / 2, (z0 + z1) / 2); k.b(0.7, 0.04, z1 - z0 + (z0 === CF.z0 ? 0.04 : 0), TIMBER.butcher, cx, CTR.top - 0.02, (z0 + z1) / 2 + (z0 === CF.z0 ? 0.02 : 0));
+      k.b(0.46, 0.1, z1 - z0 - 0.02, INK, cx, 0.05, (z0 + z1) / 2);
+      for (let z = z0 + 0.3; z < z1 - 0.1; z += 0.6) k.b(0.012, CTR.top - 0.2, 0.05, TIMBER.wainscotAlt, CTR.x0 + 0.044, (CTR.top - 0.04) / 2 + 0.03, z);
+    }
+    cafeColliders.push({ minX: CTR.x0 - 0.05, maxX: CTR.x1 + 0.05, minZ: CF.z0, maxZ: CF.z1 });
+    for (const z of [GZ0 + 0.03, GZ1 - 0.03]) k.b(0.08, 1.02, 0.06, TIMBER.beam, cx, 0.51, z);                                   // gate posts
+    k.b(0.045, 0.62, GZ1 - GZ0 - 0.16, TIMBER.plank, cx, 0.6, (GZ0 + GZ1) / 2); k.b(0.05, 0.05, GZ1 - GZ0 - 0.14, TIMBER.beam, cx, 0.93, (GZ0 + GZ1) / 2); k.b(0.05, 0.05, GZ1 - GZ0 - 0.14, TIMBER.beam, cx, 0.3, (GZ0 + GZ1) / 2);
+    k.b(0.1, 2.05, 0.1, TIMBER.beam, cx, 1.025, GZ0 - 0.08); k.b(0.14, 0.02, 0.02, LODGE.brass, CTR.x0 + 0.18, 1.78, GZ0 - 0.08);  // apron post and hook
+    k.b(0.02, 0.62, 0.34, C.signal, CTR.x0 + 0.12, 1.42, GZ0 - 0.08); k.b(0.022, 0.2, 0.22, LODGE.cream, CTR.x0 + 0.119, 1.56, GZ0 - 0.08); k.b(0.022, 0.03, 0.36, LODGE.cream, CTR.x0 + 0.119, 1.3, GZ0 - 0.08); // the apron
+    // register, tip jar, ticket printer and rail, pickup shelf
+    const RZ = 1.8, ty = CTR.top;
+    k.b(0.3, 0.2, 0.34, INK, cx, ty + 0.1, RZ); k.b(0.02, 0.2, 0.3, 0x2b2b30, cx + 0.12, ty + 0.3, RZ, 0, 0, 0.3); k.b(0.02, 0.1, 0.2, 0x2b2b30, cx - 0.13, ty + 0.25, RZ, 0, 0, -0.3);
+    glow.push({ geo: new THREE.BoxGeometry(0.004, 0.15, 0.24), color: C.signalHi, m: mat4(cx + 0.132, ty + 0.304, RZ, 0, 0, 0.3) });
+    k.c(0.07, 0.06, 0.02, 12, LODGE.brass, cx - 0.02, ty + 0.01, RZ + 0.5); for (let i = 0; i < 3; i++) k.c(0.035, 0.035, 0.008, 10, LODGE.brass, cx - 0.03 + i * 0.015, ty + 0.026 + i * 0.008, RZ + 0.5 + i * 0.01, 0.1 * i);
+    glass.push({ geo: new THREE.CylinderGeometry(0.075, 0.065, 0.17, 12, 1, true), color: 0xffffff, m: mat4(cx - 0.02, ty + 0.085, RZ + 0.5) });
+    k.b(0.16, 0.12, 0.2, 0x2b2b30, cx + 0.14, ty + 0.06, RZ - 0.5); k.b(0.02, 0.05, 0.14, 0xfafaf6, cx + 0.14, ty + 0.14, RZ - 0.5);                              // ticket printer
+    for (const z of [-1.05, 1.05]) k.b(0.02, 0.5, 0.02, INK, CTR.x1 - 0.03, ty + 0.25, z); k.b(0.016, 0.016, 2.14, INK, CTR.x1 - 0.03, ty + 0.5, 0);               // ticket rail
+    k.b(0.46, 0.02, 0.5, 0x2b2b30, cx, ty + 0.01, 5.0); for (const z of [4.76, 5.24]) k.b(0.46, 0.05, 0.02, TIMBER.beam, cx, ty + 0.025, z);                       // pickup tray
+    k.c(0.07, 0.055, 0.12, 8, LODGE.postRed, cx, ty + 0.06, 5.72); for (const [dx, dz, h] of [[0, 0, 0.3], [0.05, 0.03, 0.22], [-0.05, 0.02, 0.24], [0.01, -0.05, 0.2]]) k.g(new THREE.ConeGeometry(0.05, h, 5), NATURE.fir, mat4(cx + dx, ty + 0.12 + h / 2, 5.72 + dz));
+    // back bar along the east wall, and what stands on it
+    const BT = BAR.top, bz = (BAR.z0 + BAR.z1) / 2, bl = BAR.z1 - BAR.z0;
+    k.b(0.52, BT - 0.04, bl, TIMBER.stainLight, 13.34, (BT - 0.04) / 2, bz); k.b(0.62, 0.04, bl + 0.04, TIMBER.butcher, 13.29, BT - 0.02, bz); k.b(0.5, 0.1, bl - 0.04, INK, 13.35, 0.05, bz);
+    for (let z = BAR.z0 + 0.4; z < BAR.z1 - 0.1; z += 0.8) { k.b(0.012, BT - 0.24, 0.7, TIMBER.wainscot, 13.074, (BT - 0.04) / 2 + 0.04, z); k.b(0.03, 0.02, 0.14, LODGE.brass, 13.06, BT - 0.2, z); }
+    cafeColliders.push({ minX: 12.95, maxX: CF.x1, minZ: BAR.z0 - 0.05, maxZ: BAR.z1 + 0.05 });
+    const hotStack = (z, r, n) => { for (let i = 0; i < n; i++) k.c(r, r * 0.8, 0.1, 10, i % 2 ? 0xe6dcc2 : LODGE.cream, 13.27, BT + 0.05 + i * 0.022, z); k.c(r * 1.02, r * 0.93, 0.03, 10, C.signal, 13.27, BT + 0.06 + (n - 1) * 0.022, z); };
+    hotStack(ST.hs.z, 0.04, 6); hotStack(ST.hl.z, 0.046, 8);
+    for (const [z, r, h] of [[ST.is.z, 0.04, 0.22], [ST.il.z, 0.046, 0.28]]) { glass.push({ geo: new THREE.CylinderGeometry(r, r * 0.8, h, 10, 1, true), color: 0xffffff, m: mat4(13.27, BT + h / 2, z) }); for (let y = 0.04; y < h; y += 0.03) k.g(new THREE.TorusGeometry(r * 0.9, 0.002, 3, 10), 0xcfe3f2, mat4(13.27, BT + y, z, Math.PI / 2)); }
+    { const z = ST.ice.z; for (const [w, d, x, zz] of [[0.42, 0.02, 13.3, z - 0.26], [0.42, 0.02, 13.3, z + 0.26], [0.02, 0.5, 13.1, z], [0.02, 0.5, 13.5, z]]) k.b(w, 0.2, d, NATURE.steelPaint, x, BT + 0.1, zz); k.b(0.4, 0.02, 0.5, NATURE.steelDark, 13.3, BT + 0.01, z);
+      let s2 = 3; const r2 = () => ((s2 = (s2 * 1664525 + 1013904223) >>> 0) / 4294967296);
+      for (let i = 0; i < 26; i++) k.b(0.05, 0.05, 0.05, i % 3 ? 0xeaf6ff : 0xd3e9fb, 13.14 + r2() * 0.32, BT + 0.12 + r2() * 0.05, z - 0.2 + r2() * 0.4, r2(), r2(), r2());
+      k.b(0.03, 0.02, 0.2, INK, 13.2, BT + 0.2, z + 0.1, 0.5, 0.4); }
+    { const z = ST.shot.z; // espresso machine: two group heads and the gauge face the aisle, the steam wand is at its south end
+      k.b(0.44, 0.34, 0.9, 0xb9c0c4, 13.34, BT + 0.25, z); k.b(0.46, 0.06, 0.92, 0x2b2b30, 13.34, BT + 0.45, z); k.b(0.44, 0.08, 0.9, 0x2b2b30, 13.34, BT + 0.04, z); k.b(0.16, 0.025, 0.8, NATURE.steelDark, 13.06, BT + 0.012, z);
+      for (const dz of [-0.2, 0.2]) { k.c(0.04, 0.04, 0.06, 10, 0x2b2b30, 13.08, BT + 0.33, z + dz); k.c(0.03, 0.03, 0.03, 10, NATURE.steelPaint, 13.08, BT + 0.29, z + dz); k.b(0.14, 0.02, 0.025, INK, 13.0, BT + 0.29, z + dz + 0.04, 0, 0.5); }
+      k.c(0.05, 0.05, 0.012, 14, LODGE.brass, 13.115, BT + 0.31, z, 0, 0, Math.PI / 2); k.c(0.04, 0.04, 0.014, 14, 0xfafaf6, 13.113, BT + 0.31, z, 0, 0, Math.PI / 2); k.b(0.004, 0.03, 0.006, LODGE.postRed, 13.104, BT + 0.32, z + 0.008, 0.6);
+      k.c(0.008, 0.008, 0.24, 6, NATURE.steelPaint, 13.06, BT + 0.22, z + 0.4, 0, 0, 0.35); k.c(0.016, 0.016, 0.03, 6, INK, 13.1, BT + 0.33, z + 0.4);
+      for (const dz of [-0.25, 0, 0.25]) for (const dx of [-0.08, 0.08]) k.c(0.035, 0.028, 0.06, 8, 0xfafaf6, 13.34 + dx, BT + 0.51, z + dz);
+      glow.push({ geo: new THREE.BoxGeometry(0.006, 0.02, 0.05), color: 0xff7a1a, m: mat4(13.117, BT + 0.4, z - 0.34) }); }
+    k.b(0.36, 0.008, 0.98, 0x2b2b30, 13.22, BT + 0.004, (MATS[0].z + MATS[1].z) / 2);                                                                                                       // work mat
+    { const z = (ST.whole.z + ST.oat.z) / 2; // milk fridge: glass front and top, whole and oat cartons inside
+      k.b(0.38, 0.03, 0.62, INK, 13.36, BT + 0.015, z); k.b(0.02, 0.4, 0.62, 0xfafaf6, 13.54, BT + 0.2, z); for (const s of [-1, 1]) k.b(0.38, 0.4, 0.02, 0x2b2b30, 13.36, BT + 0.2, z + s * 0.3); k.b(0.03, 0.4, 0.03, INK, 13.185, BT + 0.2, z);
+      for (const [w, h, d, x, y] of [[0.02, 0.4, 0.58, 13.18, 0.2], [0.36, 0.01, 0.58, 13.36, 0.4]]) glass.push({ geo: new THREE.BoxGeometry(w, h, d), color: 0xffffff, m: mat4(x, BT + y, z) });
+      for (const [zz, body, band] of [[ST.whole.z, 0xfafaf6, C.signal], [ST.oat.z, 0xd9c49a, NATURE.fir]]) for (const dx of [0, 0.12]) { k.b(0.085, 0.22, 0.085, body, 13.27 + dx, BT + 0.14, zz); k.b(0.087, 0.07, 0.087, band, 13.27 + dx, BT + 0.13, zz); k.b(0.085, 0.04, 0.02, body, 13.27 + dx, BT + 0.27, zz); } }
+    for (const [id, c] of [["vanilla", 0xf0e2b6], ["caramel", 0xc98a3a], ["mocha", 0x3b2416]]) { const z = ST[id].z; k.c(0.045, 0.05, 0.22, 10, c, 13.3, BT + 0.11, z); k.c(0.02, 0.02, 0.05, 8, INK, 13.3, BT + 0.245, z); k.b(0.07, 0.014, 0.014, INK, 13.27, BT + 0.275, z); k.b(0.014, 0.03, 0.014, INK, 13.24, BT + 0.262, z); }
+    k.c(0.036, 0.036, 0.2, 10, NATURE.steelPaint, 13.28, BT + 0.1, ST.whip.z); k.c(0.012, 0.03, 0.05, 8, 0xfafaf6, 13.28, BT + 0.225, ST.whip.z); k.c(0.03, 0.03, 0.09, 10, 0x8a4a22, 13.28, BT + 0.045, ST.cinnamon.z); k.c(0.031, 0.031, 0.02, 10, NATURE.steelPaint, 13.28, BT + 0.1, ST.cinnamon.z);
+    for (let i = 0; i < 7; i++) k.c(0.048, 0.048, 0.008, 12, i % 2 ? 0xfafaf6 : 0xe9e9e2, 13.18, BT + 0.006 + i * 0.011, ST.lid.z);
+    for (let i = 0; i < 3; i++) glass.push({ geo: new THREE.SphereGeometry(0.048, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2), color: 0xffffff, m: mat4(13.4, BT + 0.004 + i * 0.03, ST.lid.z) });
+    k.c(0.2, 0.17, 0.6, 12, 0x2b2b30, 13.3, 0.3, ST.trash.z); k.c(0.17, 0.17, 0.01, 12, INK, 13.3, 0.598, ST.trash.z); cafeColliders.push({ minX: 13.05, maxX: CF.x1, minZ: ST.trash.z - 0.25, maxZ: ST.trash.z + 0.25 });
+    // customer side: two tables with stools, a bean sack, a plant, the window to the deck
+    for (const [x, z] of [[7.7, -1.8], [7.5, 5.2]]) {
+      k.c(0.38, 0.38, 0.04, 14, TIMBER.plank, x, 0.76, z); k.c(0.04, 0.05, 0.72, 8, INK, x, 0.37, z); k.c(0.22, 0.24, 0.03, 12, INK, x, 0.015, z);
+      k.c(0.04, 0.035, 0.085, 10, LODGE.cream, x + 0.1, 0.8225, z - 0.08); k.c(0.06, 0.06, 0.008, 10, 0xfafaf6, x + 0.1, 0.784, z - 0.08);
+      for (const [dx, dz] of [[-0.62, -0.1], [0.5, 0.42]]) { k.c(0.17, 0.17, 0.04, 12, LODGE.leather, x + dx, 0.5, z + dz); k.c(0.025, 0.03, 0.48, 6, INK, x + dx, 0.24, z + dz); k.c(0.14, 0.15, 0.02, 10, INK, x + dx, 0.01, z + dz); }
+      cafeColliders.push({ minX: x - 0.3, maxX: x + 0.3, minZ: z - 0.3, maxZ: z + 0.3 });
+    }
+    k.c(0.26, 0.3, 0.55, 9, 0xb39a6b, 7.05, 0.275, -2.95); k.c(0.2, 0.26, 0.12, 9, 0xa58d60, 7.05, 0.6, -2.95); k.b(0.3, 0.2, 0.012, 0x2b2b30, 7.05, 0.3, -2.652, -0.08); cafeColliders.push({ minX: 6.75, maxX: 7.35, minZ: CF.z0, maxZ: -2.65 });
+    k.c(0.19, 0.15, 0.34, 9, LODGE.postRed, 9.45, 0.17, -3.0); for (const [dx, dz, h] of [[0, 0, 0.8], [0.12, 0.06, 0.6], [-0.12, 0.05, 0.64], [0.03, -0.12, 0.56], [-0.06, -0.1, 0.5]]) k.g(new THREE.ConeGeometry(0.14, h, 5), dx ? NATURE.fir : NATURE.spruce, mat4(9.45 + dx, 0.34 + h / 2, -3.0 + dz));
+    cafeColliders.push({ minX: 9.2, maxX: 9.7, minZ: CF.z0, maxZ: -2.75 });
+    { const wx = 8.6, wy = 1.85, ww = 1.9, wh = 1.1, z = CF.z1 - 0.03; for (const [w, h, x, y] of [[ww + 0.14, 0.07, wx, wy + wh / 2 + 0.035], [ww + 0.14, 0.07, wx, wy - wh / 2 - 0.035], [0.07, wh, wx - ww / 2 - 0.035, wy], [0.07, wh, wx + ww / 2 + 0.035, wy], [0.04, wh, wx, wy], [ww, 0.04, wx, wy]]) k.b(w, h, 0.05, TIMBER.beam, x, y, z);
+      k.b(ww + 0.3, 0.04, 0.14, TIMBER.beam, wx, wy - wh / 2 - 0.09, z - 0.05);
+      glow.push({ geo: new THREE.PlaneGeometry(ww, wh), color: 0xd9ecfb, m: mat4(wx, wy, CF.z1 - 0.012, 0, Math.PI) }); }
+    k.b(0.02, 0.9, CD, TIMBER.stain, CF.x1 + 0.02, 0.45, zc);                                                                                                         // back of the bar wall: only the shift camera, which looks in from outside, ever sees it
+    k.b(2.74, 1.76, 0.03, INK, 8.4, 1.85, CF.z0 + 0.018);                                                                                                            // board frame
+    // beams and pendants (their own group)
+    for (const z of [-1.6, 1.3, 4.2]) top.b(CW2, 0.22, 0.18, TIMBER.beam, xc, H - 0.11, z);
+    for (const z of [0, 2.2, 4.4]) { top.b(0.012, 0.5, 0.012, INK, cx, H - 0.25, z); top.c(0.06, 0.22, 0.2, 12, INK, cx, H - 0.6, z); top.c(0.19, 0.19, 0.01, 12, 0xffe2b0, cx, H - 0.704, z); }
+    const stat = k.mesh(false); stat.receiveShadow = false; cafeG.add(stat);
+    const tm = top.mesh(false); tm.receiveShadow = false; cafeTop.add(tm);
+    cafeG.add(new THREE.Mesh(bake(glass), cupGlass));
+    cafeG.add(new THREE.Mesh(bake(glow), new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false })));
+    const lamp = new THREE.PointLight(0xffd9a8, 5, 6, 2); lamp.position.set(11.4, 2.5, 1.6); cafeG.add(lamp);                                                        // the one extra light: warm, no shadows
+    // menu chalkboard on the east wall: a single-sided decal, so the shift camera looks straight through it
+    const menu = canvasTex(1024, 320, (g, w, h) => {
+      g.fillStyle = "#1c1f1d"; g.fillRect(0, 0, w, h); g.strokeStyle = "#6b4a2c"; g.lineWidth = 14; g.strokeRect(7, 7, w - 14, h - 14);
+      g.fillStyle = "#f3f3ef"; g.textBaseline = "alphabetic"; g.font = `800 condensed 64px ${F_SANS}`; g.fillText("LODGE CAFÉ", 40, 84);
+      g.font = `700 24px ${F_MONO}`; g.fillStyle = "#7fa6ec"; g.fillText("MADE TO ORDER BY BARISTA-01", 40, 122);
+      const col = (x, head, rows) => { g.fillStyle = "#7fa6ec"; g.font = `700 22px ${F_MONO}`; g.fillText(head, x, 172); g.fillStyle = "#f3f3ef"; g.font = `500 24px ${F_MONO}`; rows.forEach((r, i) => g.fillText(r, x, 206 + i * 31)); };
+      col(40, "DRINK", ["AMERICANO", "LATTE", "MOCHA"]); col(270, "HOT / ICED", ["SMALL", "LARGE", "1× OR 2× SHOT"]); col(540, "MILK", ["WHOLE", "OAT", "NONE"]); col(730, "ADD", ["VANILLA / CARAMEL", "MOCHA SAUCE", "WHIP / CINNAMON"]);
+      g.textAlign = "right"; g.fillStyle = "#f3f3ef"; g.font = `700 22px ${F_MONO}`; g.fillText("COFFEE: WALK FASTER", w - 40, 84); g.fillStyle = "#7fa6ec"; g.fillText("HELP WANTED: SEE THE APRON", w - 40, 122); g.textAlign = "left";
+    });
+    const md = decal(menu.t, 4.0, 1.25); md.rotation.y = -Math.PI / 2; md.position.set(CF.x1 - 0.004, 2.25, 1.7); cafeG.add(md);
+    const bd = decal(cafeTex.t, 2.6, 1.625); bd.position.set(0, 0, 0.036); cafeBoard.add(bd);
+    const bh = new THREE.Mesh(new THREE.BoxGeometry(2.7, 1.72, 0.06)); bh.visible = false; bh.position.z = 0.03; cafeBoard.add(bh);
+    // small signs and labels: one atlas, one mesh
+    const sheet = canvasTex(1024, 512), lab = { pos: [], uv: [], x: 4, y: 4 };
+    const addLabel = (text, w, h, m, bg = CSS.plate, fg = CSS.ink) => {
+      const LH = 60, LW = Math.max(40, Math.round((LH * w) / h)); if (lab.x + LW > 1020) { lab.x = 4; lab.y += LH + 6; }
+      const g = sheet.g, x = lab.x, y = lab.y; lab.x += LW + 6;
+      g.fillStyle = fg; g.fillRect(x, y, LW, LH); g.fillStyle = bg; g.fillRect(x + 3, y + 3, LW - 6, LH - 6); g.fillStyle = fg; g.font = `700 ${Math.round(LH * 0.56)}px ${F_MONO}`; g.textBaseline = "middle"; fitText(g, text, x + LW / 2, y + LH / 2 + 2, LW - 16, "center");
+      const geo = new THREE.PlaneGeometry(w, h).toNonIndexed(); geo.applyMatrix4(m);
+      const u0 = x / 1024, u1 = (x + LW) / 1024, v1 = 1 - y / 512, v0 = 1 - (y + LH) / 512, uv = geo.attributes.uv;
+      for (let i = 0; i < uv.count; i++) lab.uv.push(u0 + uv.getX(i) * (u1 - u0), v0 + uv.getY(i) * (v1 - v0));
+      lab.pos.push(...geo.attributes.position.array);
+    };
+    const FW = -Math.PI / 2, FE = Math.PI / 2; // turn a label to face west (the customers) or east (the bar side)
+    addLabel("STAFF ONLY", 0.62, 0.15, mat4(cx - 0.026, 0.62, (GZ0 + GZ1) / 2, 0, FW), CSS.ink, CSS.plate);
+    addLabel("ORDER HERE", 0.5, 0.12, mat4(CTR.x0 + 0.036, 0.7, RZ, 0, FW));
+    addLabel("PICK UP", 0.4, 0.12, mat4(CTR.x0 + 0.036, 0.7, 5.0, 0, FW));
+    addLabel("TIPS", 0.12, 0.05, mat4(cx - 0.098, ty + 0.09, RZ + 0.5, 0, FW));
+    for (const [id, t] of [["vanilla", "VANILLA"], ["caramel", "CARAMEL"], ["mocha", "MOCHA"]]) { addLabel(t, 0.085, 0.05, mat4(13.248, BT + 0.12, ST[id].z, 0, FW)); addLabel(t, 0.085, 0.05, mat4(13.352, BT + 0.12, ST[id].z, 0, FE)); }
+    for (const [id, t] of [["whole", "WHOLE"], ["oat", "OAT"]]) addLabel(t, 0.1, 0.04, mat4(13.165, BT + 0.05, ST[id].z, 0, FW));
+    addLabel("ICE", 0.2, 0.08, mat4(13.088, BT + 0.1, ST.ice.z, 0, FW)); addLabel("ICE", 0.2, 0.08, mat4(13.512, BT + 0.1, ST.ice.z, 0, FE));
+    for (const [id, t] of [["hs", "S"], ["hl", "L"], ["is", "S"], ["il", "L"]]) addLabel(t, 0.07, 0.07, mat4(13.1, BT + 0.003, ST[id].z, -Math.PI / 2, FW));
+    addLabel("WORK A SHIFT", 0.34, 0.07, mat4(CTR.x0 + 0.108, 1.02, GZ0 - 0.08, 0, FW), CSS.signal, CSS.plate);
+    sheet.t.needsUpdate = true;
+    const lg = new THREE.BufferGeometry(); lg.setAttribute("position", new THREE.Float32BufferAttribute(lab.pos, 3)); lg.setAttribute("uv", new THREE.Float32BufferAttribute(lab.uv, 2));
+    cafeG.add(new THREE.Mesh(lg, new THREE.MeshBasicMaterial({ map: sheet.t, toneMapped: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })));
+    // ticket rail: one strip hanging under the rail, facing the bar
+    ticketRail = decal(canvasTex(1024, 180).t, 2.0, 0.352, { transparent: true }); ticketRail.rotation.y = Math.PI / 2; ticketRail.position.set(CTR.x1 - 0.018, ty + 0.31, 0); ticketRail.visible = false; cafeG.add(ticketRail);
+    // exterior: log walls 4 cm clear of the interior planes, low gable roof with snow, a lit window and a sign facing the deck
+    const sh = kit(), X0 = HALF + 0.25, X1 = CF.x1 + 0.2, Zn = CF.z0 - 0.2, Zs = CF.z1 + 0.2, EH = 3.4, xm = (X0 + X1) / 2, zm = (Zn + Zs) / 2, T = 0.16;
+    sh.b(X1 - X0, EH, T, TIMBER.honeyDark, xm, EH / 2, Zn + T / 2); sh.b(X1 - X0, EH, T, TIMBER.honeyDark, xm, EH / 2, Zs - T / 2); sh.b(T, EH, Zs - Zn - 2 * T, TIMBER.honeyDark, X1 - T / 2, EH / 2, zm);
+    for (let y = 0.2; y < EH; y += 0.4) { sh.b(X1 - X0 + 0.24, 0.34, 0.05, (y * 5) % 2 < 1 ? TIMBER.honey : 0xa8713a, xm + 0.1, y, Zn - 0.025); sh.b(0.05, 0.34, Zs - Zn + 0.24, (y * 5) % 2 < 1 ? 0xa8713a : TIMBER.honey, X1 + 0.025, y, zm);
+      for (const [x0, x1] of [[X0, 7.45], [9.75, X1 + 0.12]]) sh.b(x1 - x0, 0.34, 0.05, (y * 5) % 2 < 1 ? TIMBER.honey : 0xa8713a, (x0 + x1) / 2, y, Zs + 0.025);
+      if (y < 1.2 || y > 2.5) sh.b(2.3, 0.34, 0.05, (y * 5) % 2 < 1 ? TIMBER.honey : 0xa8713a, 8.6, y, Zs + 0.025); }
+    for (const [x, z] of [[X1 + 0.03, Zn - 0.03], [X1 + 0.03, Zs + 0.03]]) sh.b(0.2, EH, 0.2, TIMBER.stain, x, EH / 2, z);
+    const hw = (X1 - X0) / 2, rise = 0.95, sl = Math.hypot(hw + 0.3, rise * (hw + 0.3) / hw), ang = Math.atan2(rise, hw);
+    for (const s of [-1, 1]) { const len = s < 0 ? Math.hypot(hw, rise) : sl, mx = s < 0 ? xm - hw / 2 : xm + (hw + 0.3) / 2, my = EH + rise / 2 - (s > 0 ? (0.3 * rise) / hw / 2 : 0);
+      sh.b(len, 0.14, Zs - Zn + 0.7, NATURE.roof, mx, my + 0.02, zm, 0, 0, -s * ang); sh.b(len - 0.1, 0.1, Zs - Zn + 0.5, NATURE.snow, mx, my + 0.14, zm, 0, 0, -s * ang); }
+    for (const z of [Zn + T / 2, Zs - T / 2]) for (const [w, y] of [[(X1 - X0) * 0.82, EH + 0.14], [(X1 - X0) * 0.52, EH + 0.42], [(X1 - X0) * 0.22, EH + 0.7]]) sh.b(w, 0.3, T, TIMBER.honeyDark, xm, y, z);
+    { const wx = 8.6, wy = 1.85, ww = 1.9, wh = 1.1, z = Zs + 0.03; for (const [w, h, x, y] of [[ww + 0.2, 0.1, wx, wy + wh / 2 + 0.05], [ww + 0.2, 0.1, wx, wy - wh / 2 - 0.05], [0.1, wh, wx - ww / 2 - 0.05, wy], [0.1, wh, wx + ww / 2 + 0.05, wy], [0.05, wh, wx, wy], [ww, 0.05, wx, wy]]) sh.b(w, h, 0.08, TIMBER.stain, x, y, z);
+      sh.b(ww, wh, 0.02, 0xffd98a, wx, wy, Zs + 0.015); sh.b(ww + 0.5, 0.05, 0.22, NATURE.snow, wx, wy - wh / 2 - 0.12, z + 0.06); }
+    annexShell = sh.mesh(false); world.add(annexShell);
+    const sign = canvasTex(512, 160, (g, w, h) => { g.fillStyle = CSS.signal; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 124px ${F_SANS}`; g.textBaseline = "middle"; if ("letterSpacing" in g) g.letterSpacing = "14px"; fitText(g, "CAFÉ", w / 2, h / 2 + 8, w - 70, "center"); });
+    const sd = decal(sign.t, 1.5, 0.47); sd.position.set(8.6, 2.86, Zs + 0.052); world.add(sd);
+    solid(xm, zm, hw + 0.05, (Zs - Zn) / 2 + 0.05); FBOX.push([X0 - 0.3, X1 + 0.5, Zn - 0.5, Zs + 0.5, EH + rise + 0.5]);
+  }
+
+  // ---------- cups: one model, three instances (the robot's, and the two slots on the work mat) ----------
+  const CUP_R = 0.043, CUP_H = 0.135;
+  function makeCup() {
+    const root = new THREE.Group(), body = new THREE.Group(); root.add(body); root.visible = false; cafeG.add(root);
+    const part = (list, mat) => { const m = new THREE.Mesh(bake(list), mat); m.visible = false; body.add(m); return m; };
+    const wallGeo = () => new THREE.CylinderGeometry(CUP_R, CUP_R * 0.78, CUP_H, 12, 1, true);
+    const hot = part([{ geo: wallGeo(), color: LODGE.cream, m: mat4(0, CUP_H / 2, 0) }, { geo: new THREE.CylinderGeometry(CUP_R * 0.78, CUP_R * 0.78, 0.004, 12), color: LODGE.cream, m: mat4(0, 0.002, 0) }, { geo: new THREE.CylinderGeometry(CUP_R * 0.95 + 0.002, CUP_R * 0.86 + 0.002, CUP_H * 0.4, 12, 1, true), color: C.signal, m: mat4(0, CUP_H * 0.5, 0) }], lamVD);
+    const iced = part([{ geo: wallGeo(), color: 0xffffff, m: mat4(0, CUP_H / 2, 0) }, { geo: new THREE.CylinderGeometry(CUP_R * 0.78, CUP_R * 0.78, 0.004, 12), color: 0xffffff, m: mat4(0, 0.002, 0) }], cupGlass);
+    const liquid = new THREE.Mesh(new THREE.CylinderGeometry(CUP_R * 0.93, CUP_R * 0.76, 1, 12).translate(0, 0.5, 0), new THREE.MeshLambertMaterial({ color: 0x2b170d })); liquid.position.y = 0.005; liquid.visible = false; body.add(liquid);
+    const ice = part([[0.012, 0.03, 0.01, 0.3], [-0.014, 0.055, -0.008, 1.1], [0.004, 0.08, 0.014, 2.0], [-0.008, 0.1, 0.004, 0.7], [0.014, 0.112, -0.012, 1.6]].map(([x, y, z, r]) => ({ geo: new THREE.BoxGeometry(0.024, 0.024, 0.024), color: 0xf2faff, m: mat4(x, y, z, r, r * 2, r) })), lamV);
+    const whip = part([{ geo: new THREE.SphereGeometry(CUP_R * 0.92, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2), color: 0xfffdf6, m: mat4(0, CUP_H - 0.004, 0) }, { geo: new THREE.ConeGeometry(CUP_R * 0.4, 0.03, 6), color: 0xfffdf6, m: mat4(0, CUP_H + CUP_R * 0.86, 0) }], lamV);
+    const cin = part([0, 1, 2, 3, 4, 5, 6].map((i) => ({ geo: new THREE.BoxGeometry(0.008, 0.003, 0.008), color: 0x7a3d18, m: mat4(Math.cos(i * 2.4) * 0.022 * (i ? 1 : 0), CUP_H * 0.9, Math.sin(i * 2.4) * 0.022 * (i ? 1 : 0), 0, i) })), lamV);
+    const lidFlat = part([{ geo: new THREE.CylinderGeometry(CUP_R + 0.003, CUP_R + 0.003, 0.008, 12), color: 0xfafaf6, m: mat4(0, CUP_H + 0.002, 0) }, { geo: new THREE.CylinderGeometry(CUP_R * 0.7, CUP_R * 0.86, 0.008, 12), color: 0xfafaf6, m: mat4(0, CUP_H + 0.01, 0) }], lamV);
+    const lidDome = part([{ geo: new THREE.SphereGeometry(CUP_R + 0.003, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2), color: 0xffffff, m: mat4(0, CUP_H, 0) }], cupGlass);
+    const straw = part([{ geo: new THREE.CylinderGeometry(0.004, 0.004, CUP_H * 1.35, 5), color: C.signal, m: mat4(0.008, CUP_H * 0.78, 0, 0, 0, -0.1) }], lamV);
+    const cup = { root, level: 0, tint: new THREE.Color(0x2b170d), want: new THREE.Color(), st: null,
+      show(st) { // st: { kind, ice, shots, milk, flav, top, lid }
+        cup.st = st; root.visible = !!(st && st.kind); if (!root.visible) { cup.level = 0; return; }
+        const isIced = st.kind[0] === "i", big = st.kind[1] === "l";
+        body.scale.set(big ? 1 : 0.9, big ? 1 : 0.76, big ? 1 : 0.9);
+        hot.visible = !isIced; iced.visible = isIced; ice.visible = !!st.ice; whip.visible = st.top === "whip"; cin.visible = st.top === "cinnamon";
+        lidFlat.visible = st.lid && st.top !== "whip"; lidDome.visible = st.lid && st.top === "whip"; straw.visible = st.lid && isIced;
+        cup.goal = Math.min(0.86, (st.shots || 0) * 0.2 + (st.milk ? 0.5 : 0) + (st.ice ? 0.12 : 0) + (st.lid && !st.milk && st.shots ? 0.5 : 0));
+        const c = !st.shots ? 0xf2ead8 : !st.milk ? (st.lid ? 0x3a2012 : 0x2b170d) : st.flav === "mocha" ? 0x6d4630 : st.flav === "caramel" ? 0xbf8442 : st.flav === "vanilla" ? 0xc79a6c : st.milk === "oat" ? 0xb59a72 : 0xb8875a;
+        cup.want.setHex(c); if (!st.milk && st.flav === "mocha") cup.want.lerp(new THREE.Color(0x120a06), 0.4);
+      },
+      tick(dt) { if (!root.visible) return; const k = REDUCED ? 1 : 1 - Math.exp(-7 * dt); cup.level += ((cup.goal || 0) - cup.level) * k; cup.tint.lerp(cup.want, k); liquid.material.color.copy(cup.tint); liquid.visible = cup.level > 0.02; liquid.scale.y = Math.max(0.001, cup.level * (CUP_H - 0.008)); },
+    };
+    return cup;
+  }
+  const kindOf = (r) => (r.iced ? "i" : "h") + (r.large ? "l" : "s");
+  const cap = (s) => s[0].toUpperCase() + s.slice(1);
+  const drinkName = (r) => [r.large ? "Large" : "Small", r.shots > 1 ? "Double" : "", r.iced ? "Iced" : "", r.milk === "oat" ? "Oat" : "", r.flav && !(r.flav === "mocha" && r.milk) ? cap(r.flav) : "", r.milk ? (r.flav === "mocha" ? "Mocha" : "Latte") : "Americano"].filter(Boolean).join(" ") + (r.top ? ` + ${cap(r.top)}` : "");
+  const compsOf = (r) => (r.iced ? 1 : 0) + r.shots + (r.milk ? 1 : 0) + (r.flav ? 1 : 0) + (r.top ? 1 : 0);
+  const money = (c) => `$${(c / 100).toFixed(2)}`;
+
+  // ---------- the barista ----------
+  const HOME = { x: 11.3, z: 1.8, ry: Math.PI / 2 }, BAR_X = 12.5, FACE_E = -Math.PI / 2;
+  const bot = new THREE.Group(), botHead = new THREE.Group(), botArm = new THREE.Group(), botArm2 = new THREE.Group(); bot.position.set(HOME.x, 0.01, HOME.z); bot.rotation.y = HOME.ry; cafeG.add(bot);
+  { // same family as the waffle robot, built facing -z; its own character: apron with a blue stripe, name plate, cap
+    const b = kit(); for (const sx of [-0.11, 0.11]) { b.b(0.12, 0.72, 0.12, C.steel, sx, 0.36, 0); b.b(0.16, 0.06, 0.24, INK, sx, 0.03, -0.03); }
+    b.b(0.5, 0.56, 0.3, C.plate, 0, 1.02, 0); b.b(0.1, 0.08, 0.1, C.steel, 0, 1.34, 0);
+    b.b(0.44, 0.62, 0.014, LODGE.cream, 0, 0.9, -0.158); b.b(0.44, 0.07, 0.016, C.signal, 0, 0.78, -0.159); b.b(0.3, 0.2, 0.014, LODGE.cream, 0, 1.2, -0.158); for (const sx of [-1, 1]) b.b(0.03, 0.2, 0.012, C.signal, sx * 0.17, 1.22, -0.158, 0, 0, sx * 0.5);
+    b.b(0.52, 0.05, 0.32, C.signal, 0, 0.72, 0); bot.add(b.mesh(false));
+    const h = kit(); h.b(0.4, 0.3, 0.3, C.plate, 0, 0.15, 0); h.b(0.32, 0.1, 0.012, INK, 0, 0.17, -0.157); for (const sx of [-0.08, 0.08]) h.b(0.05, 0.05, 0.012, C.signalHi, sx, 0.17, -0.165); h.b(0.42, 0.05, 0.05, INK, 0, 0.15, 0);
+    h.b(0.42, 0.07, 0.32, C.signal, 0, 0.335, 0); h.b(0.34, 0.03, 0.14, C.signal, 0, 0.305, -0.22); botHead.add(h.mesh(false)); botHead.position.set(0, 1.38, 0); bot.add(botHead);
+    for (const [g, sx] of [[botArm, -1], [botArm2, 1]]) { const a = kit(); a.b(0.1, 0.5, 0.1, C.steel, 0, -0.24, 0); a.b(0.11, 0.1, 0.11, INK, 0, -0.52, 0); g.add(a.mesh(false)); g.position.set(sx * 0.31, 1.24, 0); bot.add(g); }
+    const tag = canvasTex(256, 64, (g, w, h) => { g.fillStyle = "#b8923a"; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink; g.font = `700 36px ${F_MONO}`; g.textBaseline = "middle"; fitText(g, "BARISTA-01", w / 2, h / 2 + 2, w - 20, "center"); });
+    const td = decal(tag.t, 0.2, 0.05); td.rotation.y = Math.PI; td.position.set(0, 1.2, -0.168); bot.add(td);
+  }
+  const myCup = makeCup(), slotCups = [makeCup(), makeCup()];
+  const stream = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 1, 5).translate(0, -0.5, 0), new THREE.MeshBasicMaterial({ color: 0x2b170d })); stream.visible = false; cafeG.add(stream);
+  const steam = new THREE.Mesh(bake([0, 1, 2].map((i) => ({ geo: new THREE.PlaneGeometry(0.012, 0.09), color: 0xffffff, m: mat4((i - 1) * 0.016, 0.05 + i * 0.012, (i % 2) * 0.012 - 0.006, 0, i * 1.1) }))), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, depthWrite: false, side: THREE.DoubleSide })); steam.visible = false; cafeG.add(steam);
+
+  // coffee boost: walking only, so the ski and flight boards stay fair. Kept for the session, so it survives a trip to a sub-page.
+  let coffee = null; try { coffee = JSON.parse(sessionStorage.getItem("room:coffee")); } catch (e) { /* ignore */ }
+  if (!coffee || !(coffee.until > Date.now()) || !(coffee.mult > 1 && coffee.mult < 1.3)) coffee = null;
+  function coffeeMult() { if (!coffee) return 1; if (Date.now() >= coffee.until) { coffee = null; mem(sessionStorage, "room:coffee", "null"); inv(); toast("Coffee wore off"); return 1; } return coffee.mult; }
+  let lastCoffee = "";
+  function coffeeChip() { // "Coffee +15% 4:32", refreshed once a second
+    const on = !!coffee && Date.now() < coffee.until; let text = "";
+    if (on) { const s = Math.ceil((coffee.until - Date.now()) / 1000); text = `Coffee +${Math.round((coffee.mult - 1) * 100)}% ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+    if (text !== lastCoffee) { lastCoffee = text; el.invCoffee.textContent = text; inv(); }
+  }
+
+  // the robot's job: a list of stops along the bar, then the walk to the pickup shelf
+  let ui = null; // null | "order" | "hire" | "shift" | "end": a card or the game owns the mouse and keys
+  const job = { on: false, steps: [], i: 0, t: 0, phase: "", r: null, st: null, from: null, ready: false, sip: -1 };
+  const SHELF = { x: 10.5, y: CTR.top + 0.022, z: 5.0 };
+  function startJob(r) {
+    const st = { kind: null, ice: 0, shots: 0, milk: "", flav: "", top: "", lid: false }, S = [], kind = kindOf(r), q = REDUCED ? 0.25 : 1;
+    const at = (id, dur, fn, fx) => S.push({ id, z: ST[id].z, dur: dur * q, fn, fx });
+    at(kind, 0.4, () => { st.kind = kind; });
+    if (r.iced) at("ice", 0.5, () => { st.ice = 1; });
+    for (let i = 0; i < r.shots; i++) at("shot", 0.8, () => { st.shots++; }, "shot");
+    if (r.milk) at(r.milk, 0.7, () => { st.milk = r.milk; }, "milk");
+    if (r.flav) at(r.flav, 0.45, () => { st.flav = r.flav; }, "pump");
+    if (r.top) at(r.top, 0.45, () => { st.top = r.top; }, "pump");
+    at("lid", 0.4, () => { st.lid = true; });
+    Object.assign(job, { on: true, steps: S, i: 0, t: 0, phase: "go", r, st, from: { x: bot.position.x, z: bot.position.z }, ready: false, sip: -1 });
+    myCup.show(st); baristaObj.off = true; registerObj.off = true; cupObj.off = true;
+  }
+  const cupSpot = (s) => (s.id === "shot" ? { x: 13.075, y: BAR.top + 0.026, z: ST.shot.z - 0.2 } : s.id === "whole" || s.id === "oat" ? { x: 13.1, y: BAR.top, z: s.z } : { x: 13.13, y: BAR.top, z: s.z });
+  function jobTick(dt) {
+    const p = bot.position;
+    if (!job.on) { // idle: back to the register (or the till during a shift), wipe the counter, watch the player
+      const k = REDUCED ? 1 : 1 - Math.exp(-4 * dt); p.x += (HOME.x - p.x) * k; p.z += (HOME.z - p.z) * k; bot.rotation.y += (HOME.ry - bot.rotation.y) * k;
+      const dx = player.x - p.x, dz = player.z - p.z, near = !shift.cam && player.zone === "cafe";
+      const want = near ? clamp(Math.atan2(-dx, -dz) - bot.rotation.y, -1.1, 1.1) : shift.cam ? shift.look : 0;
+      botHead.rotation.y += (want - botHead.rotation.y) * k; botHead.position.y = 1.38 + (REDUCED ? 0 : Math.sin(time * 1.6) * 0.006);
+      const wipe = !REDUCED && !near && !shift.cam ? Math.sin(time * 2.2) : 0;
+      botArm.rotation.x += ((shift.say > 0 ? 1.0 : wipe ? 0.95 : 0) - botArm.rotation.x) * k; botArm.rotation.z = wipe * 0.35; botArm2.rotation.x += (0 - botArm2.rotation.x) * k;
+      return;
+    }
+    const s = job.steps[job.i], last = job.i >= job.steps.length; job.t += dt;
+    const to = last ? { x: 11.25, z: SHELF.z } : { x: BAR_X, z: s.z }, dist = Math.hypot(to.x - job.from.x, to.z - job.from.z), mv = REDUCED ? 0.05 : Math.max(0.12, dist / 4.6);
+    botHead.rotation.y *= 0.9;
+    if (job.phase === "go") {
+      const k = ease(job.t / mv); p.x = job.from.x + (to.x - job.from.x) * k; p.z = job.from.z + (to.z - job.from.z) * k;
+      bot.rotation.y += ((last ? Math.PI / 2 : FACE_E) - bot.rotation.y) * (REDUCED ? 1 : 1 - Math.exp(-9 * dt));
+      botArm.rotation.x += (1.0 - botArm.rotation.x) * 0.2; botArm.rotation.z = 0;
+      if (job.st.kind) { const fx = Math.sin(bot.rotation.y), fz = Math.cos(bot.rotation.y); myCup.root.position.set(p.x - fx * 0.36, 1.0, p.z - fz * 0.36); }
+      if (job.t >= mv) { job.phase = last ? "set" : "act"; job.t = 0; }
+    } else if (job.phase === "act") {
+      const c = cupSpot(s), k = job.t / s.dur;
+      if (job.st.kind) myCup.root.position.set(c.x, c.y, c.z);
+      botArm.rotation.x = 1.15 + (REDUCED ? 0 : Math.sin(k * Math.PI * (s.fx === "pump" ? 4 : 1)) * 0.25);
+      stream.visible = !REDUCED && (s.fx === "shot" || s.fx === "milk") && k > 0.1 && k < 0.92;
+      if (stream.visible) { stream.material.color.setHex(s.fx === "shot" ? 0x2b170d : 0xf6efe0); const y0 = s.fx === "shot" ? BAR.top + 0.275 : c.y + 0.3; stream.position.set(c.x + (s.fx === "shot" ? 0.005 : 0), y0, c.z); stream.scale.y = y0 - c.y - 0.02; }
+      if (job.t >= s.dur) { s.fn(); myCup.show(job.st); if (s === job.steps[0]) myCup.root.position.set(c.x, c.y, c.z); stream.visible = false; job.i++; job.t = 0; job.phase = "go"; job.from = { x: p.x, z: p.z }; }
+    } else { // set it on the pickup shelf
+      const k = ease(job.t / (REDUCED ? 0.05 : 0.45)); myCup.root.position.set(p.x - 0.36 + (SHELF.x - (p.x - 0.36)) * k, 1.0 + (SHELF.y - 1.0) * k, SHELF.z); botArm.rotation.x = 1.0 + k * 0.3;
+      if (k >= 1) { job.on = false; job.ready = true; cupObj.off = false; cupObj.dest.label = drinkName(job.r); baristaObj.off = false; registerObj.off = false; toast(`${drinkName(job.r)} / Ready at pick up`, 3600); }
+    }
+  }
+  function drinkCup() {
+    if (!job.ready || job.sip >= 0) return;
+    job.sip = 0; cupObj.off = true; setTarget(null);
+  }
+  function sipTick(dt) {
+    if (job.sip < 0) return;
+    job.sip += dt / (REDUCED ? 0.01 : 0.7);
+    const k = Math.min(1, job.sip), e = ease(k); camera.getWorldDirection(tmpF);
+    myCup.root.position.set(SHELF.x + (camera.position.x + tmpF.x * 0.3 - SHELF.x) * e, SHELF.y + (camera.position.y - 0.16 - SHELF.y) * e, SHELF.z + (camera.position.z + tmpF.z * 0.3 - SHELF.z) * e);
+    myCup.root.rotation.x = seg(k, 0.6, 1) * 0.7;
+    if (k >= 1) {
+      job.sip = -1; job.ready = false; myCup.root.rotation.x = 0; myCup.show(null);
+      const mult = job.r.shots > 1 ? 1.15 : 1.1; coffee = { until: Date.now() + 300000, mult }; mem(sessionStorage, "room:coffee", JSON.stringify(coffee));
+      toast(`Coffee / Walk +${Math.round((mult - 1) * 100)}% / 5:00`, 3600); coffeeChip();
+    }
+  }
+
+  // ---------- cards: order, start a shift, end of shift ----------
+  const relock = () => { if (CAN_LOCK && state === "play") { try { const p = el.gl.requestPointerLock(); if (p && p.catch) p.catch(() => {}); } catch (e) { /* stay unlocked: drag to look */ } } };
+  function openCard(kind, html) {
+    ui = kind; keys.clear(); resetJoy(); setTarget(null);
+    if (document.pointerLockElement === el.gl) document.exitPointerLock();
+    el.card.innerHTML = html; hud();
+    const f = el.card.querySelector("[autofocus]") || el.card.querySelector("input, button"); if (f) f.focus({ preventScroll: true });
+  }
+  function closeCard(lock = true) { if (ui === "shift") return; ui = null; el.card.onchange = null; el.card.innerHTML = ""; hud(); el.gl.focus({ preventScroll: true }); if (lock) relock(); }
+  const OPTS = [["temp", "Temp", [["hot", "Hot"], ["iced", "Iced"]]], ["size", "Size", [["small", "Small"], ["large", "Large"]]], ["shots", "Espresso", [["1", "Single"], ["2", "Double"]]], ["milk", "Milk", [["", "None"], ["whole", "Whole"], ["oat", "Oat"]]],
+    ["flav", "Flavour", [["", "None"], ["vanilla", "Vanilla"], ["caramel", "Caramel"], ["mocha", "Mocha"]]], ["top", "Topping", [["", "None"], ["whip", "Whip"], ["cinnamon", "Cinnamon"]]]];
+  const lastOrder = { temp: "hot", size: "small", shots: "1", milk: "whole", flav: "", top: "" };
+  const readOrder = () => { for (const [id] of OPTS) { const c = el.card.querySelector(`input[name="o-${id}"]:checked`); if (c) lastOrder[id] = c.value; } return { iced: lastOrder.temp === "iced", large: lastOrder.size === "large", shots: +lastOrder.shots, milk: lastOrder.milk, flav: lastOrder.flav, top: lastOrder.top }; };
+  function openOrder() {
+    if (job.on) return toast("One at a time / Your drink is on its way");
+    if (job.ready) return toast("One at a time / Your drink is at pick up");
+    openCard("order", `<h1 id="card-title">Order</h1>` + OPTS.map(([id, name, ch], n) => `<div class="row" role="radiogroup" aria-label="${name}"><span>${name}</span><div class="seg">${ch.map(([v, t]) => `<label><input type="radio" name="o-${id}" value="${v}"${lastOrder[id] === v ? " checked" : ""}${!n && lastOrder[id] === v ? " autofocus" : ""}><b>${t}</b></label>`).join("")}</div></div>`).join("") +
+      `<p class="name" id="card-name" aria-live="polite"></p><button class="go" id="card-go" type="button"><span>Order</span><span aria-hidden="true">&rarr;</span></button><button class="alt" id="card-x" type="button"><span>Cancel</span><span aria-hidden="true">Esc</span></button>`);
+    const name = el.card.querySelector("#card-name"), upd = () => { name.textContent = drinkName(readOrder()); }; upd();
+    el.card.onchange = upd;
+    el.card.querySelector("#card-go").addEventListener("click", () => { const r = readOrder(); closeCard(); startJob(r); toast(`${drinkName(r)} / Coming up`); });
+    el.card.querySelector("#card-x").addEventListener("click", () => closeCard());
+  }
+  function openHire() {
+    if (job.on || job.sip >= 0) return toast("The barista is busy / Try again in a moment");
+    const best = CAFEB.mine ? money(CAFEB.mine.ms) : "—";
+    openCard("hire", `<h1 id="card-title">Morning rush</h1><p class="txt">Three minutes behind the bar. Orders print as tickets.<br>Build each drink, lid it, serve it before patience runs out.<br>Fast and correct earns tips. Streaks multiply them.</p>` +
+      `<p class="txt">${TOUCH ? "Tap the station buttons. Tap a ticket to serve it." : "Keys: 1–4 cup / I ice / E shot / M O milk / V C K flavour / W N topping / L lid / Enter serve / X trash / Tab other cup. Or click the stations."}</p>` +
+      `<p class="name">Best today: ${best}</p><button class="go" id="card-go" type="button" autofocus><span>Start shift</span><span aria-hidden="true">&rarr;</span></button><button class="alt" id="card-x" type="button"><span>Not now</span><span aria-hidden="true">Esc</span></button>`);
+    el.card.querySelector("#card-go").addEventListener("click", () => startShift());
+    el.card.querySelector("#card-x").addEventListener("click", () => closeCard());
+  }
+
+  // ---------- best shift today: tips in one three-minute shift (higher is better) ----------
+  const CAFEB = { game: "cafe", tex: cafeTex, title: "BEST SHIFT TODAY", note: "3:00 SHIFT / TIPS", key: "room:cafeday", rows: [], at: -1e9, mine: jget("room:cafeday"), desc: true, fmt: money };
+  if (!CAFEB.mine || CAFEB.mine.day !== skiDay() || !(CAFEB.mine.ms > 0)) CAFEB.mine = null;
+  drawBoard(CAFEB);
+  const boardAct = () => {
+    loadBoard(true, CAFEB);
+    if (CAFEB.mine && !myInitials()) { startEntry(); return toast(TOUCH ? "Enter your initials to post your shift" : "Type your initials, then Enter", 4000); }
+    if (CAFEB.mine) { postTime(CAFEB); return toast(`Your best shift today / ${money(CAFEB.mine.ms)}`); }
+    toast("Work a shift to post your tips");
+  };
+
+  // ---------- the shift ----------
+  const SHIFT_LEN = 180, MAX_TICKETS = 5, NAMES = ["DOT", "KIT", "UNIT 7", "PIP", "BOLT", "MOSS", "RAY", "NOVA", "TIN", "ZED", "ADA", "OTTO", "LUX", "BEEP", "CODA", "FERN", "GUS", "IVY", "JAX", "ORB"];
+  const QSPOT = [[9.72, 1.8], [9.05, 1.9], [8.4, 2.25], [7.8, 2.75], [7.3, 3.3], [6.95, 3.65], [5.6, 3.65], [5.0, 3.65]], WSPOT = [[9.72, 0.35], [9.72, 3.0], [9.72, -0.7], [9.72, 4.0], [9.72, 5.0]];
+  const newSlot = () => ({ kind: null, ice: 0, shots: 0, pull: 0, milk: "", milkPend: "", flav: "", top: "", lid: false });
+  const shift = { on: false, cam: false, t: 0, tips: 0, streak: 0, best: 0, served: 0, wrong: 0, walk: 0, n: 0, nextAt: 0, pairAt: -1, tickets: [], cust: [], slots: [newSlot(), newSlot()], active: 0, heads: [{ t: 0, s: -1 }, { t: 0, s: -1 }], wand: { t: 0, s: -1, milk: "" }, rnd: Math.random, cfg: { g0: 13, g1: 8.67, g2: 3.2, p0: 0.2, p1: 0.35, pat: 24, per: 3, fade: 0.2 }, fb: 0.2, look: 0, say: 0, seq: 0, sig: "", railAt: 0, lastCall: false, mark: { id: "", t: 9 } };
+  // shift.cfg was tuned with a bot: seconds between arrivals at 0:00, 2:00 and 2:50 (g0, g1, g2); chance an arrival brings a friend before and during the rush (p0, p1); patience in seconds (pat + per x components), shrinking by `fade` over the shift
+  const mulberry = (a) => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  // customers: a small pool of one-mesh bots
+  const custPool = [];
+  { const tones = [0xd9655b, 0x5b8fd9, 0x6dbb7a, 0xe0b54a, 0xb07ad6, 0xe38b4f, 0x58b8b0, 0xd97aa6, 0x8c9aa8, 0xc9c36a];
+    for (let i = 0; i < 10; i++) { const k = kit(), h = 0.9 + (i % 3) * 0.12, w = 0.42 + (i % 2) * 0.06;
+      k.b(w, h * 0.6, 0.3, 0xffffff, 0, 0.16 + h * 0.3, 0); k.b(w * 0.5, 0.16, 0.2, 0x6b6b66, 0, 0.08, 0); k.b(w * 0.84, 0.3, 0.28, 0xffffff, 0, 0.16 + h * 0.6 + 0.19, 0); k.b(w * 0.66, 0.1, 0.012, 0x1b1b1b, 0, 0.16 + h * 0.6 + 0.2, -0.142);
+      for (const sx of [-1, 1]) { k.b(0.05, 0.05, 0.012, 0xdfeaff, sx * w * 0.17, 0.16 + h * 0.6 + 0.2, -0.148); k.b(0.07, h * 0.36, 0.08, 0x8c8c86, sx * (w / 2 + 0.045), 0.16 + h * 0.36, 0); }
+      if (i % 2) { k.b(0.014, 0.14, 0.014, 0x1b1b1b, 0.08, 0.16 + h * 0.6 + 0.41, 0); k.b(0.04, 0.04, 0.04, 0xdfeaff, 0.08, 0.16 + h * 0.6 + 0.5, 0); } else k.b(w * 0.5, 0.05, 0.2, 0x6b6b66, 0, 0.16 + h * 0.6 + 0.365, 0);
+      const m = new THREE.Mesh(bake(k.list), new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true, color: tones[i] })); m.visible = false; cafeG.add(m); custPool.push({ m, free: true, top: 0.16 + h * 0.6 + 0.4 }); } }
+  const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.012, 10), new THREE.MeshBasicMaterial({ color: 0xf2b632, toneMapped: false })); coin.visible = false; cafeG.add(coin); let coinT = -1; const coinFrom = new THREE.Vector3();
+  // station markers: a frame round the hovered or pressed station, another round the active cup slot
+  const frameMesh = (c) => { const q = []; for (const [w, d, x, z] of [[1, 0.06, 0, -0.5], [1, 0.06, 0, 0.5], [0.06, 1, -0.5, 0], [0.06, 1, 0.5, 0]]) q.push({ geo: new THREE.BoxGeometry(w, 0.012, d), color: 0xffffff, m: mat4(x, 0, z) }); const m = new THREE.Mesh(bake(q), new THREE.MeshBasicMaterial({ color: c, toneMapped: false })); m.visible = false; cafeG.add(m); return m; };
+  const stMark = frameMesh(C.signalHi), slotMark = frameMesh(0xffffff);
+  const stHits = []; // invisible click targets in the shift view
+  for (const id of Object.keys(ST)) { const s = ST[id]; if (s.z === undefined) continue; const w = s.w || 0.28, m = new THREE.Mesh(new THREE.BoxGeometry(0.62, id === "trash" ? 0.7 : 0.6, w)); m.position.set(13.3, id === "trash" ? 0.35 : BAR.top + 0.3, s.z); m.visible = false; m.userData.act = id; m.updateMatrixWorld(true); stHits.push(m); }
+  MATS.forEach((p, i) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.5, 0.4)); m.position.set(p.x, BAR.top + 0.25, p.z); m.userData.slot = i; m.updateMatrixWorld(true); stHits.push(m); });
+  const custHit = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.7, 0.6)); // moved onto each waiting customer when testing a click
+
+  function shiftCam() { // fixed view from above and behind the bar: back bar just over the station buttons, then the aisle, the counter and the customers. Higher on narrow screens.
+    const vt = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), r = clamp(4.35 / (vt * camera.aspect), 3.7, 7.5), B = 1.326, pitch = B - Math.atan((1 - 2 * shift.fb - 0.05) * vt);
+    camera.position.set(CF.x1 + r * Math.cos(B), BAR.top + r * Math.sin(B), 1.5); camera.rotation.set(-pitch, Math.PI / 2, 0);
+  }
+  function shiftFit() { const h = el.room.clientHeight || 1; shift.fb = clamp((el.shiftBottom.offsetHeight + 12) / h, 0.1, 0.42); }
+  window.addEventListener("resize", () => { if (shift.cam) setTimeout(shiftFit, 60); });
+  function genOrder(i, t) {
+    const R = shift.rnd, late = t > 120, mid = i >= 3;
+    const r = { iced: R() < 0.42, large: R() < 0.5, shots: 1, milk: "", flav: "", top: "" };
+    if (!mid) { if (R() < 0.6) r.milk = R() < 0.6 ? "whole" : "oat"; if (r.iced && r.milk) return r; if (!r.iced && R() < 0.35) r.shots = 2; return r; }
+    if (R() < (late ? 0.5 : 0.35)) r.shots = 2;
+    if (R() < (late ? 0.85 : 0.75)) r.milk = R() < 0.55 ? "whole" : "oat";
+    if (R() < (late ? 0.7 : 0.5)) r.flav = ["vanilla", "caramel", "mocha"][Math.floor(R() * 3)];
+    if (R() < (late ? 0.5 : 0.1)) r.top = R() < 0.5 ? "whip" : "cinnamon";
+    return r;
+  }
+  function spawnCustomer() {
+    const c = custPool.find((q) => q.free); if (!c) return;
+    c.free = false; c.m.visible = true; c.x = 5.2; c.z = 3.65; c.path = [[6.95, 3.65]]; c.state = "queue"; c.name = NAMES[shift.n % NAMES.length]; c.mood = 0; c.wait = 0; c.ticket = null; c.id = shift.n++; c.m.position.set(c.x, 0, c.z); c.m.rotation.set(0, FACE_E, 0);
+    shift.cust.push(c);
+  }
+  function leave(c, mood) { c.state = "out"; c.mood = mood; c.moodT = 0; c.ticket = null; c.path = [[7.0, 3.65], [5.2, 3.65]]; }
+  function say(text) { shift.say = 2.4; el.say.textContent = text; el.say.hidden = false; }
+  function popAt(x, y, z, text, bad) {
+    tmpV.set(x, y, z).project(camera); const d = document.createElement("div"); d.className = "pop" + (bad ? " bad" : ""); d.textContent = text;
+    d.style.left = `${clamp((tmpV.x * 0.5 + 0.5) * 100, 12, 88)}%`; d.style.top = `${clamp((-tmpV.y * 0.5 + 0.5) * 100, 14, 80)}%`; // kept clear of the screen edges el.pops.appendChild(d); setTimeout(() => d.remove(), 1000);
+  }
+  const tokens = (r) => [[r.large ? "L" : "S", "size"], [r.iced ? "ICED" : "HOT", "temp"], [`${r.shots}×`, "shots"], r.milk && [r.milk.toUpperCase(), "milk"], r.flav && [r.flav.toUpperCase(), "flav"], r.top && [r.top === "cinnamon" ? "CINN" : "WHIP", "top"]].filter(Boolean);
+  const tokDone = (s, r, key) => s.kind && s.kind[0] === (r.iced ? "i" : "h") && (key === "size" ? s.kind === kindOf(r) : key === "temp" ? s.kind === kindOf(r) && (!r.iced || s.ice === 1) : key === "shots" ? s.kind === kindOf(r) && s.shots === r.shots : key === "milk" ? s.milk === r.milk : key === "flav" ? s.flav === r.flav : s.top === r.top);
+  const fits = (s, r) => s.kind === kindOf(r) && (!s.ice || r.iced) && s.shots + s.pull <= r.shots && (!(s.milk || s.milkPend) || (s.milk || s.milkPend) === r.milk) && (!s.flav || s.flav === r.flav) && (!s.top || s.top === r.top);
+  const exact = (s, r) => s.kind === kindOf(r) && s.ice === (r.iced ? 1 : 0) && s.shots === r.shots && !s.pull && s.milk === r.milk && !s.milkPend && s.flav === r.flav && s.top === r.top && s.lid;
+  const wantedBy = (s) => (s.kind ? shift.tickets.find((t) => fits(s, t.r)) : null); // the oldest ticket this cup can still become
+  function resetSlot(i) { for (const h of shift.heads) if (h.s === i) { h.t = 0; h.s = -1; } if (shift.wand.s === i) { shift.wand.t = 0; shift.wand.s = -1; } shift.slots[i] = newSlot(); }
+  function serveTo(t) {
+    const i = shift.active, s = shift.slots[i];
+    if (!s.kind) return hint("No cup / Pick a cup first");
+    if (s.pull || s.milkPend) return hint("Wait for the machine");
+    if (!s.lid) return hint("Lid it first");
+    if (!t) return hint("No orders waiting");
+    const c = t.cust, y = c.top + 0.25;
+    if (exact(s, t.r)) {
+      shift.streak++; shift.best = Math.max(shift.best, shift.streak); shift.served++;
+      const mult = shift.streak >= 10 ? 2 : shift.streak >= 6 ? 1.5 : shift.streak >= 3 ? 1.25 : 1, gain = Math.round((200 + 25 * t.comps + 150 * Math.max(0, t.left / t.max)) * mult);
+      if (mult === 2 && shift.streak === 10) toast("×2 / On a roll", 2200);
+      shift.tips += gain; popAt(c.x, y, c.z, `+${money(gain)}`); coinFrom.set(c.x, 1.1, c.z); coinT = 0;
+      shift.tickets.splice(shift.tickets.indexOf(t), 1); leave(c, 1);
+    } else {
+      shift.streak = 0; shift.wrong++; shift.tips = Math.max(0, shift.tips - 100); popAt(c.x, y, c.z, "Wrong order −$1.00", true); c.mood = -1; c.moodT = 0; flash("Wrong order");
+    }
+    resetSlot(i); if (shift.slots[1 - i].kind) shift.active = 1 - i;
+  }
+  function flash(text) { el.flash.textContent = text; el.flash.hidden = false; clearTimeout(flash.t); flash.t = setTimeout(() => { el.flash.hidden = true; }, 900); }
+  function doAct(id) { // every key, button and 3D click ends up here
+    if (!shift.on || state !== "play") return;
+    if (id === "tab") { shift.active = 1 - shift.active; return; }
+    if (id === "serve") return serveTo(shift.tickets.find((t) => exact(shift.slots[shift.active], t.r)) || shift.tickets[0]);
+    shift.mark.id = id; shift.mark.t = 0;
+    const i = shift.active, s = shift.slots[i];
+    if (id === "trash") { if (!s.kind) return hint("Nothing to bin"); return resetSlot(i); }
+    if (id.length === 2) { if (s.kind) return hint("Cup already down / X bins it"); s.kind = id; return; }
+    if (!s.kind) return hint("Pick a cup first");
+    if (s.lid) return hint("Already lidded / Serve or bin it");
+    if (id === "ice") { if (s.kind[0] === "h") return hint("Ice goes in iced cups"); if (s.ice) return hint("Already iced"); s.ice = 1; }
+    else if (id === "shot") { if (s.shots + s.pull >= 2) return hint("Two shots at most"); const h = shift.heads.find((q) => q.t <= 0); if (!h) return hint("Both group heads busy"); h.t = 1.2; h.s = i; s.pull++; }
+    else if (id === "whole" || id === "oat") { if (s.milk || s.milkPend) return hint("Already has milk"); if (s.kind[0] === "i") s.milk = id; else { if (shift.wand.t > 0) return hint("Steam wand busy"); shift.wand.t = 1.0; shift.wand.s = i; shift.wand.milk = id; s.milkPend = id; } }
+    else if (id === "vanilla" || id === "caramel" || id === "mocha") { if (s.flav) return hint("One flavour per cup"); s.flav = id; }
+    else if (id === "whip" || id === "cinnamon") { if (s.top) return hint("One topping per cup"); s.top = id; }
+    else if (id === "lid") { if (s.pull || s.milkPend) return hint("Wait for the machine"); s.lid = true; }
+  }
+  function startShift() {
+    ui = "shift"; el.card.innerHTML = ""; el.room.classList.add("shift");
+    if (document.pointerLockElement === el.gl) document.exitPointerLock(); // the shift is played with the cursor
+    Object.assign(shift, { on: true, t: 0, tips: 0, streak: 0, best: 0, served: 0, wrong: 0, walk: 0, n: 0, nextAt: 2, pairAt: -1, tickets: [], slots: [newSlot(), newSlot()], active: 0, say: 0, seq: 0, sig: "", lastCall: false, rushed: false, rnd: shift.seed ? mulberry(shift.seed) : Math.random });
+    for (const c of shift.cust) { c.free = true; c.m.visible = false; } shift.cust = []; for (const h of shift.heads) { h.t = 0; h.s = -1; } shift.wand.t = 0; shift.wand.s = -1;
+    el.pops.innerHTML = ""; el.say.hidden = true; el.flash.hidden = true;
+    annexShell.visible = false; cafeTop.visible = false; ticketRail.visible = true;
+    if (!shift.cam) { shift.cam = true; fromPose.pos.copy(camera.position); fromPose.quat.copy(camera.quaternion); shiftCam(); toPose.pos.copy(camera.position); toPose.quat.copy(camera.quaternion); if (!REDUCED) tween = { t: 0, dur: 0.6 }; }
+    HOME.x = 11.25; HOME.z = 1.8; hud(); shiftDom(true); shiftFit(); if (tween) { shiftCam(); toPose.pos.copy(camera.position); toPose.quat.copy(camera.quaternion); } el.gl.focus({ preventScroll: true });
+  }
+  function endShift(quit) {
+    shift.on = false; for (const c of shift.cust) if (c.state !== "out") leave(c, 0); shift.tickets = []; shift.slots = [newSlot(), newSlot()]; shiftDom(true);
+    if (quit) return clockOut();
+    const tips = Math.round(shift.tips), day = skiDay(), b = CAFEB; if (b.mine && b.mine.day !== day) b.mine = null;
+    const best = tips > 0 && (!b.mine || tips > b.mine.ms);
+    if (best) { b.mine = { day, ms: tips, posted: b.mine ? b.mine.posted : 0 }; jset(b.key, b.mine); }
+    if (best && myInitials()) postTime(b); else drawBoard(b);
+    const tot = shift.served + shift.wrong, acc = tot ? Math.round((shift.served / tot) * 100) : 0, auto = best && !!myInitials(), can = b.mine && b.mine.posted !== b.mine.ms && !auto;
+    ui = "end"; hud();
+    el.card.innerHTML = `<h1 id="card-title">Shift over</h1><dl class="stats"><dt>Tips</dt><dd>${money(tips)}</dd><dt>Drinks served</dt><dd>${shift.served}</dd><dt>Accuracy</dt><dd>${tot ? acc + "%" : "—"}</dd><dt>Best streak</dt><dd>${shift.best}</dd><dt>Walk-outs</dt><dd>${shift.walk}</dd></dl>` +
+      `<p class="name">Best today: ${b.mine ? money(b.mine.ms) : "—"}${best ? " / New best" : ""}</p>` + (can ? (myInitials() ? `<button class="alt" id="card-post" type="button"><span>Post to board</span><span aria-hidden="true">&rarr;</span></button>` : `<button class="alt" id="card-post" type="button"><span>Enter initials to post it</span><span aria-hidden="true">&rarr;</span></button><p class="txt">Or press the board on the wall later.</p>`) : auto && SB.on ? `<p class="txt">Posted to the board as ${myInitials()}.</p>` : "") +
+      `<button class="go" id="card-go" type="button" autofocus><span>Play again</span><span aria-hidden="true">&rarr;</span></button><button class="alt" id="card-x" type="button"><span>Clock out</span><span aria-hidden="true">Esc</span></button>`;
+    const post = el.card.querySelector("#card-post"); if (post) post.addEventListener("click", () => { if (myInitials()) { postTime(CAFEB); post.hidden = true; } else startEntry(); });
+    el.card.querySelector("#card-go").addEventListener("click", () => startShift());
+    el.card.querySelector("#card-x").addEventListener("click", () => clockOut());
+    el.card.querySelector("#card-go").focus({ preventScroll: true });
+  }
+  function clockOut(lock = true) { // back to the customer side of the counter, on foot
+    shift.on = false; ui = null; el.card.innerHTML = ""; el.room.classList.remove("shift"); el.pops.innerHTML = ""; el.say.hidden = true; el.flash.hidden = true; if (entry) endEntry(false);
+    for (const c of shift.cust) { c.free = true; c.m.visible = false; } shift.cust = []; shift.tickets = []; slotCups.forEach((c) => c.show(null)); stMark.visible = slotMark.visible = coin.visible = false; coinT = -1;
+    annexShell.visible = true; cafeTop.visible = true; ticketRail.visible = false; HOME.x = 11.3;
+    Object.assign(player, { x: 9.3, z: 2.6, yaw: -Math.PI / 2, pitch: -0.06, vx: 0, vz: 0, vy: 0, y: 0, ground: true, zone: "cafe" });
+    fromPose.pos.copy(camera.position); fromPose.quat.copy(camera.quaternion); shift.cam = false; if (!REDUCED) tween = { t: 0, dur: 0.6, follow: true }; else updateWalk(0);
+    hud(); el.gl.focus({ preventScroll: true }); if (lock) relock();
+  }
+  // DOM for the shift: tickets along the top, cup cards and the station bar along the bottom
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  el.stations.innerHTML = Object.keys(ST).map((id) => `<button type="button" data-a="${id}"${id === "serve" ? ' class="serve"' : ""} aria-label="${ST[id].n}, key ${ST[id].k}"><span>${ST[id].s || ST[id].n}</span><kbd>${ST[id].k === "Enter" ? "↵" : ST[id].k}</kbd></button>`).join("");
+  el.stations.addEventListener("click", (e) => { const b = e.target.closest("[data-a]"); if (b) { doAct(b.dataset.a); shiftDom(); } });
+  el.stations.addEventListener("pointerover", (e) => { const b = e.target.closest("[data-a]"); shift.hover = b ? b.dataset.a : ""; });
+  el.stations.addEventListener("pointerleave", () => { shift.hover = ""; });
+  el.tickets.addEventListener("click", (e) => { const b = e.target.closest("[data-t]"); if (b) { serveTo(shift.tickets.find((t) => t.id === +b.dataset.t)); shiftDom(); } });
+  el.cups.addEventListener("click", (e) => { const b = e.target.closest("[data-s]"); if (b) { shift.active = +b.dataset.s; shiftDom(); } });
+  el.shPause.addEventListener("click", () => pause());
+  function shiftDom(force) {
+    const a = shift.slots[shift.active], fit = wantedBy(a);
+    const sig = shift.tickets.map((t) => `${t.id}${t.left / t.max <= 0.25 ? "!" : ""}${t === fit ? "*" : ""}`).join(",") + "|" + shift.slots.map((s) => JSON.stringify(s)).join("") + shift.active + "|" + shift.served + "|" + shift.streak;
+    if (sig !== shift.sig || force) {
+      shift.sig = sig;
+      el.tickets.innerHTML = shift.tickets.map((t) => { const low = t.left / t.max <= 0.25, mine = t === fit;
+        return `<button type="button" class="tk${low ? " low" : ""}${mine ? " fit" : ""}" data-t="${t.id}" aria-label="Serve ${esc(t.cust.name)}: ${esc(drinkName(t.r))}"><span class="who"><span>${esc(t.cust.name)}</span><span>${low ? "Hurry" : mine ? "This cup" : ""}</span></span><span class="nm">${esc(drinkName(t.r))}</span><span class="cmp">${tokens(t.r).map(([txt, key]) => { const ok = mine && tokDone(a, t.r, key); return `<i${ok ? ' class="ok"' : ""}>${ok ? "✓" : ""}${txt}</i>`; }).join("")}</span><span class="bar"><b></b></span></button>`; }).join("");
+      el.cups.innerHTML = shift.slots.map((s, i) => { const t = wantedBy(s), mark = (ok) => (ok ? "✓" : "✗"), parts = [];
+        if (s.kind) { const best = t ? t.r : null;
+          parts.push(`${best ? "✓" : mark(shift.tickets.some((q) => kindOf(q.r) === s.kind))}${s.kind[0] === "i" ? "Iced" : "Hot"} ${s.kind[1] === "l" ? "L" : "S"}`);
+          const any = (f) => (best ? f(best) : shift.tickets.some((q) => kindOf(q.r) === s.kind && f(q.r)));
+          if (s.ice) parts.push(`${mark(any((r) => r.iced))}Ice`);
+          if (s.shots) parts.push(`${mark(any((r) => r.shots >= s.shots + s.pull))}${s.shots}× shot`);
+          if (s.pull) parts.push(`…pulling`);
+          if (s.milk) parts.push(`${mark(any((r) => r.milk === s.milk))}${cap(s.milk)}`);
+          if (s.milkPend) parts.push(`…steaming`);
+          if (s.flav) parts.push(`${mark(any((r) => r.flav === s.flav))}${cap(s.flav)}`);
+          if (s.top) parts.push(`${mark(any((r) => r.top === s.top))}${cap(s.top)}`);
+          if (s.lid) parts.push(`Lidded`);
+        }
+        return `<button type="button" class="cupc${i === shift.active ? " on" : ""}" data-s="${i}" aria-pressed="${i === shift.active}"><u>Cup ${i + 1}${i === shift.active ? " / Active" : ""}</u><span>${parts.length ? parts.join(" · ") : "Empty / Pick a cup"}</span></button>`; }).join("");
+      const mult = shift.streak >= 10 ? "×2" : shift.streak >= 6 ? "×1.5" : shift.streak >= 3 ? "×1.25" : "×1";
+      el.shStreak.textContent = `Streak ${shift.streak} / ${mult}${shift.streak >= 10 ? " / On a roll" : ""}`; el.shServed.textContent = `${shift.served} served`;
+    }
+    const bars = el.tickets.querySelectorAll(".bar b"); shift.tickets.forEach((t, i) => { if (bars[i]) bars[i].style.transform = `scaleX(${Math.max(0, t.left / t.max).toFixed(3)})`; });
+    const left = Math.max(0, SHIFT_LEN - shift.t), txt = `${Math.floor(Math.ceil(left) / 60)}:${String(Math.ceil(left) % 60).padStart(2, "0")}`;
+    if (el.shTime.textContent !== txt) { el.shTime.textContent = txt; el.shTime.classList.toggle("last", left <= 10); }
+    const tips = money(Math.round(shift.tips)); if (el.shTips.textContent !== tips) el.shTips.textContent = tips;
+  }
+  function drawRail() { // the paper slips on the 3D rail
+    const cv = ticketRail.material.map.image, g = cv.getContext("2d"), W = cv.width, H = cv.height; g.clearRect(0, 0, W, H);
+    shift.tickets.forEach((t, i) => { const x = 8 + i * 204, low = t.left / t.max <= 0.25;
+      g.fillStyle = "#fbfbf7"; g.fillRect(x, 0, 190, H - 8); g.fillStyle = low ? "#c62828" : "#141414"; g.fillRect(x, 0, 190, 34); g.fillStyle = "#f3f3ef"; g.font = `700 22px ${F_MONO}`; g.textBaseline = "middle"; g.textAlign = "left"; fitText(g, t.cust.name, x + 8, 18, 174);
+      g.fillStyle = "#141414"; g.font = `700 20px ${F_MONO}`; const tk = tokens(t.r).map((q) => q[0]); fitText(g, tk.slice(0, 3).join(" "), x + 8, 60, 174); fitText(g, tk.slice(3).join(" "), x + 8, 90, 174);
+      g.fillStyle = "#d6d6cf"; g.fillRect(x + 8, 120, 174, 14); g.fillStyle = low ? "#c62828" : "#141414"; g.fillRect(x + 8, 120, 174 * Math.max(0, t.left / t.max), 14); });
+    ticketRail.material.map.needsUpdate = true;
+  }
+  function shiftTick(dt) {
+    if (shift.on && state === "play") {
+      shift.t += dt; const t = shift.t;
+      // arrivals: the gap shrinks from 13 s to under 9 s over two minutes, then the closing rush takes it to about 3 s. After the first minute some arrivals bring a friend.
+      if (t < SHIFT_LEN - 10) {
+        if (t >= shift.nextAt) { spawnCustomer(); const R = shift.rnd, rush = t > 120, G = shift.cfg, gap = rush ? G.g1 + (G.g2 - G.g1) * ((t - 120) / 50) : G.g0 + (G.g1 - G.g0) * (t / 120); shift.nextAt = t + gap * (0.8 + R() * 0.4); if (t > 60 && R() < (rush ? G.p1 : G.p0)) shift.pairAt = t + 1 + R(); }
+        if (t > 120 && !shift.rushed) { shift.rushed = true; toast("Closing rush", 2200); }
+        if (shift.pairAt > 0 && t >= shift.pairAt) { shift.pairAt = -1; spawnCustomer(); }
+      } else if (!shift.lastCall) { shift.lastCall = true; toast("Last call", 2200); }
+      for (const h of shift.heads) if (h.t > 0) { h.t -= dt; if (h.t <= 0) { const s = shift.slots[h.s]; if (s && s.pull) { s.pull--; s.shots++; } h.s = -1; } }
+      if (shift.wand.t > 0) { shift.wand.t -= dt; if (shift.wand.t <= 0) { const s = shift.slots[shift.wand.s]; if (s && s.milkPend) { s.milk = s.milkPend; s.milkPend = ""; } shift.wand.s = -1; } }
+      for (const tk of shift.tickets.slice()) { tk.left -= dt; if (tk.left <= 0) { shift.tickets.splice(shift.tickets.indexOf(tk), 1); shift.streak = 0; shift.walk++; shift.tips = Math.max(0, shift.tips - 150); popAt(tk.cust.x, tk.cust.top + 0.25, tk.cust.z, "Walked out −$1.50", true); leave(tk.cust, -1); } }
+      // the queue: the customer at the till orders as soon as there is room on the rail
+      const q = shift.cust.filter((c) => c.state === "queue");
+      q.forEach((c, i) => { const s = QSPOT[Math.min(i, QSPOT.length - 1)]; if (c.path.length <= 1) c.path = c.x < 6.6 && s[0] > 6.9 ? [[6.95, 3.65], s] : [s]; });
+      const head = q[0];
+      if (head && Math.hypot(head.x - QSPOT[0][0], head.z - QSPOT[0][1]) < 0.06 && shift.tickets.length < MAX_TICKETS) {
+        head.wait += dt;
+        if (head.wait > 0.7) { const r = genOrder(shift.seq, t), comps = compsOf(r), max = (shift.cfg.pat + shift.cfg.per * comps) * (1 - shift.cfg.fade * (t / SHIFT_LEN)) * (0.9 + shift.rnd() * 0.2), used = new Set(shift.cust.filter((c) => c.state === "wait").map((c) => c.spot)), spot = [0, 1, 2, 3, 4].find((k) => !used.has(k));
+          const tk = { id: ++shift.seq, r, comps, max, left: max, cust: head }; shift.tickets.push(tk); head.ticket = tk; head.state = "wait"; head.spot = spot; head.path = [WSPOT[spot]];
+          say(`${drinkName(r)}, for ${head.name}`); shift.look = clamp(Math.atan2(-(head.x - bot.position.x), -(head.z - bot.position.z)) - HOME.ry, -1, 1); }
+      }
+      if (shift.say > 0) { shift.say -= dt; if (shift.say <= 0) el.say.hidden = true; }
+      if (t >= SHIFT_LEN) endShift(false);
+    }
+    if (!shift.cam) return;
+    // customers walk, fidget, bob and slump whether or not the clock is running
+    const run = state === "play";
+    for (const c of shift.cust.slice()) {
+      const p = c.path[0];
+      if (p && run) { const dx = p[0] - c.x, dz = p[1] - c.z, d = Math.hypot(dx, dz), st = (REDUCED ? 40 : 1.9) * dt;
+        if (d <= st) { c.x = p[0]; c.z = p[1]; if (c.path.length > 1 || c.state === "out") c.path.shift(); } else { c.x += (dx / d) * st; c.z += (dz / d) * st; c.m.rotation.y = Math.atan2(-dx, -dz); }
+        if (c.state === "out" && !c.path.length) { c.free = true; c.m.visible = false; shift.cust.splice(shift.cust.indexOf(c), 1); continue; } }
+      if (!p || (c.state !== "out" && c.path.length === 1 && c.x === p[0] && c.z === p[1])) c.m.rotation.y += (FACE_E - c.m.rotation.y) * 0.2;
+      if (run) c.moodT = (c.moodT || 0) + dt;
+      const low = c.ticket && c.ticket.left / c.ticket.max <= 0.25;
+      let y = 0, tilt = 0, jx = 0;
+      if (!REDUCED) { if (c.mood > 0 && c.moodT < 0.7) y = Math.abs(Math.sin(c.moodT * 9)) * 0.14; else if (c.mood < 0) { tilt = 0.22 * Math.min(1, c.moodT * 4); if (c.state !== "out" && c.moodT < 0.6) jx = Math.sin(c.moodT * 40) * 0.03; } else if (low) jx = Math.sin(time * 26 + c.id) * 0.018; }
+      else if (c.mood < 0) tilt = 0.22;
+      if (c.mood < 0 && c.state !== "out" && c.moodT > 1) c.mood = 0;
+      c.m.position.set(c.x + jx, y, c.z); c.m.rotation.x = tilt;
+    }
+    if (coinT >= 0) { coinT += dt / (REDUCED ? 0.01 : 0.55); const k = Math.min(1, coinT); coin.visible = k < 1; coin.position.set(coinFrom.x + (10.48 - coinFrom.x) * k, 1.1 + Math.sin(k * Math.PI) * 0.7 + (1.12 - 1.1) * k, coinFrom.z + (2.3 - coinFrom.z) * k); coin.rotation.x = k * 9; if (k >= 1) coinT = -1; }
+    if (!shift.on) return;
+    // cups on the mat, markers, speech bubble, rail, DOM
+    shift.slots.forEach((s, i) => { const c = slotCups[i]; c.show(s.kind ? s : null); c.root.position.set(MATS[i].x, BAR.top + 0.01, MATS[i].z); c.root.scale.setScalar(2); c.tick(dt); });
+    slotMark.visible = true; slotMark.position.set(MATS[shift.active].x, BAR.top + 0.014, MATS[shift.active].z); slotMark.scale.set(0.34, 1, 0.4);
+    shift.mark.t += dt; const mid = shift.mark.t < 0.25 ? shift.mark.id : shift.hover || "", ms = ST[mid];
+    stMark.visible = !!(ms && ms.z !== undefined);
+    if (stMark.visible) { const w = (ms.w || 0.28) + 0.06, pulse = shift.mark.t < 0.25 && !REDUCED ? 1 + Math.sin((shift.mark.t / 0.25) * Math.PI) * 0.25 : 1; stMark.position.set(13.3, mid === "trash" ? 0.62 : BAR.top + 0.014, ms.z); stMark.scale.set(0.6 * pulse, 1, w * pulse); stMark.material.color.setHex(shift.mark.t < 0.25 ? 0xffffff : C.signalHi); }
+    if (!el.say.hidden) { tmpV.set(bot.position.x, 1.95, bot.position.z).project(camera); el.say.style.left = `${(tmpV.x * 0.5 + 0.5) * 100}%`; el.say.style.top = `${(-tmpV.y * 0.5 + 0.5) * 100}%`; }
+    if (time - shift.railAt > 0.4) { shift.railAt = time; drawRail(); }
+    shiftDom();
+  }
+  // clicks in the shift view: stations, cup slots, waiting customers
+  function shiftClick(e) {
+    const r = el.gl.getBoundingClientRect(); ray.setFromCamera(tmpN.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+    let best = null, bd = 1e9;
+    for (const c of shift.cust) { if (c.state !== "wait") continue; custHit.position.set(c.x, 0.85, c.z); custHit.updateMatrixWorld(true); const h = ray.intersectObject(custHit, false)[0]; if (h && h.distance < bd) { bd = h.distance; best = { t: c.ticket }; } }
+    const h = ray.intersectObjects(stHits, false)[0]; if (h && h.distance < bd) best = h.object.userData;
+    if (!best) return;
+    if (best.t) serveTo(best.t); else if (best.slot !== undefined) shift.active = best.slot; else doAct(best.act);
+    shiftDom();
+  }
+  const tmpN = new THREE.Vector2();
+  el.gl.addEventListener("pointermove", (e) => { if (ui !== "shift" || state !== "play" || e.pointerType === "touch") return; const r = el.gl.getBoundingClientRect(); ray.setFromCamera(tmpN.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera); const h = ray.intersectObjects(stHits, false)[0]; shift.hover = h && h.object.userData.act ? h.object.userData.act : ""; el.gl.style.cursor = h ? "pointer" : ""; });
+  const SKEY = { Digit1: "hs", Digit2: "hl", Digit3: "is", Digit4: "il", Numpad1: "hs", Numpad2: "hl", Numpad3: "is", Numpad4: "il", KeyI: "ice", KeyE: "shot", KeyM: "whole", KeyO: "oat", KeyV: "vanilla", KeyC: "caramel", KeyK: "mocha", KeyW: "whip", KeyN: "cinnamon", KeyL: "lid", Enter: "serve", NumpadEnter: "serve", KeyX: "trash", Tab: "tab" };
+  function cafeKey(e) { // returns true when the café owns this key
+    if (!ui) return false;
+    if (ui === "shift") { if (e.code === "Escape" || e.code === "KeyP") { e.preventDefault(); pause(); return true; } const a = SKEY[e.code]; if (a && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); if (!e.repeat) { doAct(a); shiftDom(); } } return true; }
+    if (e.code === "Escape") { e.preventDefault(); if (ui === "end") clockOut(false); else closeCard(false); } // no pointer lock from Esc: the browser would drop it again. The next click takes the mouse back.
+    else if (e.code === "Enter" && ui === "order" && e.target && e.target.tagName === "INPUT") { e.preventDefault(); el.card.querySelector("#card-go").click(); }
+    return true;
+  }
+  function cafeFrame(dt) {
+    cafeG.visible = shift.cam || (mode === "walk" && player.zone !== "deck" && player.zone !== "field");
+    if (!cafeG.visible) return;
+    if (state === "play") { jobTick(dt); sipTick(dt); }
+    myCup.tick(dt);
+    const hotCup = myCup.root.visible && myCup.st && myCup.st.kind && myCup.st.kind[0] === "h" && myCup.st.shots > 0 && !myCup.st.lid;
+    steam.visible = hotCup; if (hotCup) { steam.position.copy(myCup.root.position); steam.position.y += 0.11; steam.rotation.y = REDUCED ? 0 : time * 0.8; steam.scale.y = REDUCED ? 1 : 1 + Math.sin(time * 3) * 0.2; }
+    shiftTick(dt);
+    if (time - (coffeeChip.at || 0) > 0.5) { coffeeChip.at = time; coffeeChip(); }
+  }
+  const baristaObj = addProp({ id: "barista", label: "Barista-01 / Order" }, hitBox(0.7, 1.75, 0.7, HOME.x, 0.9, HOME.z), "cafe", openOrder);
+  const registerObj = addProp({ id: "register", label: "Order here" }, hitBox(0.5, 0.5, 0.5, 10.5, CTR.top + 0.2, 1.8), "cafe", openOrder);
+  const cupObj = addProp({ id: "coffee", label: "Coffee" }, hitBox(0.3, 0.34, 0.3, SHELF.x, SHELF.y + 0.1, SHELF.z), "cafe", drinkCup, { off: true });
+  addProp({ id: "apron", label: "Apron / Work a shift" }, hitBox(0.2, 0.8, 0.5, CTR.x0 + 0.1, 1.4, -2.48), "cafe", openHire);
+  addProp({ id: "staffgate", label: "Staff only / Work a shift" }, hitBox(0.3, 1.0, 1.0, 10.5, 0.55, -1.9), "cafe", openHire);
+  addProp({ id: "cafeboard", label: "Shift board" }, cafeBoard, "cafe", boardAct);
+  if (new URLSearchParams(location.search).has("test")) window.__cafe = { shift, job, ST, doAct, startShift, endShift, clockOut, openOrder, openHire, startJob, drinkCup, drinkName, exact, fits, tokens, shiftTick, cafeFrame, jobTick, coffeeMult, get ui() { return ui; }, get coffee() { return coffee; }, set coffee(v) { coffee = v; }, CAFEB, player, camera, cafeColliders, step: (dt) => { time += dt; cafeFrame(dt); }, draw: () => renderer.info.render.calls };
+
   function pushOut(list) {
     for (const c of list) {
       const nx = Math.min(c.maxX, Math.max(c.minX, player.x)), nz = Math.min(c.maxZ, Math.max(c.minZ, player.z));
@@ -1896,14 +2598,21 @@ function buildRoom(THREE) {
     }
   }
   const DWAY = DOOR.w / 2 - RADIUS + 0.12; // half-width you can stand in inside the doorway
+  const AWAY = RADIUS - 0.12;               // how close to a jamb you can stand in the café passage
   // outside on foot you may stand in any of these: the deck, the gate in its west rope, the airfield, the hangar floor  [x0, x1, z0, z1]
   const FIELD = [AIR.x0 - 1.1, DX0 - 0.9, -2.9, AIR.z1 + 1.0], WALK = [[DX0 + 0.5, DX1 - 0.5, OUT0, Z0 - 0.8], [DX0 - 1.2, DX0 + 0.8, GAP.z0 + 0.45, GAP.z1 - 0.45], FIELD, [HGR.x0 + 0.6, HGR.x1 - 0.6, HGR.z0 + 0.6, -2.5]];
   function collide() { // on foot: room <-> doorway <-> summit deck
     const lim = HALF - RADIUS - 0.03, open = doorK > 0.85;
     let zn = player.zone || "room";
     if (zn === "room") {
-      player.x = clamp(player.x, -lim, lim); player.z = Math.max(-lim, player.z);
-      if (player.z > lim) { if (open && Math.abs(player.x) < 0.6) zn = "door"; else player.z = lim; }
+      player.x = Math.max(-lim, player.x); player.z = Math.max(-lim, player.z);
+      if (player.x > lim) { if (player.z > AZ.z0 + 0.1 && player.z < AZ.z1 - 0.1) zn = "arch"; else player.x = lim; }
+      if (zn === "room" && player.z > lim) { if (open && Math.abs(player.x) < 0.6) zn = "door"; else player.z = lim; }
+    }
+    if (zn === "arch") { player.z = clamp(player.z, AZ.z0 + AWAY, AZ.z1 - AWAY); if (player.x <= lim) zn = "room"; else if (player.x >= CF.x0 + RADIUS) zn = "cafe"; }
+    if (zn === "cafe") {
+      player.z = clamp(player.z, CF.z0 + RADIUS + 0.03, CF.z1 - RADIUS - 0.03); player.x = Math.min(player.x, CF.x1 - RADIUS - 0.03);
+      if (player.x < CF.x0 + RADIUS) { if (player.z > AZ.z0 + 0.1 && player.z < AZ.z1 - 0.1) { zn = "arch"; player.z = clamp(player.z, AZ.z0 + AWAY, AZ.z1 - AWAY); } else player.x = CF.x0 + RADIUS; }
     }
     if (zn === "door") { player.x = clamp(player.x, -DWAY, DWAY); if (player.z <= lim) zn = "room"; else if (player.z >= OUT0) zn = "deck"; }
     if (zn === "deck") {
@@ -1918,7 +2627,8 @@ function buildRoom(THREE) {
     }
     player.zone = zn;
     if (zn === "deck" || zn === "field") return pushOut(outColliders);
-    if (zn === "door") return;
+    if (zn === "door" || zn === "arch") return;
+    if (zn === "cafe") return pushOut(cafeColliders);
     for (const c of colliders) {
       const nx = Math.min(c.maxX, Math.max(c.minX, player.x)), nz = Math.min(c.maxZ, Math.max(c.minZ, player.z));
       let dx = player.x - nx, dz = player.z - nz; const d2 = dx * dx + dz * dz;
@@ -2017,17 +2727,17 @@ function buildRoom(THREE) {
     mySkis.position.set(lp.x, lp.y - HANG - 0.42, lp.z - 0.45); mySkis.rotation.set(0.12, 0, 0);
     skiHud();
   }
-  function updatePlayer(dt) { if (mode === "walk") updateWalk(dt); else if (mode === "ski") updateSki(dt); else if (mode === "fly") updateFly(dt); else updateLift(dt); }
+  function updatePlayer(dt) { if (shift.cam) return shiftCam(); if (mode === "walk") updateWalk(dt); else if (mode === "ski") updateSki(dt); else if (mode === "fly") updateFly(dt); else updateLift(dt); }
   function updateWalk(dt) {
     let f = 0, s = 0, fast = false;
-    if (state === "play") {
+    if (state === "play" && !ui) {
       f = (keys.has("KeyW") || keys.has("ArrowUp") ? 1 : 0) - (keys.has("KeyS") || keys.has("ArrowDown") ? 1 : 0) - joy.y;
       s = (keys.has("KeyD") || keys.has("ArrowRight") ? 1 : 0) - (keys.has("KeyA") || keys.has("ArrowLeft") ? 1 : 0) + joy.x;
       fast = keys.has("ShiftLeft") || keys.has("ShiftRight");
       if (keys.has("Space") && player.ground) { player.vy = 3.3; player.ground = false; }
     }
     const len = Math.hypot(f, s); if (len > 1) { f /= len; s /= len; }
-    const sp = fast ? 6 : 3.5, sin = Math.sin(player.yaw), cos = Math.cos(player.yaw);
+    const sp = (fast ? 6 : 3.5) * coffeeMult(), sin = Math.sin(player.yaw), cos = Math.cos(player.yaw); // coffee: walking only
     const tx = (-sin * f + cos * s) * sp, tz = (-cos * f - sin * s) * sp, k = 1 - Math.exp(-(len > 0.01 ? 10 : 13) * dt);
     player.vx += (tx - player.vx) * k; player.vz += (tz - player.vz) * k;
     player.x += player.vx * dt; player.z += player.vz * dt;
@@ -2055,7 +2765,9 @@ function buildRoom(THREE) {
   }
   function reachable(o) { // room objects from inside, mountain props from outside
     if (o.off || mode === "lift" || mode === "liftwait" || mode === "fly") return false;
-    return (o.zone || "in") === (player.z > HALF + 0.1 || player.zone === "field" ? "out" : "in");
+    if (ui) return false;
+    const here = player.zone === "cafe" || (player.zone === "arch" && player.x > HALF + 0.3) ? "cafe" : player.z > HALF + 0.1 || player.zone === "field" ? "out" : "in"; // nothing is pressable through a wall
+    return (o.zone || "in") === here;
   }
   function updateTarget() {
     let t = pick(CENTER, REACH);
@@ -2101,7 +2813,7 @@ function buildRoom(THREE) {
   }
   function zoomAndGo(o) {
     state = "busy"; keys.clear(); resetJoy(); setTarget(null); hud();
-    try { sessionStorage.setItem("room:pose", JSON.stringify({ x: player.x, z: player.z, yaw: player.yaw, pitch: player.pitch })); } catch (e) { /* ignore */ }
+    try { sessionStorage.setItem("room:pose", JSON.stringify({ x: player.x, z: player.z, yaw: player.yaw, pitch: player.pitch, zone: player.zone })); } catch (e) { /* ignore */ }
     const go = () => { el.fade.classList.add("on"); setTimeout(() => { window.location.href = o.dest.href; }, REDUCED ? 0 : 250); };
     if (REDUCED || !o.screen) return go();
     const s = o.screen, p = s.geometry.parameters, c = s.getWorldPosition(new THREE.Vector3()), n = s.getWorldDirection(new THREE.Vector3());
@@ -2116,8 +2828,9 @@ function buildRoom(THREE) {
   function hud() {
     const playing = state === "play";
     const flying = mode === "fly";
-    el.cross.hidden = !(playing && !TOUCH) || flying;
-    el.joy.hidden = !(playing && TOUCH);
+    el.cross.hidden = !(playing && !TOUCH) || flying || !!ui;
+    el.joy.hidden = !(playing && TOUCH) || !!ui;
+    el.card.hidden = !(playing && (ui === "order" || ui === "hire" || ui === "end")); el.shiftUi.hidden = !(playing && (ui === "shift" || ui === "end"));
     el.flyTouch.hidden = !(playing && TOUCH && flying); el.flyHelp.hidden = !(playing && flying && fl.help);
     if (!playing) { el.prompt.hidden = true; el.open.hidden = true; }
     el.tag.hidden = !(entry && playing);
@@ -2129,7 +2842,8 @@ function buildRoom(THREE) {
   function showPanel(kind) {
     el.panelTitle.textContent = kind === "pause" ? "Paused" : CONFIG.SHOW_NAME_ON_WALL ? CONFIG.NAME : "Room";
     el.panelGoText.textContent = kind === "pause" ? "Resume" : TOUCH ? "Tap to enter" : "Click to enter";
-    el.panelLegend.textContent = mode === "fly" ? (TOUCH ? "Left pad: pitch and roll / Buttons: throttle, respawn, exit" : "W S: throttle / Mouse or arrows: pitch and roll / A D: roll / R: respawn / E: exit when stopped / H: help") : TOUCH ? "Left pad: move / Drag: look / Tap an object: open" : CAN_LOCK ? "WASD: move / Mouse: look / E or click: open / Shift: fast / Space: jump / Esc: pause" : "WASD: move / Drag: look / E or click: open / Shift: fast / Space: jump";
+    el.panelQuit.hidden = !(kind === "pause" && ui === "shift");
+    el.panelLegend.textContent = ui === "shift" ? (TOUCH ? "Shift paused / The clock and the customers wait" : "Shift paused / 1-4: cup / I: ice / E: shot / M O: milk / V C K: flavour / W N: topping / L: lid / Enter: serve / X: trash / Tab: other cup") : mode === "fly" ? (TOUCH ? "Left pad: pitch and roll / Buttons: throttle, respawn, exit" : "W S: throttle / Mouse or arrows: pitch and roll / A D: roll / R: respawn / E: exit when stopped / H: help") : TOUCH ? "Left pad: move / Drag: look / Tap an object: open" : CAN_LOCK ? "WASD: move / Mouse: look / E or click: open / Shift: fast / Space: jump / Esc: pause" : "WASD: move / Drag: look / E or click: open / Shift: fast / Space: jump";
     hud();
   }
   function begin() { // enter play (first time: glide from the idle orbit to the spawn point)
@@ -2147,14 +2861,16 @@ function buildRoom(THREE) {
     tween = null; state = "pause"; keys.clear(); resetJoy(); setTarget(null); showPanel("pause");
   }
   function requestEnter() {
+    if (ui) return begin(); // a card or the shift owns the cursor: no pointer lock
     if (CAN_LOCK) {
       try { const p = el.gl.requestPointerLock(); if (p && p.catch) p.catch(() => {}); } catch (e) { /* stays on the panel */ }
     } else begin();
   }
   el.panelGo.addEventListener("click", requestEnter);
+  el.panelQuit.addEventListener("click", () => { if (ui === "shift") { endShift(true); showPanel("pause"); } });
   document.addEventListener("pointerlockchange", () => {
     if (document.pointerLockElement === el.gl) begin();
-    else if (state === "play" || state === "intro") pause();
+    else if ((state === "play" || state === "intro") && !ui) pause();
   });
   document.addEventListener("pointerlockerror", () => {});
 
@@ -2171,6 +2887,7 @@ function buildRoom(THREE) {
       e.preventDefault(); el.tagIn.value = entry.text; if (entry.text.length === 3) endEntry(true);
       return;
     }
+    if (cafeKey(e)) return;
     if (GAME_KEYS.has(e.code)) e.preventDefault();
     if (mode === "fly") { // flying: R respawn, E exit (when stopped), H help; everything else is read each frame
       if (e.code === "Escape") { if (!CAN_LOCK) pause(); return; }
@@ -2193,7 +2910,7 @@ function buildRoom(THREE) {
 
   // ---------- pointer: look-drag (touch, or mouse when pointer lock is unavailable) + joystick ----------
   el.gl.addEventListener("pointerdown", (e) => {
-    if (state !== "play" || document.pointerLockElement === el.gl) return;
+    if (state !== "play" || document.pointerLockElement === el.gl || ui) return;
     if (look.id !== null) return;
     look.id = e.pointerId; look.x = e.clientX; look.y = e.clientY; look.moved = 0; look.t0 = performance.now();
     try { el.gl.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
@@ -2211,7 +2928,10 @@ function buildRoom(THREE) {
   // click = activate. Locked desktop: whatever is under the crosshair. Touch / no-lock: whatever was tapped.
   el.gl.addEventListener("click", (e) => {
     if (state !== "play") return;
+    if (ui === "shift") return shiftClick(e);
+    if (ui) return;
     if (document.pointerLockElement === el.gl) return activate(target);
+    if (CAN_LOCK && e.pointerType !== "touch") return relock(); // unlocked after a card: the next click takes the mouse back
     if (look.moved > 12) return; // that was a drag, not a tap
     const r = el.gl.getBoundingClientRect();
     const o = pick(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), 30);
@@ -2261,14 +2981,15 @@ function buildRoom(THREE) {
       if (o.t >= 0) { o.t += dt; shadowDirty = 2; if (o.t > (o.dur || 1)) { o.update && o.update(dt, time, o.dur || 1); o.t = -1; continue; } }
       o.update && o.update(dt, time, o.t);
     }
+    cafeFrame(dt);
     updateAmbient(time);
-    if (state === "play") updateTarget();
+    if (state === "play" && !ui) updateTarget();
     if (shadowDirty > 0) { renderer.shadowMap.needsUpdate = true; shadowDirty--; }
     renderer.render(scene, camera);
   }
   function run() { if (!rafId && !document.hidden && state !== "list") { last = performance.now(); rafId = requestAnimationFrame(frame); } }
   function stop() { cancelAnimationFrame(rafId); rafId = 0; }
-  document.addEventListener("visibilitychange", () => { if (document.hidden) { stop(); keys.clear(); resetJoy(); } else run(); });
+  document.addEventListener("visibilitychange", () => { if (document.hidden) { if (shift.on) pause(); stop(); keys.clear(); resetJoy(); } else run(); });
   window.addEventListener("resize", resize);
   window.addEventListener("orientationchange", () => setTimeout(resize, 120));
   if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
@@ -2294,6 +3015,7 @@ function buildRoom(THREE) {
       if (!p || !isFinite(p.x) || !isFinite(p.z) || !isFinite(p.yaw)) return false;
       player.x = p.x; player.z = p.z; player.yaw = p.yaw; player.pitch = isFinite(p.pitch) ? p.pitch : -0.04;
       player.vx = player.vz = player.vy = 0; player.y = 0; entered = true;
+      player.zone = p.zone === "cafe" || (p.zone !== "room" && p.x > CF.x0) ? "cafe" : p.zone === "arch" ? "arch" : "room"; // sub-pages are only ever opened from indoors
       updatePlayer(0);
       if (TOUCH || !CAN_LOCK) { state = "play"; hud(); } else { state = "pause"; showPanel("pause"); }
       run(); return true;
@@ -2302,7 +3024,7 @@ function buildRoom(THREE) {
       if (document.pointerLockElement === el.gl) { state = "list"; document.exitPointerLock(); }
       state = "list"; tween = null; keys.clear(); resetJoy(); setTarget(null); hud(); stop();
     },
-    enterFromList() { state = entered ? "pause" : "start"; resize(); showPanel(entered ? "pause" : "start"); shadowDirty = 3; run(); requestEnter(); },
+    enterFromList() { state = entered ? "pause" : "start"; resize(); showPanel(entered ? "pause" : "start"); shadowDirty = 3; run(); if (ui !== "shift") requestEnter(); },
   };
 }
 </script>

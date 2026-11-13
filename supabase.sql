@@ -4,15 +4,16 @@
 create table if not exists public.scores (
   id          bigint generated always as identity primary key,
   day         int  not null check (day >= 1),
-  game        text not null check (game in ('sectors', 'binary', 'weights', 'ski', 'flight')),
+  game        text not null check (game in ('sectors', 'binary', 'weights', 'ski', 'flight', 'cafe')),
   initials    text not null check (initials ~ '^[A-Z]{1,3}$'),
-  ms          int  not null check (ms between 5000 and 3600000),
+  ms          int  not null,  -- a time in ms, or café tips in cents; range checked per game below
   device      text not null check (char_length(device) between 8 and 64),
-  created_at  timestamptz not null default now()
+  created_at  timestamptz not null default now(),
+  constraint scores_ms_check check ((game = 'cafe' and ms between 0 and 100000) or (game <> 'cafe' and ms between 5000 and 3600000))
 );
 
--- One time per device per puzzle per day. Ski runs and flights (game = 'ski' / 'flight') may be posted again when you beat your own time.
-create unique index if not exists scores_one_per_device on public.scores (day, game, device) where game not in ('ski', 'flight');
+-- One time per device per puzzle per day. Ski runs, flights and café shifts (game = 'ski' / 'flight' / 'cafe') may be posted again when you beat your own best.
+create unique index if not exists scores_one_per_device on public.scores (day, game, device) where game not in ('ski', 'flight', 'cafe');
 
 create index if not exists scores_day_game_ms on public.scores (day, game, ms, created_at);
 
@@ -41,5 +42,5 @@ grant select (day, game, initials, ms, created_at) on public.scores to anon;
 grant insert (day, game, initials, ms, device) on public.scores to anon;
 
 -- ---------------------------------------------------------------------------------------------------
--- Already ran an earlier version of this file? Run supabase-migration.sql instead: it adds the ski and
--- flight scoreboards to an existing table and is safe to run more than once.
+-- Already ran an earlier version of this file? Run supabase-migration.sql (ski and flight boards) and
+-- supabase-migration-cafe.sql (café board) instead: they update an existing table and are safe to run more than once.
