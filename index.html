@@ -138,36 +138,27 @@
   #sh-tips { grid-column: span 2; padding: 5px 9px 3px; font: 800 22px/1 var(--f-sans); font-stretch: 75%; }
   #sh-streak, #sh-served { grid-column: span 2; padding: 4px 9px; border-top: 1px solid var(--hair); }
   #shift-tickets { flex: 1; min-width: 0; display: flex; gap: 6px; }
-  .tk { flex: 1 1 0; min-width: 0; max-width: 200px; appearance: none; display: grid; align-content: start; padding: 0; border: 2px solid var(--ink); background: #fbfbf7; color: var(--ink); text-align: left; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; pointer-events: auto; touch-action: manipulation; }
+  .tk { flex: 1 1 0; min-width: 0; max-width: 230px; appearance: none; display: grid; align-content: start; padding: 0; border: 2px solid var(--ink); background: #fbfbf7; color: var(--ink); text-align: left; font: inherit; letter-spacing: inherit; text-transform: inherit; }
   .tk .who { display: flex; justify-content: space-between; gap: 6px; background: var(--ink); color: var(--plate); padding: 3px 7px; white-space: nowrap; overflow: hidden; }
   .tk .nm { padding: 5px 7px 2px; font: 750 13px/1.1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.01em; }
   .tk .cmp { display: flex; flex-wrap: wrap; gap: 0 7px; padding: 0 7px 5px; color: var(--steel); }
-  .tk .cmp i { font-style: normal; } .tk .cmp i.ok { color: var(--ink); text-decoration: line-through; }
+  .tk .cmp i { font-style: normal; } .tk .cmp i.ok { text-decoration: line-through; } .tk .cmp i.nx { color: var(--on-signal); background: var(--signal); padding: 0 4px; }
   .tk .bar { display: block; height: 7px; border-top: 2px solid var(--ink); background: var(--given); } .tk .bar b { display: block; height: 100%; background: var(--ink); transform-origin: left; }
   .tk.low { border-color: var(--error); } .tk.low .who, .tk.low .bar b { background: var(--error); } .tk.low .bar { border-color: var(--error); }
   .tk.fit { outline: 3px solid var(--signal-hi); outline-offset: 0; }
-  .tk:hover .nm { text-decoration: underline; }
-  #shift-bottom { position: absolute; left: calc(10px + var(--sl)); right: calc(10px + var(--sr)); bottom: calc(10px + var(--sb)); display: grid; gap: 6px; }
-  #shift-cups { display: flex; gap: 6px; }
-  .cupc { appearance: none; flex: 0 1 230px; min-width: 0; padding: 0; border: 2px solid var(--ink); background: var(--plate); color: var(--ink); text-align: left; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; pointer-events: auto; touch-action: manipulation; }
-  .cupc u { display: block; padding: 3px 7px; background: var(--given); text-decoration: none; } .cupc.on u { background: var(--signal); color: var(--on-signal); }
-  .cupc span { display: block; padding: 4px 7px; min-height: 2.9em; }
-  #shift-stations { display: grid; grid-template-columns: repeat(16, 1fr); gap: 4px; pointer-events: auto; }
-  #shift-stations button { appearance: none; min-width: 0; overflow: hidden; display: grid; justify-items: center; gap: 1px; padding: 6px 1px 4px; border: 2px solid var(--ink); background: rgba(243, 243, 239, 0.95); color: var(--ink); font: inherit; letter-spacing: 0.03em; text-transform: inherit; cursor: pointer; touch-action: manipulation; }
-  #shift-stations kbd { font: inherit; opacity: 0.6; }
-  #shift-stations button:hover, #shift-stations button:active { background: var(--ink); color: var(--plate); }
-  #shift-stations button.serve { background: var(--signal); color: var(--on-signal); } #shift-stations button.serve:hover { background: var(--ink); }
-  #shift-stations button:focus-visible, .tk:focus-visible, .cupc:focus-visible { outline: 3px solid var(--signal-hi); outline-offset: -1px; }
-  .touch #shift-stations { grid-template-columns: repeat(8, 1fr); } .touch #shift-stations button { padding: 10px 1px 9px; } .touch #shift-stations kbd { display: none; }
-  #shift-say { position: absolute; transform: translate(-50%, -100%); max-width: 250px; border: 2px solid var(--ink); background: var(--plate); padding: 5px 8px; font-size: 11px; text-align: center; }
+  #shift-hand { position: absolute; left: 50%; bottom: calc(26px + var(--sb)); transform: translateX(-50%); max-width: calc(100% - 24px); display: flex; border: 2px solid var(--ink); background: var(--plate); font-size: 11px; white-space: nowrap; }
+  #shift-hand u { text-decoration: none; background: var(--ink); color: var(--plate); padding: 6px 9px; } #shift-hand span { padding: 6px 10px; overflow: hidden; text-overflow: ellipsis; }
+  #shift-hand.bad { border-color: var(--error); } #shift-hand.bad u { background: var(--error); color: #fff; }
+  .touch #shift-hand { bottom: calc(12px + var(--sb)); }
+  .ctag { position: absolute; transform: translate(-50%, -100%); border: 2px solid var(--ink); background: var(--plate); padding: 3px 7px; font-size: 11px; white-space: nowrap; }
+  .ctag.go { background: var(--signal); color: var(--on-signal); border-color: var(--signal); } .ctag.low { border-color: var(--error); }
   #shift-flash { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); background: var(--error); color: #fff; padding: 8px 14px; font: 800 26px/1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.04em; }
   .pop { position: absolute; transform: translate(-50%, -50%); background: var(--ink); color: var(--plate); padding: 3px 6px; white-space: nowrap; font: 800 18px/1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.02em; animation: pop 1s ease-out forwards; }
   .pop.bad { background: var(--error); color: #fff; }
   @keyframes pop { from { opacity: 1; margin-top: 0; } 70% { opacity: 1; } to { opacity: 0; margin-top: -44px; } }
   #room.shift #toast { bottom: auto; top: calc(132px + var(--st)); }
-  @media (max-width: 760px) { #shift-stations { grid-template-columns: repeat(8, 1fr); } .tk .cmp { display: none; } }
   @media (max-height: 460px) { .card { width: min(560px, calc(100% - 24px)); } .card h1 { font-size: 22px; padding: 7px 14px 5px; } .card .seg b { padding: 6px 2px; } .card .name { padding: 6px 14px; min-height: 0; font-size: 16px; } .card .txt { padding: 5px 14px; line-height: 1.45; } .card .go { padding: 10px 14px; font-size: 19px; } .card .alt { padding: 7px 14px; } .card .stats { grid-template-columns: 1fr auto 1fr auto; } .card .stats dt, .card .stats dd { padding: 4px 14px; }
-    #sh-time { font-size: 22px; } #sh-tips { font-size: 17px; } #sh-streak, #sh-served { padding: 2px 9px; } .tk .nm { font-size: 12px; } .cupc span { min-height: 1.4em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .touch #shift-stations button { padding: 7px 1px 6px; } #room.shift #toast { top: calc(104px + var(--st)); } }
+    #sh-time { font-size: 22px; } #sh-tips { font-size: 17px; } #sh-streak, #sh-served { padding: 2px 9px; } .tk .nm { font-size: 12px; } #room.shift #toast { top: calc(104px + var(--st)); } }
   @media (prefers-reduced-motion: reduce) { .pop { animation: none; } }
 
   #loader { position: absolute; inset: 0; background: var(--paper); display: grid; place-content: center; gap: 8px; font: 700 13px/1 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; z-index: 5; }
@@ -223,8 +214,9 @@
   </div>
   <div id="shift" hidden>
     <div id="shift-top"><div id="shift-hud"><span id="sh-time">3:00</span><button id="sh-pause" type="button" aria-label="Pause the shift">P</button><span id="sh-tips">$0.00</span><span id="sh-streak">Streak 0 / ×1</span><span id="sh-served">0 served</span></div><div id="shift-tickets" aria-label="Orders, oldest first"></div></div>
-    <div id="shift-bottom"><div id="shift-cups"></div><div id="shift-stations" role="toolbar" aria-label="Stations"></div></div>
-    <div id="shift-say" hidden></div><div id="shift-flash" role="alert" hidden></div><div id="shift-pops" aria-hidden="true"></div>
+    <div id="shift-hand" aria-live="polite"><u>In hand</u><span id="sh-hand">Nothing</span></div>
+    <div id="shift-tags" aria-hidden="true"><div class="ctag" hidden></div><div class="ctag" hidden></div><div class="ctag" hidden></div></div>
+    <div id="shift-flash" role="alert" hidden></div><div id="shift-pops" aria-hidden="true"></div>
   </div>
   <div id="cafe-card" class="card" role="dialog" aria-modal="true" aria-labelledby="card-title" hidden></div>
   <div id="loader" role="status"><span>Loading <span id="pct">0</span>%</span><div class="bar"><i id="pctbar"></i></div></div>
@@ -290,7 +282,7 @@ const el = {
   toast: $("#toast"), listBtn: $("#listbtn"), panel: $("#panel"), panelTitle: $("#panel-title"), panelGo: $("#panel-go"), panelGoText: $("#panel-go-text"),
   panelLegend: $("#panel-legend"), panelList: $("#panel-list"), loader: $("#loader"), pct: $("#pct"), pctBar: $("#pctbar"), fade: $("#fade"),
   flyHelp: $("#fly-help"), flyTouch: $("#fly-touch"), flyRespawn: $("#fly-respawn"), flyExit: $("#fly-exit"),
-  card: $("#cafe-card"), shiftUi: $("#shift"), shiftBottom: $("#shift-bottom"), tickets: $("#shift-tickets"), cups: $("#shift-cups"), stations: $("#shift-stations"), say: $("#shift-say"), flash: $("#shift-flash"), pops: $("#shift-pops"),
+  card: $("#cafe-card"), shiftUi: $("#shift"), tickets: $("#shift-tickets"), hand: $("#shift-hand"), handText: $("#sh-hand"), tags: [...document.querySelectorAll("#shift-tags .ctag")], flash: $("#shift-flash"), pops: $("#shift-pops"),
   shTime: $("#sh-time"), shTips: $("#sh-tips"), shStreak: $("#sh-streak"), shServed: $("#sh-served"), shPause: $("#sh-pause"), panelQuit: $("#panel-quit"), invCoffee: $("#inv-coffee"),
   inv: $("#inv"), invKey: $("#inv-key"), invWaffle: $("#inv-waffle"), invSki: $("#inv-ski"),
   list: $("#list"), listTitle: $("#list-title"), rows: $("#rows"), listEnter: $("#list-enter"), listNote: $("#list-note"),
@@ -1616,7 +1608,7 @@ function buildRoom(THREE) {
     const playing = state === "play" || state === "pause";
     el.invKey.hidden = !hasKey; el.invSki.hidden = mode === "walk"; el.invWaffle.hidden = !(puzzlesDone() && !waffleEaten());
     el.invCoffee.hidden = !lastCoffee;
-    el.inv.hidden = !playing || ui === "shift" || ui === "end" || (el.invKey.hidden && el.invSki.hidden && el.invWaffle.hidden && el.invCoffee.hidden);
+    el.inv.hidden = !playing || shift.on || ui === "end" || (el.invKey.hidden && el.invSki.hidden && el.invWaffle.hidden && el.invCoffee.hidden);
   }
   function skiHud(force) {
     if (mode === "walk") return;
@@ -1985,14 +1977,14 @@ function buildRoom(THREE) {
   // CAFÉ ANNEX: order a coffee from the robot, or work a three-minute shift behind the bar
   // =====================================================================
   const CTR = { x0: 10.2, x1: 10.8, top: 1.0 }, BAR = { x0: 13.0, z0: -1.9, z1: 5.7, top: 0.92 };
-  // one station per option, along the back bar (z); the same table drives the robot, the game and the 3D click targets
-  // (south to north, so they read left to right from behind the bar)
+  // one station per option, along the back bar (z), in the order a drink is built: cups, ice, espresso, milk, flavour, topping, lids.
+  // The same table drives the robot, the shift and the things you press.
   const ST = { hs: { z: 5.46, n: "Hot S", k: "1" }, hl: { z: 5.14, n: "Hot L", k: "2" }, is: { z: 4.76, n: "Iced S", k: "3" }, il: { z: 4.44, n: "Iced L", k: "4" }, ice: { z: 3.71, n: "Ice", k: "I", w: 0.56 }, shot: { z: 2.66, n: "Shot", k: "E", w: 0.92 },
-    whole: { z: 0.48, n: "Whole", k: "M", w: 0.26 }, oat: { z: 0.22, n: "Oat", k: "O", w: 0.26 }, vanilla: { z: -0.34, n: "Vanilla", k: "V", w: 0.2 }, caramel: { z: -0.56, n: "Caramel", k: "C", w: 0.2 }, mocha: { z: -0.78, n: "Mocha", k: "K", w: 0.2 },
-    whip: { z: -1.12, n: "Whip", k: "W", w: 0.2 }, cinnamon: { z: -1.32, n: "Cinnamon", s: "Cinn.", k: "N", w: 0.2 }, lid: { z: -1.6, n: "Lid", k: "L", w: 0.3 }, serve: { n: "Serve", k: "Enter" }, trash: { z: -2.45, n: "Trash", k: "X", w: 0.46 } };
+    whole: { z: 0.48, n: "Whole", k: "M", w: 0.26 }, oat: { z: 0.22, n: "Oat", k: "O", w: 0.26 }, vanilla: { z: -0.3, n: "Vanilla", k: "V", w: 0.26 }, caramel: { z: -0.58, n: "Caramel", k: "C", w: 0.26 }, mocha: { z: -0.86, n: "Mocha", k: "K", w: 0.26 },
+    whip: { z: -1.16, n: "Whip", k: "W", w: 0.26 }, cinnamon: { z: -1.42, n: "Cinnamon", s: "Cinn.", k: "N", w: 0.24 }, lid: { z: -1.7, n: "Lid", k: "L", w: 0.28 }, trash: { z: -2.45, n: "Trash", k: "X", w: 0.46 } };
   const MATS = [{ x: 13.22, z: 1.58 }, { x: 13.22, z: 1.14 }]; // the two cup slots on the work mat
   const cafeG = new THREE.Group(); scene.add(cafeG);            // interior: drawn only from the lodge, the passage or the café itself
-  const cafeTop = new THREE.Group(); cafeG.add(cafeTop);        // beams and pendants: hidden in the shift view, which looks in from above
+  const cafeTop = new THREE.Group(); cafeG.add(cafeTop);        // beams and pendants
   const cafeColliders = [];
   const cafeTex = canvasTex(1024, 640);                         // the "best shift" board
   const cafeBoard = new THREE.Group(); cafeBoard.position.set(8.4, 1.85, CF.z0); cafeG.add(cafeBoard);
@@ -2001,13 +1993,14 @@ function buildRoom(THREE) {
   const hitBox = (w, h, d, x, y, z) => { const g = new THREE.Group(), m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d)); m.visible = false; g.position.set(x, y, z); g.add(m); cafeG.add(g); return g; };
   let annexShell = null, ticketRail = null, cafeTip = null;
   {
-    const k = kit(), glass = [], glow = [], top = kit();
+    const k = kit(), glass = [], glow = [], top = kit(), WIN2 = { x: 8.6, y: 1.85, w: 1.9, h: 1.1 }; // the window to the deck: a real opening, glazed
     const plane = (w, h, color, x, y, z, rx, ry) => k.g(new THREE.PlaneGeometry(w, h), color, mat4(x, y, z, rx, ry));
     const zc = (CF.z0 + CF.z1) / 2, xc = (CF.x0 + CF.x1) / 2, CW2 = CF.x1 - CF.x0, CD = CF.z1 - CF.z0, H = CF.h;
-    // shell, seen from inside: single-sided planes, so the shift camera can look in through the east wall and the ceiling
+    // shell, seen from inside: single-sided planes
     for (let i = 0; i < CW2 / 0.2 - 1e-6; i++) plane(0.2, CD, [0xb8874f, 0xa97a45, 0xc19258, 0xb08049][(i * 7 + (i >> 2)) % 4], CF.x0 + 0.1 + i * 0.2, 0, zc, -Math.PI / 2);     // floor boards
     plane(CW2, CD, 0xdcc49c, xc, H, zc, Math.PI / 2);                                                                                                                         // ceiling
-    plane(CD, H, C.wall, CF.x1, H / 2, zc, 0, -Math.PI / 2); plane(CW2, H, C.wall, xc, H / 2, CF.z0, 0, 0); plane(CW2, H, C.wall, xc, H / 2, CF.z1, 0, Math.PI);             // east, north, south
+    plane(CD, H, C.wall, CF.x1, H / 2, zc, 0, -Math.PI / 2); plane(CW2, H, C.wall, xc, H / 2, CF.z0, 0, 0);                                                                  // east, north
+    for (const [x0, x1, y0, y1] of [[CF.x0, WIN2.x - WIN2.w / 2, 0, H], [WIN2.x + WIN2.w / 2, CF.x1, 0, H], [WIN2.x - WIN2.w / 2, WIN2.x + WIN2.w / 2, 0, WIN2.y - WIN2.h / 2], [WIN2.x - WIN2.w / 2, WIN2.x + WIN2.w / 2, WIN2.y + WIN2.h / 2, H]]) plane(x1 - x0, y1 - y0, C.wall, (x0 + x1) / 2, (y0 + y1) / 2, CF.z1, 0, Math.PI); // south, around the window
     for (const [z0, z1, y0, y1] of [[CF.z0, AZ.z0, 0, H], [AZ.z1, CF.z1, 0, H], [AZ.z0, AZ.z1, AZ.h, H]]) plane(z1 - z0, y1 - y0, C.wall, CF.x0, (y0 + y1) / 2, (z0 + z1) / 2, 0, Math.PI / 2); // west, around the passage
     // wainscot 2 cm proud of the walls, rail on top (not behind the back bar)
     const WH = 1.0;
@@ -2040,7 +2033,7 @@ function buildRoom(THREE) {
     const BT = BAR.top, bz = (BAR.z0 + BAR.z1) / 2, bl = BAR.z1 - BAR.z0;
     k.b(0.52, BT - 0.04, bl, TIMBER.stainLight, 13.34, (BT - 0.04) / 2, bz); k.b(0.62, 0.04, bl + 0.04, TIMBER.butcher, 13.29, BT - 0.02, bz); k.b(0.5, 0.1, bl - 0.04, INK, 13.35, 0.05, bz);
     for (let z = BAR.z0 + 0.4; z < BAR.z1 - 0.1; z += 0.8) { k.b(0.012, BT - 0.24, 0.7, TIMBER.wainscot, 13.074, (BT - 0.04) / 2 + 0.04, z); k.b(0.03, 0.02, 0.14, LODGE.brass, 13.06, BT - 0.2, z); }
-    cafeColliders.push({ minX: 12.95, maxX: CF.x1, minZ: BAR.z0 - 0.05, maxZ: BAR.z1 + 0.05 });
+    cafeColliders.push({ minX: 12.95, maxX: CF.x1, minZ: BAR.z0 - 0.05, maxZ: BAR.z1 + 0.05 }, { minX: 10.85, maxX: 11.32, minZ: 5.28, maxZ: CF.z1 }); // the bar; the corner where the barista stands during a shift
     const hotStack = (z, r, n) => { for (let i = 0; i < n; i++) k.c(r, r * 0.8, 0.1, 10, i % 2 ? 0xe6dcc2 : LODGE.cream, 13.27, BT + 0.05 + i * 0.022, z); k.c(r * 1.02, r * 0.93, 0.03, 10, C.signal, 13.27, BT + 0.06 + (n - 1) * 0.022, z); };
     hotStack(ST.hs.z, 0.04, 6); hotStack(ST.hl.z, 0.046, 8);
     for (const [z, r, h] of [[ST.is.z, 0.04, 0.22], [ST.il.z, 0.046, 0.28]]) { glass.push({ geo: new THREE.CylinderGeometry(r, r * 0.8, h, 10, 1, true), color: 0xffffff, m: mat4(13.27, BT + h / 2, z) }); for (let y = 0.04; y < h; y += 0.03) k.g(new THREE.TorusGeometry(r * 0.9, 0.002, 3, 10), 0xcfe3f2, mat4(13.27, BT + y, z, Math.PI / 2)); }
@@ -2077,8 +2070,7 @@ function buildRoom(THREE) {
     cafeColliders.push({ minX: 9.2, maxX: 9.7, minZ: CF.z0, maxZ: -2.75 });
     { const wx = 8.6, wy = 1.85, ww = 1.9, wh = 1.1, z = CF.z1 - 0.03; for (const [w, h, x, y] of [[ww + 0.14, 0.07, wx, wy + wh / 2 + 0.035], [ww + 0.14, 0.07, wx, wy - wh / 2 - 0.035], [0.07, wh, wx - ww / 2 - 0.035, wy], [0.07, wh, wx + ww / 2 + 0.035, wy], [0.04, wh, wx, wy], [ww, 0.04, wx, wy]]) k.b(w, h, 0.05, TIMBER.beam, x, y, z);
       k.b(ww + 0.3, 0.04, 0.14, TIMBER.beam, wx, wy - wh / 2 - 0.09, z - 0.05);
-      glow.push({ geo: new THREE.PlaneGeometry(ww, wh), color: 0xd9ecfb, m: mat4(wx, wy, CF.z1 - 0.012, 0, Math.PI) }); }
-    k.b(0.02, 0.9, CD, TIMBER.stain, CF.x1 + 0.02, 0.45, zc);                                                                                                         // back of the bar wall: only the shift camera, which looks in from outside, ever sees it
+      for (const [w, h, x, y] of [[ww, 0.03, wx, wy + wh / 2 - 0.015], [ww, 0.03, wx, wy - wh / 2 + 0.015], [0.03, wh - 0.06, wx - ww / 2 + 0.015, wy], [0.03, wh - 0.06, wx + ww / 2 - 0.015, wy]]) k.b(w, h, 0.26, TIMBER.beam, x, y, CF.z1 + 0.105); } // the reveal through the wall
     k.b(2.74, 1.76, 0.03, INK, 8.4, 1.85, CF.z0 + 0.018);                                                                                                            // board frame
     // beams and pendants (their own group)
     for (const z of [-1.6, 1.3, 4.2]) top.b(CW2, 0.22, 0.18, TIMBER.beam, xc, H - 0.11, z);
@@ -2088,7 +2080,7 @@ function buildRoom(THREE) {
     cafeG.add(new THREE.Mesh(bake(glass), cupGlass));
     cafeG.add(new THREE.Mesh(bake(glow), new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false })));
     const lamp = new THREE.PointLight(0xffd9a8, 5, 6, 2); lamp.position.set(11.4, 2.5, 1.6); cafeG.add(lamp);                                                        // the one extra light: warm, no shadows
-    // menu chalkboard on the east wall: a single-sided decal, so the shift camera looks straight through it
+    // menu chalkboard on the east wall
     const menu = canvasTex(1024, 320, (g, w, h) => {
       g.fillStyle = "#1c1f1d"; g.fillRect(0, 0, w, h); g.strokeStyle = "#6b4a2c"; g.lineWidth = 14; g.strokeRect(7, 7, w - 14, h - 14);
       g.fillStyle = "#f3f3ef"; g.textBaseline = "alphabetic"; g.font = `800 condensed 64px ${F_SANS}`; g.fillText("LODGE CAFÉ", 40, 84);
@@ -2120,6 +2112,7 @@ function buildRoom(THREE) {
     for (const [id, t] of [["whole", "WHOLE"], ["oat", "OAT"]]) addLabel(t, 0.1, 0.04, mat4(13.165, BT + 0.05, ST[id].z, 0, FW));
     addLabel("ICE", 0.2, 0.08, mat4(13.088, BT + 0.1, ST.ice.z, 0, FW)); addLabel("ICE", 0.2, 0.08, mat4(13.512, BT + 0.1, ST.ice.z, 0, FE));
     for (const [id, t] of [["hs", "S"], ["hl", "L"], ["is", "S"], ["il", "L"]]) addLabel(t, 0.07, 0.07, mat4(13.1, BT + 0.003, ST[id].z, -Math.PI / 2, FW));
+    for (const [z, t, w] of [[(ST.hs.z + ST.hl.z) / 2, "HOT", 0.2], [(ST.is.z + ST.il.z) / 2, "ICED", 0.2], [ST.shot.z, "ESPRESSO", 0.3], [(MATS[0].z + MATS[1].z) / 2, "SET DOWN", 0.3], [ST.whip.z, "WHIP", 0.16], [ST.cinnamon.z, "CINN", 0.16], [ST.lid.z, "LIDS", 0.16]]) addLabel(t, w, 0.05, mat4(13.025, BT + 0.003, z, -Math.PI / 2, FW)); // along the front edge of the bar, read from the aisle
     addLabel("WORK A SHIFT", 0.34, 0.07, mat4(CTR.x0 + 0.108, 1.02, GZ0 - 0.08, 0, FW), CSS.signal, CSS.plate);
     sheet.t.needsUpdate = true;
     const lg = new THREE.BufferGeometry(); lg.setAttribute("position", new THREE.Float32BufferAttribute(lab.pos, 3)); lg.setAttribute("uv", new THREE.Float32BufferAttribute(lab.uv, 2));
@@ -2128,7 +2121,8 @@ function buildRoom(THREE) {
     ticketRail = decal(canvasTex(1024, 180).t, 2.0, 0.352, { transparent: true }); ticketRail.rotation.y = Math.PI / 2; ticketRail.position.set(CTR.x1 - 0.018, ty + 0.31, 0); ticketRail.visible = false; cafeG.add(ticketRail);
     // exterior: log walls 4 cm clear of the interior planes, low gable roof with snow, a lit window and a sign facing the deck
     const sh = kit(), X0 = HALF + 0.25, X1 = CF.x1 + 0.2, Zn = CF.z0 - 0.2, Zs = CF.z1 + 0.2, EH = 3.4, xm = (X0 + X1) / 2, zm = (Zn + Zs) / 2, T = 0.16;
-    sh.b(X1 - X0, EH, T, TIMBER.honeyDark, xm, EH / 2, Zn + T / 2); sh.b(X1 - X0, EH, T, TIMBER.honeyDark, xm, EH / 2, Zs - T / 2); sh.b(T, EH, Zs - Zn - 2 * T, TIMBER.honeyDark, X1 - T / 2, EH / 2, zm);
+    sh.b(X1 - X0, EH, T, TIMBER.honeyDark, xm, EH / 2, Zn + T / 2); sh.b(T, EH, Zs - Zn - 2 * T, TIMBER.honeyDark, X1 - T / 2, EH / 2, zm);
+    for (const [x0, x1, y0, y1] of [[X0, WIN2.x - WIN2.w / 2, 0, EH], [WIN2.x + WIN2.w / 2, X1, 0, EH], [WIN2.x - WIN2.w / 2, WIN2.x + WIN2.w / 2, 0, WIN2.y - WIN2.h / 2], [WIN2.x - WIN2.w / 2, WIN2.x + WIN2.w / 2, WIN2.y + WIN2.h / 2, EH]]) sh.b(x1 - x0, y1 - y0, T, TIMBER.honeyDark, (x0 + x1) / 2, (y0 + y1) / 2, Zs - T / 2); // south wall, around the window
     for (let y = 0.2; y < EH; y += 0.4) { sh.b(X1 - X0 + 0.24, 0.34, 0.05, (y * 5) % 2 < 1 ? TIMBER.honey : 0xa8713a, xm + 0.1, y, Zn - 0.025); sh.b(0.05, 0.34, Zs - Zn + 0.24, (y * 5) % 2 < 1 ? 0xa8713a : TIMBER.honey, X1 + 0.025, y, zm);
       for (const [x0, x1] of [[X0, 7.45], [9.75, X1 + 0.12]]) sh.b(x1 - x0, 0.34, 0.05, (y * 5) % 2 < 1 ? TIMBER.honey : 0xa8713a, (x0 + x1) / 2, y, Zs + 0.025);
       if (y < 1.2 || y > 2.5) sh.b(2.3, 0.34, 0.05, (y * 5) % 2 < 1 ? TIMBER.honey : 0xa8713a, 8.6, y, Zs + 0.025); }
@@ -2138,8 +2132,9 @@ function buildRoom(THREE) {
       sh.b(len, 0.14, Zs - Zn + 0.7, NATURE.roof, mx, my + 0.02, zm, 0, 0, -s * ang); sh.b(len - 0.1, 0.1, Zs - Zn + 0.5, NATURE.snow, mx, my + 0.14, zm, 0, 0, -s * ang); }
     for (const z of [Zn + T / 2, Zs - T / 2]) for (const [w, y] of [[(X1 - X0) * 0.82, EH + 0.14], [(X1 - X0) * 0.52, EH + 0.42], [(X1 - X0) * 0.22, EH + 0.7]]) sh.b(w, 0.3, T, TIMBER.honeyDark, xm, y, z);
     { const wx = 8.6, wy = 1.85, ww = 1.9, wh = 1.1, z = Zs + 0.03; for (const [w, h, x, y] of [[ww + 0.2, 0.1, wx, wy + wh / 2 + 0.05], [ww + 0.2, 0.1, wx, wy - wh / 2 - 0.05], [0.1, wh, wx - ww / 2 - 0.05, wy], [0.1, wh, wx + ww / 2 + 0.05, wy], [0.05, wh, wx, wy], [ww, 0.05, wx, wy]]) sh.b(w, h, 0.08, TIMBER.stain, x, y, z);
-      sh.b(ww, wh, 0.02, 0xffd98a, wx, wy, Zs + 0.015); sh.b(ww + 0.5, 0.05, 0.22, NATURE.snow, wx, wy - wh / 2 - 0.12, z + 0.06); }
+      sh.b(ww + 0.5, 0.05, 0.22, NATURE.snow, wx, wy - wh / 2 - 0.12, z + 0.06); }
     annexShell = sh.mesh(false); world.add(annexShell);
+    const pane = new THREE.Mesh(new THREE.PlaneGeometry(WIN2.w, WIN2.h), new THREE.MeshBasicMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.DoubleSide })); pane.position.set(WIN2.x, WIN2.y, Zs - 0.02); world.add(pane); // you can see through it both ways
     const sign = canvasTex(512, 160, (g, w, h) => { g.fillStyle = CSS.signal; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 124px ${F_SANS}`; g.textBaseline = "middle"; if ("letterSpacing" in g) g.letterSpacing = "14px"; fitText(g, "CAFÉ", w / 2, h / 2 + 8, w - 70, "center"); });
     const sd = decal(sign.t, 1.5, 0.47); sd.position.set(8.6, 2.86, Zs + 0.052); world.add(sd);
     solid(xm, zm, hw + 0.05, (Zs - Zn) / 2 + 0.05); FBOX.push([X0 - 0.3, X1 + 0.5, Zn - 0.5, Zs + 0.5, EH + rise + 0.5]);
@@ -2195,7 +2190,8 @@ function buildRoom(THREE) {
     const tag = canvasTex(256, 64, (g, w, h) => { g.fillStyle = "#b8923a"; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink; g.font = `700 36px ${F_MONO}`; g.textBaseline = "middle"; fitText(g, "BARISTA-01", w / 2, h / 2 + 2, w - 20, "center"); });
     const td = decal(tag.t, 0.2, 0.05); td.rotation.y = Math.PI; td.position.set(0, 1.2, -0.168); bot.add(td);
   }
-  const myCup = makeCup(), slotCups = [makeCup(), makeCup()];
+  const myCup = makeCup(), handCup = makeCup(), trayCup = makeCup(), matCups = [makeCup(), makeCup()], giveCup = makeCup();
+  camera.add(handCup.root); handCup.root.position.set(0.19, -0.21, -0.44); // the cup you carry rides with the camera
   const stream = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 1, 5).translate(0, -0.5, 0), new THREE.MeshBasicMaterial({ color: 0x2b170d })); stream.visible = false; cafeG.add(stream);
   const steam = new THREE.Mesh(bake([0, 1, 2].map((i) => ({ geo: new THREE.PlaneGeometry(0.012, 0.09), color: 0xffffff, m: mat4((i - 1) * 0.016, 0.05 + i * 0.012, (i % 2) * 0.012 - 0.006, 0, i * 1.1) }))), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, depthWrite: false, side: THREE.DoubleSide })); steam.visible = false; cafeG.add(steam);
 
@@ -2225,17 +2221,17 @@ function buildRoom(THREE) {
     if (r.top) at(r.top, 0.45, () => { st.top = r.top; }, "pump");
     at("lid", 0.4, () => { st.lid = true; });
     Object.assign(job, { on: true, steps: S, i: 0, t: 0, phase: "go", r, st, from: { x: bot.position.x, z: bot.position.z }, ready: false, sip: -1 });
-    myCup.show(st); baristaObj.off = true; registerObj.off = true; cupObj.off = true;
+    myCup.show(st); baristaObj.off = true; cupObj.off = true;
   }
   const cupSpot = (s) => (s.id === "shot" ? { x: 13.075, y: BAR.top + 0.026, z: ST.shot.z - 0.2 } : s.id === "whole" || s.id === "oat" ? { x: 13.1, y: BAR.top, z: s.z } : { x: 13.13, y: BAR.top, z: s.z });
   function jobTick(dt) {
     const p = bot.position;
     if (!job.on) { // idle: back to the register (or the till during a shift), wipe the counter, watch the player
       const k = REDUCED ? 1 : 1 - Math.exp(-4 * dt); p.x += (HOME.x - p.x) * k; p.z += (HOME.z - p.z) * k; bot.rotation.y += (HOME.ry - bot.rotation.y) * k;
-      const dx = player.x - p.x, dz = player.z - p.z, near = !shift.cam && player.zone === "cafe";
-      const want = near ? clamp(Math.atan2(-dx, -dz) - bot.rotation.y, -1.1, 1.1) : shift.cam ? shift.look : 0;
+      const dx = player.x - p.x, dz = player.z - p.z, near = !shift.on && player.zone === "cafe";
+      const want = near || shift.on ? clamp(Math.atan2(-dx, -dz) - bot.rotation.y, -1.1, 1.1) : 0;
       botHead.rotation.y += (want - botHead.rotation.y) * k; botHead.position.y = 1.38 + (REDUCED ? 0 : Math.sin(time * 1.6) * 0.006);
-      const wipe = !REDUCED && !near && !shift.cam ? Math.sin(time * 2.2) : 0;
+      const wipe = !REDUCED && !near && !shift.on ? Math.sin(time * 2.2) : 0;
       botArm.rotation.x += ((shift.say > 0 ? 1.0 : wipe ? 0.95 : 0) - botArm.rotation.x) * k; botArm.rotation.z = wipe * 0.35; botArm2.rotation.x += (0 - botArm2.rotation.x) * k;
       return;
     }
@@ -2257,7 +2253,7 @@ function buildRoom(THREE) {
       if (job.t >= s.dur) { s.fn(); myCup.show(job.st); if (s === job.steps[0]) myCup.root.position.set(c.x, c.y, c.z); stream.visible = false; job.i++; job.t = 0; job.phase = "go"; job.from = { x: p.x, z: p.z }; }
     } else { // set it on the pickup shelf
       const k = ease(job.t / (REDUCED ? 0.05 : 0.45)); myCup.root.position.set(p.x - 0.36 + (SHELF.x - (p.x - 0.36)) * k, 1.0 + (SHELF.y - 1.0) * k, SHELF.z); botArm.rotation.x = 1.0 + k * 0.3;
-      if (k >= 1) { job.on = false; job.ready = true; cupObj.off = false; cupObj.dest.label = drinkName(job.r); baristaObj.off = false; registerObj.off = false; toast(`${drinkName(job.r)} / Ready at pick up`, 3600); }
+      if (k >= 1) { job.on = false; job.ready = true; cupObj.off = false; cupObj.dest.label = drinkName(job.r); baristaObj.off = false; toast(`${drinkName(job.r)} / Ready at pick up`, 3600); }
     }
   }
   function drinkCup() {
@@ -2285,7 +2281,7 @@ function buildRoom(THREE) {
     el.card.innerHTML = html; hud();
     const f = el.card.querySelector("[autofocus]") || el.card.querySelector("input, button"); if (f) f.focus({ preventScroll: true });
   }
-  function closeCard(lock = true) { if (ui === "shift") return; ui = null; el.card.onchange = null; el.card.innerHTML = ""; hud(); el.gl.focus({ preventScroll: true }); if (lock) relock(); }
+  function closeCard(lock = true) { ui = null; el.card.onchange = null; el.card.innerHTML = ""; hud(); el.gl.focus({ preventScroll: true }); if (lock) relock(); }
   const OPTS = [["temp", "Temp", [["hot", "Hot"], ["iced", "Iced"]]], ["size", "Size", [["small", "Small"], ["large", "Large"]]], ["shots", "Espresso", [["1", "Single"], ["2", "Double"]]], ["milk", "Milk", [["", "None"], ["whole", "Whole"], ["oat", "Oat"]]],
     ["flav", "Flavour", [["", "None"], ["vanilla", "Vanilla"], ["caramel", "Caramel"], ["mocha", "Mocha"]]], ["top", "Topping", [["", "None"], ["whip", "Whip"], ["cinnamon", "Cinnamon"]]]];
   const lastOrder = { temp: "hot", size: "small", shots: "1", milk: "whole", flav: "", top: "" };
@@ -2303,8 +2299,8 @@ function buildRoom(THREE) {
   function openHire() {
     if (job.on || job.sip >= 0) return toast("The barista is busy / Try again in a moment");
     const best = CAFEB.mine ? money(CAFEB.mine.ms) : "—";
-    openCard("hire", `<h1 id="card-title">Morning rush</h1><p class="txt">Three minutes behind the bar. Orders print as tickets.<br>Build each drink, lid it, serve it before patience runs out.<br>Fast and correct earns tips. Streaks multiply them.</p>` +
-      `<p class="txt">${TOUCH ? "Tap the station buttons. Tap a ticket to serve it." : "Keys: 1–4 cup / I ice / E shot / M O milk / V C K flavour / W N topping / L lid / Enter serve / X trash / Tab other cup. Or click the stations."}</p>` +
+    openCard("hire", `<h1 id="card-title">Morning rush</h1><p class="txt">Three minutes behind the bar. Each customer's order prints as a slip.<br>Walk the line: cup, ice, espresso, milk, flavour, topping, lid.<br>Hand the drink to the customer who ordered it. Fast and correct earns tips.</p>` +
+      `<p class="txt">${TOUCH ? "Look at a station and tap Open to use it." : "Look at a station and click (or press E) to use it."} The arrow marks your next step.</p>` +
       `<p class="name">Best today: ${best}</p><button class="go" id="card-go" type="button" autofocus><span>Start shift</span><span aria-hidden="true">&rarr;</span></button><button class="alt" id="card-x" type="button"><span>Not now</span><span aria-hidden="true">Esc</span></button>`);
     el.card.querySelector("#card-go").addEventListener("click", () => startShift());
     el.card.querySelector("#card-x").addEventListener("click", () => closeCard());
@@ -2321,12 +2317,15 @@ function buildRoom(THREE) {
     toast("Work a shift to post your tips");
   };
 
-  // ---------- the shift ----------
-  const SHIFT_LEN = 180, MAX_TICKETS = 5, NAMES = ["DOT", "KIT", "UNIT 7", "PIP", "BOLT", "MOSS", "RAY", "NOVA", "TIN", "ZED", "ADA", "OTTO", "LUX", "BEEP", "CODA", "FERN", "GUS", "IVY", "JAX", "ORB"];
-  const QSPOT = [[9.72, 1.8], [9.05, 1.9], [8.4, 2.25], [7.8, 2.75], [7.3, 3.3], [6.95, 3.65], [5.6, 3.65], [5.0, 3.65]], WSPOT = [[9.72, 0.35], [9.72, 3.0], [9.72, -0.7], [9.72, 4.0], [9.72, 5.0]];
-  const newSlot = () => ({ kind: null, ice: 0, shots: 0, pull: 0, milk: "", milkPend: "", flav: "", top: "", lid: false });
-  const shift = { on: false, cam: false, t: 0, tips: 0, streak: 0, best: 0, served: 0, wrong: 0, walk: 0, n: 0, nextAt: 0, pairAt: -1, tickets: [], cust: [], slots: [newSlot(), newSlot()], active: 0, heads: [{ t: 0, s: -1 }, { t: 0, s: -1 }], wand: { t: 0, s: -1, milk: "" }, rnd: Math.random, cfg: { g0: 13, g1: 8.67, g2: 3.2, p0: 0.2, p1: 0.35, pat: 24, per: 3, fade: 0.2 }, fb: 0.2, look: 0, say: 0, seq: 0, sig: "", railAt: 0, lastCall: false, mark: { id: "", t: 9 } };
-  // shift.cfg was tuned with a bot: seconds between arrivals at 0:00, 2:00 and 2:50 (g0, g1, g2); chance an arrival brings a friend before and during the rush (p0, p1); patience in seconds (pat + per x components), shrinking by `fade` over the shift
+  // ---------- the shift: first person, behind the bar ----------
+  // A customer orders, the slip prints, and you walk the line with the cup: stack, ice, espresso, milk, flavour, topping, lid, then hand it over the counter.
+  const SHIFT_LEN = 180, MAX_TICKETS = 3, NAMES = ["DOT", "KIT", "UNIT 7", "PIP", "BOLT", "MOSS", "RAY", "NOVA", "TIN", "ZED", "ADA", "OTTO", "LUX", "BEEP", "CODA", "FERN", "GUS", "IVY", "JAX", "ORB"];
+  const QSPOT = [[9.72, 1.8], [9.05, 1.9], [8.4, 2.25], [7.8, 2.75], [7.3, 3.3], [6.95, 3.65], [5.6, 3.65], [5.0, 3.65]], WSPOT = [[9.72, 2.9], [9.72, 3.8], [9.72, 4.7]]; // waiting places: south of the till, clear of the slips on the rail
+  const AISLE = { x0: CTR.x1 + 0.05 + RADIUS, x1: 12.95 - RADIUS, z0: CF.z0 + RADIUS + 0.03, z1: CF.z1 - RADIUS - 0.03 }; // where you can stand during a shift
+  const newSlot = (kind) => ({ kind, ice: 0, shots: 0, pull: 0, milk: "", flav: "", top: "", lid: false });
+  const shift = { on: false, t: 0, tips: 0, streak: 0, best: 0, served: 0, wrong: 0, walk: 0, n: 0, nextAt: 0, pairAt: -1, tickets: [], cust: [], hand: null, tray: null, trayT: 0, trayIdle: 0, mats: [null, null], use: 0, give: -1, rnd: Math.random,
+    cfg: { g0: 14, g1: 8, p: 0.18, pat: 40, per: 4, fade: 0.2 }, say: 0, seq: 0, sig: "", railAt: 0, lastCall: false, guide: "" };
+  // shift.cfg was tuned with bots that walk the line: seconds between arrivals at the start and at last call (g0, g1); chance an arrival brings a friend after the first minute (p); patience in seconds (pat + per x steps), shrinking by `fade` over the shift
   const mulberry = (a) => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   // customers: a small pool of one-mesh bots
   const custPool = [];
@@ -2336,21 +2335,12 @@ function buildRoom(THREE) {
       for (const sx of [-1, 1]) { k.b(0.05, 0.05, 0.012, 0xdfeaff, sx * w * 0.17, 0.16 + h * 0.6 + 0.2, -0.148); k.b(0.07, h * 0.36, 0.08, 0x8c8c86, sx * (w / 2 + 0.045), 0.16 + h * 0.36, 0); }
       if (i % 2) { k.b(0.014, 0.14, 0.014, 0x1b1b1b, 0.08, 0.16 + h * 0.6 + 0.41, 0); k.b(0.04, 0.04, 0.04, 0xdfeaff, 0.08, 0.16 + h * 0.6 + 0.5, 0); } else k.b(w * 0.5, 0.05, 0.2, 0x6b6b66, 0, 0.16 + h * 0.6 + 0.365, 0);
       const m = new THREE.Mesh(bake(k.list), new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true, color: tones[i] })); m.visible = false; cafeG.add(m); custPool.push({ m, free: true, top: 0.16 + h * 0.6 + 0.4 }); } }
-  const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.012, 10), new THREE.MeshBasicMaterial({ color: 0xf2b632, toneMapped: false })); coin.visible = false; cafeG.add(coin); let coinT = -1; const coinFrom = new THREE.Vector3();
-  // station markers: a frame round the hovered or pressed station, another round the active cup slot
+  const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.012, 10), new THREE.MeshBasicMaterial({ color: 0xf2b632, toneMapped: false })); coin.visible = false; cafeG.add(coin); let coinT = -1; const coinFrom = new THREE.Vector3(), giveFrom = new THREE.Vector3(), giveTo = new THREE.Vector3();
+  // the guide: a frame on the bar and an arrow above it mark the next step
   const frameMesh = (c) => { const q = []; for (const [w, d, x, z] of [[1, 0.06, 0, -0.5], [1, 0.06, 0, 0.5], [0.06, 1, -0.5, 0], [0.06, 1, 0.5, 0]]) q.push({ geo: new THREE.BoxGeometry(w, 0.012, d), color: 0xffffff, m: mat4(x, 0, z) }); const m = new THREE.Mesh(bake(q), new THREE.MeshBasicMaterial({ color: c, toneMapped: false })); m.visible = false; cafeG.add(m); return m; };
-  const stMark = frameMesh(C.signalHi), slotMark = frameMesh(0xffffff);
-  const stHits = []; // invisible click targets in the shift view
-  for (const id of Object.keys(ST)) { const s = ST[id]; if (s.z === undefined) continue; const w = s.w || 0.28, m = new THREE.Mesh(new THREE.BoxGeometry(0.62, id === "trash" ? 0.7 : 0.6, w)); m.position.set(13.3, id === "trash" ? 0.35 : BAR.top + 0.3, s.z); m.visible = false; m.userData.act = id; m.updateMatrixWorld(true); stHits.push(m); }
-  MATS.forEach((p, i) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.5, 0.4)); m.position.set(p.x, BAR.top + 0.25, p.z); m.userData.slot = i; m.updateMatrixWorld(true); stHits.push(m); });
-  const custHit = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.7, 0.6)); // moved onto each waiting customer when testing a click
+  const stMark = frameMesh(C.signalHi);
+  const arrow = new THREE.Mesh(bake([[0.45, 0.07], [-0.45, -0.07]].map(([rz, x]) => ({ geo: new THREE.BoxGeometry(0.05, 0.2, 0.05), color: 0xffffff, m: mat4(x, 0, 0, 0, 0, rz) }))), new THREE.MeshBasicMaterial({ color: C.signalHi, toneMapped: false })); arrow.visible = false; cafeG.add(arrow);
 
-  function shiftCam() { // fixed view from above and behind the bar: back bar just over the station buttons, then the aisle, the counter and the customers. Higher on narrow screens.
-    const vt = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), r = clamp(4.35 / (vt * camera.aspect), 3.7, 7.5), B = 1.326, pitch = B - Math.atan((1 - 2 * shift.fb - 0.05) * vt);
-    camera.position.set(CF.x1 + r * Math.cos(B), BAR.top + r * Math.sin(B), 1.5); camera.rotation.set(-pitch, Math.PI / 2, 0);
-  }
-  function shiftFit() { const h = el.room.clientHeight || 1; shift.fb = clamp((el.shiftBottom.offsetHeight + 12) / h, 0.1, 0.42); }
-  window.addEventListener("resize", () => { if (shift.cam) setTimeout(shiftFit, 60); });
   function genOrder(i, t) {
     const R = shift.rnd, late = t > 120, mid = i >= 3;
     const r = { iced: R() < 0.42, large: R() < 0.5, shots: 1, milk: "", flav: "", top: "" };
@@ -2367,72 +2357,102 @@ function buildRoom(THREE) {
     shift.cust.push(c);
   }
   function leave(c, mood) { c.state = "out"; c.mood = mood; c.moodT = 0; c.ticket = null; c.path = [[7.0, 3.65], [5.2, 3.65]]; }
-  function say(text) { shift.say = 2.4; el.say.textContent = text; el.say.hidden = false; }
-  function popAt(x, y, z, text, bad) {
-    tmpV.set(x, y, z).project(camera); const d = document.createElement("div"); d.className = "pop" + (bad ? " bad" : ""); d.textContent = text;
-    d.style.left = `${clamp((tmpV.x * 0.5 + 0.5) * 100, 12, 88)}%`; d.style.top = `${clamp((-tmpV.y * 0.5 + 0.5) * 100, 14, 80)}%`; // kept clear of the screen edges el.pops.appendChild(d); setTimeout(() => d.remove(), 1000);
+  function popHud(text, bad) { const d = document.createElement("div"); d.className = "pop" + (bad ? " bad" : ""); d.textContent = text; d.style.left = "50%"; d.style.top = "62%"; el.pops.appendChild(d); setTimeout(() => d.remove(), 1000); } // feedback by the crosshair
+  function popAt(x, y, z, text, bad) { // feedback over a customer; kept on screen, and centred when they are behind you
+    tmpV.set(x, y, z).project(camera); const d = document.createElement("div"), back = tmpV.z > 1; d.className = "pop" + (bad ? " bad" : ""); d.textContent = text;
+    d.style.left = `${back ? 50 : clamp((tmpV.x * 0.5 + 0.5) * 100, 14, 86)}%`; d.style.top = `${back ? 30 : clamp((-tmpV.y * 0.5 + 0.5) * 100, 24, 78)}%`;
+    el.pops.appendChild(d); setTimeout(() => d.remove(), 1000);
   }
-  const tokens = (r) => [[r.large ? "L" : "S", "size"], [r.iced ? "ICED" : "HOT", "temp"], [`${r.shots}×`, "shots"], r.milk && [r.milk.toUpperCase(), "milk"], r.flav && [r.flav.toUpperCase(), "flav"], r.top && [r.top === "cinnamon" ? "CINN" : "WHIP", "top"]].filter(Boolean);
-  const tokDone = (s, r, key) => s.kind && s.kind[0] === (r.iced ? "i" : "h") && (key === "size" ? s.kind === kindOf(r) : key === "temp" ? s.kind === kindOf(r) && (!r.iced || s.ice === 1) : key === "shots" ? s.kind === kindOf(r) && s.shots === r.shots : key === "milk" ? s.milk === r.milk : key === "flav" ? s.flav === r.flav : s.top === r.top);
-  const fits = (s, r) => s.kind === kindOf(r) && (!s.ice || r.iced) && s.shots + s.pull <= r.shots && (!(s.milk || s.milkPend) || (s.milk || s.milkPend) === r.milk) && (!s.flav || s.flav === r.flav) && (!s.top || s.top === r.top);
-  const exact = (s, r) => s.kind === kindOf(r) && s.ice === (r.iced ? 1 : 0) && s.shots === r.shots && !s.pull && s.milk === r.milk && !s.milkPend && s.flav === r.flav && s.top === r.top && s.lid;
-  const wantedBy = (s) => (s.kind ? shift.tickets.find((t) => fits(s, t.r)) : null); // the oldest ticket this cup can still become
-  function resetSlot(i) { for (const h of shift.heads) if (h.s === i) { h.t = 0; h.s = -1; } if (shift.wand.s === i) { shift.wand.t = 0; shift.wand.s = -1; } shift.slots[i] = newSlot(); }
-  function serveTo(t) {
-    const i = shift.active, s = shift.slots[i];
-    if (!s.kind) return hint("No cup / Pick a cup first");
-    if (s.pull || s.milkPend) return hint("Wait for the machine");
-    if (!s.lid) return hint("Lid it first");
-    if (!t) return hint("No orders waiting");
-    const c = t.cust, y = c.top + 0.25;
+  // an order as the steps you take, in line order
+  const steps = (r) => [[`${r.iced ? "ICED" : "HOT"} ${r.large ? "L" : "S"}`, "cup"], r.iced && ["ICE", "ice"], [`${r.shots}× SHOT`, "shots"], r.milk && [r.milk.toUpperCase(), "milk"], r.flav && [r.flav.toUpperCase(), "flav"], r.top && [r.top === "cinnamon" ? "CINN" : "WHIP", "top"], ["LID", "lid"]].filter(Boolean);
+  const stepDone = (s, r, key) => (key === "cup" ? true : key === "ice" ? !!s.ice : key === "shots" ? s.shots === r.shots : key === "milk" ? s.milk === r.milk : key === "flav" ? s.flav === r.flav : key === "top" ? s.top === r.top : s.lid);
+  const fits = (s, r) => s.kind === kindOf(r) && (!s.ice || r.iced) && s.shots + s.pull <= r.shots && (!s.milk || s.milk === r.milk) && (!s.flav || s.flav === r.flav) && (!s.top || s.top === r.top);
+  const exact = (s, r) => s.kind === kindOf(r) && s.ice === (r.iced ? 1 : 0) && s.shots === r.shots && !s.pull && s.milk === r.milk && s.flav === r.flav && s.top === r.top && s.lid;
+  const cupsNow = () => [shift.hand, shift.tray, shift.mats[0], shift.mats[1]].filter(Boolean);
+  function assign() { // which cup is for which slip: oldest slip first, the cup in your hand first
+    const of = new Map(), used = new Set();
+    for (const t of shift.tickets) { const c = cupsNow().find((q) => !used.has(q) && fits(q, t.r)); if (c) { used.add(c); of.set(t, c); of.set(c, t); } }
+    return of;
+  }
+  function nextStep(of) { // where the arrow points
+    const h = shift.hand;
+    if (h) { const t = of.get(h); if (!t) return "trash"; const r = t.r;
+      return r.iced && !h.ice ? "ice" : h.shots < r.shots ? "shot" : r.milk && !h.milk ? r.milk : r.flav && !h.flav ? r.flav : r.top && !h.top ? r.top : !h.lid ? "lid" : "cust" + t.cust.spot; }
+    if (shift.tray) return "shot";
+    const m = shift.mats.findIndex((q) => q && of.get(q)); if (m >= 0) return "mat" + m;
+    const free = shift.tickets.find((t) => !of.get(t)); return free ? kindOf(free.r) : "";
+  }
+  const cupText = (s) => [`${s.kind[0] === "i" ? "Iced" : "Hot"} ${s.kind[1] === "l" ? "L" : "S"}`, s.ice && "Ice", s.shots && `${s.shots}× shot`, s.pull && "Pulling", s.milk && cap(s.milk), s.flav && cap(s.flav), s.top && cap(s.top), s.lid && "Lid"].filter(Boolean).join(" · ");
+  function flash(text) { el.flash.textContent = text; el.flash.hidden = false; clearTimeout(flash.t); flash.t = setTimeout(() => { el.flash.hidden = true; }, 900); }
+  function act(id) { // every station press ends up here
+    if (!shift.on || state !== "play") return;
+    const h = shift.hand, no = (text) => popHud(text, true);
+    if (id === "mat0" || id === "mat1") { const i = +id[3], m = shift.mats[i]; if (!h && !m) return no("Nothing to set down"); shift.mats[i] = h; shift.hand = m; shift.use = 1; return shiftDom(); }
+    if (id === "shot") { const tr = shift.tray;
+      if (tr && tr.pull) { if (tr.shots + tr.pull >= 2) return no("Two shots at most"); tr.pull++; popHud("+ Second shot"); return shiftDom(); }
+      if (tr) { if (h) return no("Hands full / Use the mat"); shift.hand = tr; shift.tray = null; shift.use = 1; return shiftDom(); }
+      if (!h) return no("Bring a cup");
+      if (h.lid) return no("Already lidded");
+      if (h.shots >= 2) return no("Two shots at most");
+      shift.tray = h; shift.hand = null; h.pull = 1; shift.trayT = 1.0; shift.trayIdle = 0; return shiftDom(); }
+    if (id.length === 2) { if (h) return no("Hands full / Bin it or use the mat"); shift.hand = newSlot(id); shift.use = 1; popHud(`${id[0] === "i" ? "Iced" : "Hot"} ${id[1] === "l" ? "large" : "small"} cup`); return shiftDom(); }
+    if (id === "trash") { if (!h) return no("Nothing to bin"); shift.hand = null; popHud("Binned"); return shiftDom(); }
+    if (!h) return no("Pick up a cup first");
+    if (h.lid) return no("Already lidded / Serve or bin it");
+    if (id === "ice") { if (h.kind[0] === "h") return no("Ice goes in iced cups"); if (h.ice) return no("Already iced"); h.ice = 1; }
+    else if (id === "whole" || id === "oat") { if (h.milk) return no("Already has milk"); h.milk = id; }
+    else if (id === "vanilla" || id === "caramel" || id === "mocha") { if (h.flav) return no("One flavour per cup"); h.flav = id; }
+    else if (id === "whip" || id === "cinnamon") { if (h.top) return no("One topping per cup"); h.top = id; }
+    else if (id === "lid") h.lid = true;
+    shift.use = 1;
+    if (shift.tickets.length && !shift.tickets.some((t) => fits(h, t.r))) popHud(`${ST[id].n} / Not on any order`, true); else popHud(`+ ${ST[id].n}`);
+    shiftDom();
+  }
+  function serveSpot(k) { // hand the cup you carry to the customer waiting at spot k
+    if (!shift.on || state !== "play") return;
+    const c = shift.cust.find((q) => q.state === "wait" && q.spot === k), t = c && c.ticket, s = shift.hand; if (!t) return;
+    if (!s) return popHud(`${c.name} is waiting / Bring the drink`, true);
+    if (!s.lid) return popHud("Lid it first", true);
+    const y = c.top + 0.25;
     if (exact(s, t.r)) {
       shift.streak++; shift.best = Math.max(shift.best, shift.streak); shift.served++;
       const mult = shift.streak >= 10 ? 2 : shift.streak >= 6 ? 1.5 : shift.streak >= 3 ? 1.25 : 1, gain = Math.round((200 + 25 * t.comps + 150 * Math.max(0, t.left / t.max)) * mult);
       if (mult === 2 && shift.streak === 10) toast("×2 / On a roll", 2200);
       shift.tips += gain; popAt(c.x, y, c.z, `+${money(gain)}`); coinFrom.set(c.x, 1.1, c.z); coinT = 0;
+      camera.getWorldDirection(tmpF); giveFrom.copy(camera.position).addScaledVector(tmpF, 0.4); giveFrom.y -= 0.2; giveTo.set(c.x + 0.3, 1.12, c.z); shift.give = 0; giveCup.level = s.lv || 0; if (s.tn !== undefined) giveCup.tint.setHex(s.tn); giveCup.show(s);
       shift.tickets.splice(shift.tickets.indexOf(t), 1); leave(c, 1);
     } else {
       shift.streak = 0; shift.wrong++; shift.tips = Math.max(0, shift.tips - 100); popAt(c.x, y, c.z, "Wrong order −$1.00", true); c.mood = -1; c.moodT = 0; flash("Wrong order");
     }
-    resetSlot(i); if (shift.slots[1 - i].kind) shift.active = 1 - i;
-  }
-  function flash(text) { el.flash.textContent = text; el.flash.hidden = false; clearTimeout(flash.t); flash.t = setTimeout(() => { el.flash.hidden = true; }, 900); }
-  function doAct(id) { // every key, button and 3D click ends up here
-    if (!shift.on || state !== "play") return;
-    if (id === "tab") { shift.active = 1 - shift.active; return; }
-    if (id === "serve") return serveTo(shift.tickets.find((t) => exact(shift.slots[shift.active], t.r)) || shift.tickets[0]);
-    shift.mark.id = id; shift.mark.t = 0;
-    const i = shift.active, s = shift.slots[i];
-    if (id === "trash") { if (!s.kind) return hint("Nothing to bin"); return resetSlot(i); }
-    if (id.length === 2) { if (s.kind) return hint("Cup already down / X bins it"); s.kind = id; return; }
-    if (!s.kind) return hint("Pick a cup first");
-    if (s.lid) return hint("Already lidded / Serve or bin it");
-    if (id === "ice") { if (s.kind[0] === "h") return hint("Ice goes in iced cups"); if (s.ice) return hint("Already iced"); s.ice = 1; }
-    else if (id === "shot") { if (s.shots + s.pull >= 2) return hint("Two shots at most"); const h = shift.heads.find((q) => q.t <= 0); if (!h) return hint("Both group heads busy"); h.t = 1.2; h.s = i; s.pull++; }
-    else if (id === "whole" || id === "oat") { if (s.milk || s.milkPend) return hint("Already has milk"); if (s.kind[0] === "i") s.milk = id; else { if (shift.wand.t > 0) return hint("Steam wand busy"); shift.wand.t = 1.0; shift.wand.s = i; shift.wand.milk = id; s.milkPend = id; } }
-    else if (id === "vanilla" || id === "caramel" || id === "mocha") { if (s.flav) return hint("One flavour per cup"); s.flav = id; }
-    else if (id === "whip" || id === "cinnamon") { if (s.top) return hint("One topping per cup"); s.top = id; }
-    else if (id === "lid") { if (s.pull || s.milkPend) return hint("Wait for the machine"); s.lid = true; }
+    shift.hand = null; shiftDom();
   }
   function startShift() {
-    ui = "shift"; el.card.innerHTML = ""; el.room.classList.add("shift");
-    if (document.pointerLockElement === el.gl) document.exitPointerLock(); // the shift is played with the cursor
-    Object.assign(shift, { on: true, t: 0, tips: 0, streak: 0, best: 0, served: 0, wrong: 0, walk: 0, n: 0, nextAt: 2, pairAt: -1, tickets: [], slots: [newSlot(), newSlot()], active: 0, say: 0, seq: 0, sig: "", lastCall: false, rushed: false, rnd: shift.seed ? mulberry(shift.seed) : Math.random });
-    for (const c of shift.cust) { c.free = true; c.m.visible = false; } shift.cust = []; for (const h of shift.heads) { h.t = 0; h.s = -1; } shift.wand.t = 0; shift.wand.s = -1;
-    el.pops.innerHTML = ""; el.say.hidden = true; el.flash.hidden = true;
-    annexShell.visible = false; cafeTop.visible = false; ticketRail.visible = true;
-    if (!shift.cam) { shift.cam = true; fromPose.pos.copy(camera.position); fromPose.quat.copy(camera.quaternion); shiftCam(); toPose.pos.copy(camera.position); toPose.quat.copy(camera.quaternion); if (!REDUCED) tween = { t: 0, dur: 0.6 }; }
-    HOME.x = 11.25; HOME.z = 1.8; hud(); shiftDom(true); shiftFit(); if (tween) { shiftCam(); toPose.pos.copy(camera.position); toPose.quat.copy(camera.quaternion); } el.gl.focus({ preventScroll: true });
+    ui = null; el.card.onchange = null; el.card.innerHTML = ""; el.room.classList.add("shift"); if (entry) endEntry(false);
+    Object.assign(shift, { on: true, t: 0, tips: 0, streak: 0, best: 0, served: 0, wrong: 0, walk: 0, n: 0, nextAt: 2, pairAt: -1, tickets: [], hand: null, tray: null, mats: [null, null], use: 0, give: -1, say: 0, seq: 0, sig: "", lastCall: false, guide: "", rnd: shift.seed ? mulberry(shift.seed) : Math.random });
+    for (const c of shift.cust) { c.free = true; c.m.visible = false; } shift.cust = [];
+    el.pops.innerHTML = ""; el.flash.hidden = true; ticketRail.visible = true; baristaObj.off = true;
+    for (const o of stObjs) o.off = false;
+    HOME.x = 11.08; HOME.z = 5.56; HOME.ry = 0; // the barista steps aside to the south end and calls the orders
+    // you step behind the bar, facing the line
+    fromPose.pos.copy(camera.position); fromPose.quat.copy(camera.quaternion);
+    Object.assign(player, { x: 11.9, z: 3.3, yaw: -Math.PI / 2, pitch: -0.14, vx: 0, vz: 0, vy: 0, y: 0, ground: true, zone: "bar" });
+    if (!REDUCED) tween = { t: 0, dur: 0.6, follow: true }; else updateWalk(0);
+    hud(); shiftDom(true); el.gl.focus({ preventScroll: true }); relock();
+  }
+  function stopShift() { // common to the end of a shift and to quitting one
+    shift.on = false; for (const c of shift.cust) if (c.state !== "out") leave(c, 0); shift.tickets = []; shift.hand = shift.tray = null; shift.mats = [null, null]; shift.give = -1;
+    for (const o of stObjs) o.off = true; for (const o of srvObjs) o.off = true; setTarget(null);
+    for (const c of [handCup, trayCup, matCups[0], matCups[1], giveCup]) c.show(null); stMark.visible = arrow.visible = stream.visible = false; for (const g of el.tags) g.hidden = true;
   }
   function endShift(quit) {
-    shift.on = false; for (const c of shift.cust) if (c.state !== "out") leave(c, 0); shift.tickets = []; shift.slots = [newSlot(), newSlot()]; shiftDom(true);
+    stopShift(); shiftDom(true);
     if (quit) return clockOut();
     const tips = Math.round(shift.tips), day = skiDay(), b = CAFEB; if (b.mine && b.mine.day !== day) b.mine = null;
     const best = tips > 0 && (!b.mine || tips > b.mine.ms);
     if (best) { b.mine = { day, ms: tips, posted: b.mine ? b.mine.posted : 0 }; jset(b.key, b.mine); }
     if (best && myInitials()) postTime(b); else drawBoard(b);
     const tot = shift.served + shift.wrong, acc = tot ? Math.round((shift.served / tot) * 100) : 0, auto = best && !!myInitials(), can = b.mine && b.mine.posted !== b.mine.ms && !auto;
-    ui = "end"; hud();
+    ui = "end"; keys.clear(); resetJoy(); if (document.pointerLockElement === el.gl) document.exitPointerLock(); hud();
     el.card.innerHTML = `<h1 id="card-title">Shift over</h1><dl class="stats"><dt>Tips</dt><dd>${money(tips)}</dd><dt>Drinks served</dt><dd>${shift.served}</dd><dt>Accuracy</dt><dd>${tot ? acc + "%" : "—"}</dd><dt>Best streak</dt><dd>${shift.best}</dd><dt>Walk-outs</dt><dd>${shift.walk}</dd></dl>` +
       `<p class="name">Best today: ${b.mine ? money(b.mine.ms) : "—"}${best ? " / New best" : ""}</p>` + (can ? (myInitials() ? `<button class="alt" id="card-post" type="button"><span>Post to board</span><span aria-hidden="true">&rarr;</span></button>` : `<button class="alt" id="card-post" type="button"><span>Enter initials to post it</span><span aria-hidden="true">&rarr;</span></button><p class="txt">Or press the board on the wall later.</p>`) : auto && SB.on ? `<p class="txt">Posted to the board as ${myInitials()}.</p>` : "") +
       `<button class="go" id="card-go" type="button" autofocus><span>Play again</span><span aria-hidden="true">&rarr;</span></button><button class="alt" id="card-x" type="button"><span>Clock out</span><span aria-hidden="true">Esc</span></button>`;
@@ -2441,44 +2461,27 @@ function buildRoom(THREE) {
     el.card.querySelector("#card-x").addEventListener("click", () => clockOut());
     el.card.querySelector("#card-go").focus({ preventScroll: true });
   }
-  function clockOut(lock = true) { // back to the customer side of the counter, on foot
-    shift.on = false; ui = null; el.card.innerHTML = ""; el.room.classList.remove("shift"); el.pops.innerHTML = ""; el.say.hidden = true; el.flash.hidden = true; if (entry) endEntry(false);
-    for (const c of shift.cust) { c.free = true; c.m.visible = false; } shift.cust = []; shift.tickets = []; slotCups.forEach((c) => c.show(null)); stMark.visible = slotMark.visible = coin.visible = false; coinT = -1;
-    annexShell.visible = true; cafeTop.visible = true; ticketRail.visible = false; HOME.x = 11.3;
+  function clockOut(lock = true) { // back to the customer side of the counter
+    stopShift(); ui = null; el.card.innerHTML = ""; el.room.classList.remove("shift"); el.pops.innerHTML = ""; el.flash.hidden = true; if (entry) endEntry(false);
+    for (const c of shift.cust) { c.free = true; c.m.visible = false; } shift.cust = []; coin.visible = false; coinT = -1;
+    ticketRail.visible = false; baristaObj.off = job.on; HOME.x = 11.3; HOME.z = 1.8; HOME.ry = Math.PI / 2;
+    fromPose.pos.copy(camera.position); fromPose.quat.copy(camera.quaternion);
     Object.assign(player, { x: 9.3, z: 2.6, yaw: -Math.PI / 2, pitch: -0.06, vx: 0, vz: 0, vy: 0, y: 0, ground: true, zone: "cafe" });
-    fromPose.pos.copy(camera.position); fromPose.quat.copy(camera.quaternion); shift.cam = false; if (!REDUCED) tween = { t: 0, dur: 0.6, follow: true }; else updateWalk(0);
+    if (!REDUCED) tween = { t: 0, dur: 0.6, follow: true }; else updateWalk(0);
     hud(); el.gl.focus({ preventScroll: true }); if (lock) relock();
   }
-  // DOM for the shift: tickets along the top, cup cards and the station bar along the bottom
+  // DOM for the shift: clock and tips, the order slips, what is in your hand
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-  el.stations.innerHTML = Object.keys(ST).map((id) => `<button type="button" data-a="${id}"${id === "serve" ? ' class="serve"' : ""} aria-label="${ST[id].n}, key ${ST[id].k}"><span>${ST[id].s || ST[id].n}</span><kbd>${ST[id].k === "Enter" ? "↵" : ST[id].k}</kbd></button>`).join("");
-  el.stations.addEventListener("click", (e) => { const b = e.target.closest("[data-a]"); if (b) { doAct(b.dataset.a); shiftDom(); } });
-  el.stations.addEventListener("pointerover", (e) => { const b = e.target.closest("[data-a]"); shift.hover = b ? b.dataset.a : ""; });
-  el.stations.addEventListener("pointerleave", () => { shift.hover = ""; });
-  el.tickets.addEventListener("click", (e) => { const b = e.target.closest("[data-t]"); if (b) { serveTo(shift.tickets.find((t) => t.id === +b.dataset.t)); shiftDom(); } });
-  el.cups.addEventListener("click", (e) => { const b = e.target.closest("[data-s]"); if (b) { shift.active = +b.dataset.s; shiftDom(); } });
   el.shPause.addEventListener("click", () => pause());
   function shiftDom(force) {
-    const a = shift.slots[shift.active], fit = wantedBy(a);
-    const sig = shift.tickets.map((t) => `${t.id}${t.left / t.max <= 0.25 ? "!" : ""}${t === fit ? "*" : ""}`).join(",") + "|" + shift.slots.map((s) => JSON.stringify(s)).join("") + shift.active + "|" + shift.served + "|" + shift.streak;
+    const of = assign(), h = shift.hand, mine = h ? of.get(h) : null, g = shift.on ? nextStep(of) : ""; shift.guide = g;
+    const sig = shift.tickets.map((t) => { const c = of.get(t); return `${t.id}${t.left / t.max <= 0.25 ? "!" : ""}${c ? cupText(c) : ""}${t === mine ? "*" : ""}`; }).join(",") + "|" + (h ? cupText(h) : "") + "|" + (shift.tray ? cupText(shift.tray) : "") + "|" + shift.served + "|" + shift.streak + "|" + g;
     if (sig !== shift.sig || force) {
       shift.sig = sig;
-      el.tickets.innerHTML = shift.tickets.map((t) => { const low = t.left / t.max <= 0.25, mine = t === fit;
-        return `<button type="button" class="tk${low ? " low" : ""}${mine ? " fit" : ""}" data-t="${t.id}" aria-label="Serve ${esc(t.cust.name)}: ${esc(drinkName(t.r))}"><span class="who"><span>${esc(t.cust.name)}</span><span>${low ? "Hurry" : mine ? "This cup" : ""}</span></span><span class="nm">${esc(drinkName(t.r))}</span><span class="cmp">${tokens(t.r).map(([txt, key]) => { const ok = mine && tokDone(a, t.r, key); return `<i${ok ? ' class="ok"' : ""}>${ok ? "✓" : ""}${txt}</i>`; }).join("")}</span><span class="bar"><b></b></span></button>`; }).join("");
-      el.cups.innerHTML = shift.slots.map((s, i) => { const t = wantedBy(s), mark = (ok) => (ok ? "✓" : "✗"), parts = [];
-        if (s.kind) { const best = t ? t.r : null;
-          parts.push(`${best ? "✓" : mark(shift.tickets.some((q) => kindOf(q.r) === s.kind))}${s.kind[0] === "i" ? "Iced" : "Hot"} ${s.kind[1] === "l" ? "L" : "S"}`);
-          const any = (f) => (best ? f(best) : shift.tickets.some((q) => kindOf(q.r) === s.kind && f(q.r)));
-          if (s.ice) parts.push(`${mark(any((r) => r.iced))}Ice`);
-          if (s.shots) parts.push(`${mark(any((r) => r.shots >= s.shots + s.pull))}${s.shots}× shot`);
-          if (s.pull) parts.push(`…pulling`);
-          if (s.milk) parts.push(`${mark(any((r) => r.milk === s.milk))}${cap(s.milk)}`);
-          if (s.milkPend) parts.push(`…steaming`);
-          if (s.flav) parts.push(`${mark(any((r) => r.flav === s.flav))}${cap(s.flav)}`);
-          if (s.top) parts.push(`${mark(any((r) => r.top === s.top))}${cap(s.top)}`);
-          if (s.lid) parts.push(`Lidded`);
-        }
-        return `<button type="button" class="cupc${i === shift.active ? " on" : ""}" data-s="${i}" aria-pressed="${i === shift.active}"><u>Cup ${i + 1}${i === shift.active ? " / Active" : ""}</u><span>${parts.length ? parts.join(" · ") : "Empty / Pick a cup"}</span></button>`; }).join("");
+      el.tickets.innerHTML = shift.tickets.map((t) => { const low = t.left / t.max <= 0.25, c = of.get(t); let nx = false;
+        return `<div class="tk${low ? " low" : ""}${t === mine ? " fit" : ""}"><span class="who"><span>${esc(t.cust.name)}</span><span>${low ? "Hurry" : t === mine ? "In hand" : ""}</span></span><span class="nm">${esc(drinkName(t.r))}</span><span class="cmp">${steps(t.r).map(([txt, key]) => { const ok = !!c && stepDone(c, t.r, key), next = !ok && !nx && t === mine; if (!ok) nx = true; return `<i class="${ok ? "ok" : next ? "nx" : ""}">${ok ? "✓" : ""}${txt}</i>`; }).join("")}</span><span class="bar"><b></b></span></div>`; }).join("");
+      const lost = h && !mine && shift.tickets.length > 0;
+      el.handText.textContent = h ? cupText(h) + (lost ? " / Not on any order: bin it" : h.lid && mine ? ` / Hand it to ${mine.cust.name}` : "") : shift.tray ? `Nothing / On the machine: ${cupText(shift.tray)}` : "Nothing"; el.hand.classList.toggle("bad", !!lost);
       const mult = shift.streak >= 10 ? "×2" : shift.streak >= 6 ? "×1.5" : shift.streak >= 3 ? "×1.25" : "×1";
       el.shStreak.textContent = `Streak ${shift.streak} / ${mult}${shift.streak >= 10 ? " / On a roll" : ""}`; el.shServed.textContent = `${shift.served} served`;
     }
@@ -2487,42 +2490,43 @@ function buildRoom(THREE) {
     if (el.shTime.textContent !== txt) { el.shTime.textContent = txt; el.shTime.classList.toggle("last", left <= 10); }
     const tips = money(Math.round(shift.tips)); if (el.shTips.textContent !== tips) el.shTips.textContent = tips;
   }
-  function drawRail() { // the paper slips on the 3D rail
+  function drawRail() { // the paper slips on the rail over the counter
     const cv = ticketRail.material.map.image, g = cv.getContext("2d"), W = cv.width, H = cv.height; g.clearRect(0, 0, W, H);
-    shift.tickets.forEach((t, i) => { const x = 8 + i * 204, low = t.left / t.max <= 0.25;
-      g.fillStyle = "#fbfbf7"; g.fillRect(x, 0, 190, H - 8); g.fillStyle = low ? "#c62828" : "#141414"; g.fillRect(x, 0, 190, 34); g.fillStyle = "#f3f3ef"; g.font = `700 22px ${F_MONO}`; g.textBaseline = "middle"; g.textAlign = "left"; fitText(g, t.cust.name, x + 8, 18, 174);
-      g.fillStyle = "#141414"; g.font = `700 20px ${F_MONO}`; const tk = tokens(t.r).map((q) => q[0]); fitText(g, tk.slice(0, 3).join(" "), x + 8, 60, 174); fitText(g, tk.slice(3).join(" "), x + 8, 90, 174);
-      g.fillStyle = "#d6d6cf"; g.fillRect(x + 8, 120, 174, 14); g.fillStyle = low ? "#c62828" : "#141414"; g.fillRect(x + 8, 120, 174 * Math.max(0, t.left / t.max), 14); });
+    shift.tickets.forEach((t, i) => { const x = 110 + i * 280, low = t.left / t.max <= 0.25;
+      g.fillStyle = "#fbfbf7"; g.fillRect(x, 0, 250, H - 8); g.fillStyle = low ? "#c62828" : "#141414"; g.fillRect(x, 0, 250, 34); g.fillStyle = "#f3f3ef"; g.font = `700 22px ${F_MONO}`; g.textBaseline = "middle"; g.textAlign = "left"; fitText(g, t.cust.name, x + 8, 18, 234);
+      g.fillStyle = "#141414"; g.font = `700 20px ${F_MONO}`; const tk = steps(t.r).slice(0, -1).map((q) => q[0]); fitText(g, tk.slice(0, 3).join(" / "), x + 8, 60, 234); fitText(g, tk.slice(3).join(" / "), x + 8, 90, 234);
+      g.fillStyle = "#d6d6cf"; g.fillRect(x + 8, 120, 234, 14); g.fillStyle = low ? "#c62828" : "#141414"; g.fillRect(x + 8, 120, 234 * Math.max(0, t.left / t.max), 14); });
     ticketRail.material.map.needsUpdate = true;
   }
+  const TRAY = { x: 13.075, y: BAR.top + 0.026, z: ST.shot.z - 0.2 };
   function shiftTick(dt) {
-    if (shift.on && state === "play") {
-      shift.t += dt; const t = shift.t;
-      // arrivals: the gap shrinks from 13 s to under 9 s over two minutes, then the closing rush takes it to about 3 s. After the first minute some arrivals bring a friend.
+    const run = state === "play";
+    if (shift.on && run) {
+      shift.t += dt; const t = shift.t, G = shift.cfg;
+      // arrivals: the gap shrinks steadily to last call; after the first minute some arrivals bring a friend
       if (t < SHIFT_LEN - 10) {
-        if (t >= shift.nextAt) { spawnCustomer(); const R = shift.rnd, rush = t > 120, G = shift.cfg, gap = rush ? G.g1 + (G.g2 - G.g1) * ((t - 120) / 50) : G.g0 + (G.g1 - G.g0) * (t / 120); shift.nextAt = t + gap * (0.8 + R() * 0.4); if (t > 60 && R() < (rush ? G.p1 : G.p0)) shift.pairAt = t + 1 + R(); }
-        if (t > 120 && !shift.rushed) { shift.rushed = true; toast("Closing rush", 2200); }
+        if (t >= shift.nextAt) { spawnCustomer(); const R = shift.rnd; shift.nextAt = t + (G.g0 + (G.g1 - G.g0) * (t / (SHIFT_LEN - 10))) * (0.8 + R() * 0.4); if (t > 60 && R() < G.p) shift.pairAt = t + 1.5 + R(); }
         if (shift.pairAt > 0 && t >= shift.pairAt) { shift.pairAt = -1; spawnCustomer(); }
       } else if (!shift.lastCall) { shift.lastCall = true; toast("Last call", 2200); }
-      for (const h of shift.heads) if (h.t > 0) { h.t -= dt; if (h.t <= 0) { const s = shift.slots[h.s]; if (s && s.pull) { s.pull--; s.shots++; } h.s = -1; } }
-      if (shift.wand.t > 0) { shift.wand.t -= dt; if (shift.wand.t <= 0) { const s = shift.slots[shift.wand.s]; if (s && s.milkPend) { s.milk = s.milkPend; s.milkPend = ""; } shift.wand.s = -1; } }
-      for (const tk of shift.tickets.slice()) { tk.left -= dt; if (tk.left <= 0) { shift.tickets.splice(shift.tickets.indexOf(tk), 1); shift.streak = 0; shift.walk++; shift.tips = Math.max(0, shift.tips - 150); popAt(tk.cust.x, tk.cust.top + 0.25, tk.cust.z, "Walked out −$1.50", true); leave(tk.cust, -1); } }
+      // the espresso machine works while you wait; a finished cup comes back to your free hand if you are standing there
+      const tr = shift.tray;
+      if (tr && tr.pull > 0) { shift.trayT -= dt; if (shift.trayT <= 0) { tr.pull--; tr.shots++; if (tr.pull > 0) shift.trayT = 0.8; else shift.trayIdle = 0; } }
+      else if (tr) { shift.trayIdle += dt; if (!shift.hand && shift.trayIdle > 0.1 && Math.hypot(player.x - 12.6, player.z - ST.shot.z) < 1.5) { shift.hand = tr; shift.tray = null; shift.use = 1; } }
+      for (const tk of shift.tickets.slice()) { tk.left -= dt; if (tk.left <= 0) { shift.tickets.splice(shift.tickets.indexOf(tk), 1); shift.streak = 0; shift.walk++; shift.tips = Math.max(0, shift.tips - 150); popAt(tk.cust.x, tk.cust.top + 0.25, tk.cust.z, `${tk.cust.name} walked out −$1.50`, true); leave(tk.cust, -1); } }
       // the queue: the customer at the till orders as soon as there is room on the rail
       const q = shift.cust.filter((c) => c.state === "queue");
       q.forEach((c, i) => { const s = QSPOT[Math.min(i, QSPOT.length - 1)]; if (c.path.length <= 1) c.path = c.x < 6.6 && s[0] > 6.9 ? [[6.95, 3.65], s] : [s]; });
       const head = q[0];
       if (head && Math.hypot(head.x - QSPOT[0][0], head.z - QSPOT[0][1]) < 0.06 && shift.tickets.length < MAX_TICKETS) {
         head.wait += dt;
-        if (head.wait > 0.7) { const r = genOrder(shift.seq, t), comps = compsOf(r), max = (shift.cfg.pat + shift.cfg.per * comps) * (1 - shift.cfg.fade * (t / SHIFT_LEN)) * (0.9 + shift.rnd() * 0.2), used = new Set(shift.cust.filter((c) => c.state === "wait").map((c) => c.spot)), spot = [0, 1, 2, 3, 4].find((k) => !used.has(k));
+        if (head.wait > 0.7) { const r = genOrder(shift.seq, t), comps = compsOf(r), max = (G.pat + G.per * comps) * (1 - G.fade * (t / SHIFT_LEN)) * (0.9 + shift.rnd() * 0.2), used = new Set(shift.cust.filter((c) => c.state === "wait").map((c) => c.spot)), spot = [0, 1, 2].find((k) => !used.has(k));
           const tk = { id: ++shift.seq, r, comps, max, left: max, cust: head }; shift.tickets.push(tk); head.ticket = tk; head.state = "wait"; head.spot = spot; head.path = [WSPOT[spot]];
-          say(`${drinkName(r)}, for ${head.name}`); shift.look = clamp(Math.atan2(-(head.x - bot.position.x), -(head.z - bot.position.z)) - HOME.ry, -1, 1); }
+          shift.say = 2.4; toast(`${head.name} / ${drinkName(r)}`, 2600); }
       }
-      if (shift.say > 0) { shift.say -= dt; if (shift.say <= 0) el.say.hidden = true; }
-      if (t >= SHIFT_LEN) endShift(false);
+      if (shift.say > 0) shift.say -= dt;
+      if (t >= SHIFT_LEN) return endShift(false);
     }
-    if (!shift.cam) return;
-    // customers walk, fidget, bob and slump whether or not the clock is running
-    const run = state === "play";
+    // customers walk, fidget, bob and slump (they finish walking out after the shift ends)
     for (const c of shift.cust.slice()) {
       const p = c.path[0];
       if (p && run) { const dx = p[0] - c.x, dz = p[1] - c.z, d = Math.hypot(dx, dz), st = (REDUCED ? 40 : 1.9) * dt;
@@ -2538,40 +2542,38 @@ function buildRoom(THREE) {
       c.m.position.set(c.x + jx, y, c.z); c.m.rotation.x = tilt;
     }
     if (coinT >= 0) { coinT += dt / (REDUCED ? 0.01 : 0.55); const k = Math.min(1, coinT); coin.visible = k < 1; coin.position.set(coinFrom.x + (10.48 - coinFrom.x) * k, 1.1 + Math.sin(k * Math.PI) * 0.7 + (1.12 - 1.1) * k, coinFrom.z + (2.3 - coinFrom.z) * k); coin.rotation.x = k * 9; if (k >= 1) coinT = -1; }
+    if (shift.give >= 0) { shift.give += dt / (REDUCED ? 0.01 : 0.22); const k = Math.min(1, shift.give); giveCup.root.position.lerpVectors(giveFrom, giveTo, ease(k)); giveCup.root.position.y += Math.sin(k * Math.PI) * 0.12; giveCup.tick(dt); if (k >= 1) { shift.give = -1; giveCup.show(null); } }
     if (!shift.on) return;
-    // cups on the mat, markers, speech bubble, rail, DOM
-    shift.slots.forEach((s, i) => { const c = slotCups[i]; c.show(s.kind ? s : null); c.root.position.set(MATS[i].x, BAR.top + 0.01, MATS[i].z); c.root.scale.setScalar(2); c.tick(dt); });
-    slotMark.visible = true; slotMark.position.set(MATS[shift.active].x, BAR.top + 0.014, MATS[shift.active].z); slotMark.scale.set(0.34, 1, 0.4);
-    shift.mark.t += dt; const mid = shift.mark.t < 0.25 ? shift.mark.id : shift.hover || "", ms = ST[mid];
-    stMark.visible = !!(ms && ms.z !== undefined);
-    if (stMark.visible) { const w = (ms.w || 0.28) + 0.06, pulse = shift.mark.t < 0.25 && !REDUCED ? 1 + Math.sin((shift.mark.t / 0.25) * Math.PI) * 0.25 : 1; stMark.position.set(13.3, mid === "trash" ? 0.62 : BAR.top + 0.014, ms.z); stMark.scale.set(0.6 * pulse, 1, w * pulse); stMark.material.color.setHex(shift.mark.t < 0.25 ? 0xffffff : C.signalHi); }
-    if (!el.say.hidden) { tmpV.set(bot.position.x, 1.95, bot.position.z).project(camera); el.say.style.left = `${(tmpV.x * 0.5 + 0.5) * 100}%`; el.say.style.top = `${(-tmpV.y * 0.5 + 0.5) * 100}%`; }
+    // the cups: in your hand, under the group head, on the mat
+    const put = (cup, sl, x, y, z) => { if (sl && cup.st !== sl) { cup.level = sl.lv || 0; if (sl.tn !== undefined) cup.tint.setHex(sl.tn); } cup.show(sl || null); if (!sl) return; if (x !== undefined) cup.root.position.set(x, y, z); cup.tick(dt); sl.lv = cup.level; sl.tn = cup.tint.getHex(); };
+    put(handCup, shift.hand); put(trayCup, shift.tray, TRAY.x, TRAY.y, TRAY.z); shift.mats.forEach((m, i) => put(matCups[i], m, MATS[i].x, BAR.top + 0.01, MATS[i].z));
+    shift.use = Math.max(0, shift.use - dt / 0.22); const u = REDUCED ? 0 : Math.sin(shift.use * Math.PI), sway = REDUCED ? 0 : Math.sin(time * 7) * Math.min(1, Math.hypot(player.vx, player.vz) / 3.5) * 0.008;
+    handCup.root.position.set(0.19, -0.21 + sway - u * 0.03, -0.44 - u * 0.1); handCup.root.rotation.set(u * 0.25, 0, 0.06);
+    const pouring = !!shift.tray && shift.tray.pull > 0; stream.visible = pouring && !REDUCED;
+    if (stream.visible) { stream.material.color.setHex(0x2b170d); const y0 = BAR.top + 0.275; stream.position.set(TRAY.x + 0.005, y0, TRAY.z); stream.scale.y = y0 - TRAY.y - 0.02; }
+    // who can be served, the name over each waiting customer, the guide
+    shiftDom(); const g = shift.guide; camera.updateMatrixWorld(); camera.matrixWorldInverse.copy(camera.matrixWorld).invert(); // this frame's view, so the name tags do not trail when you turn
+    srvObjs.forEach((o, k) => { const c = shift.cust.find((q) => q.state === "wait" && q.spot === k), here = !!c && Math.hypot(c.x - WSPOT[k][0], c.z - WSPOT[k][1]) < 0.4, tag = el.tags[k];
+      o.off = !here; if (here) o.dest.label = `${c.name} / Serve`; if (!here && target === o) setTarget(null);
+      let show = false; if (c && c.ticket) { tmpV.set(c.x, c.top + 0.32, c.z).project(camera); show = tmpV.z < 1 && Math.abs(tmpV.x) < 1.1 && Math.abs(tmpV.y) < 1.1; }
+      tag.hidden = !show; if (show) { const go = g === "cust" + k, low = c.ticket.left / c.ticket.max <= 0.25, txt = go ? `${c.name} / Serve` : c.name; if (tag.textContent !== txt) tag.textContent = txt; tag.className = "ctag" + (go ? " go" : "") + (low ? " low" : ""); tag.style.left = `${(tmpV.x * 0.5 + 0.5) * 100}%`; tag.style.top = `${(-tmpV.y * 0.5 + 0.5) * 100}%`; } });
+    const gs = ST[g], gm = g.startsWith("mat") ? MATS[+g[3]] : null, gc = g.startsWith("cust") ? WSPOT[+g[4]] : null, bob = REDUCED ? 0 : Math.sin(time * 5) * 0.03, pulse = REDUCED ? 1 : 1 + Math.sin(time * 5) * 0.06;
+    stMark.visible = arrow.visible = !!(gs || gm || gc);
+    if (gs) { const w = (gs.w || 0.28) + 0.08, bin = g === "trash"; stMark.position.set(13.3, bin ? 0.62 : BAR.top + 0.014, gs.z); stMark.scale.set(0.56 * pulse, 1, w * pulse); arrow.position.set(13.2, (bin ? 1.0 : g === "shot" ? BAR.top + 0.72 : BAR.top + 0.52) + bob, gs.z); }
+    else if (gm) { stMark.position.set(gm.x, BAR.top + 0.014, gm.z); stMark.scale.set(0.34 * pulse, 1, 0.4 * pulse); arrow.position.set(gm.x, BAR.top + 0.45 + bob, gm.z); }
+    else if (gc) { stMark.position.set(10.5, CTR.top + 0.014, gc[1]); stMark.scale.set(0.5 * pulse, 1, 0.5 * pulse); arrow.position.set(10.5, CTR.top + 0.4 + bob, gc[1]); }
+    arrow.rotation.y = player.yaw; // always faces you
     if (time - shift.railAt > 0.4) { shift.railAt = time; drawRail(); }
-    shiftDom();
   }
-  // clicks in the shift view: stations, cup slots, waiting customers
-  function shiftClick(e) {
-    const r = el.gl.getBoundingClientRect(); ray.setFromCamera(tmpN.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
-    let best = null, bd = 1e9;
-    for (const c of shift.cust) { if (c.state !== "wait") continue; custHit.position.set(c.x, 0.85, c.z); custHit.updateMatrixWorld(true); const h = ray.intersectObject(custHit, false)[0]; if (h && h.distance < bd) { bd = h.distance; best = { t: c.ticket }; } }
-    const h = ray.intersectObjects(stHits, false)[0]; if (h && h.distance < bd) best = h.object.userData;
-    if (!best) return;
-    if (best.t) serveTo(best.t); else if (best.slot !== undefined) shift.active = best.slot; else doAct(best.act);
-    shiftDom();
-  }
-  const tmpN = new THREE.Vector2();
-  el.gl.addEventListener("pointermove", (e) => { if (ui !== "shift" || state !== "play" || e.pointerType === "touch") return; const r = el.gl.getBoundingClientRect(); ray.setFromCamera(tmpN.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera); const h = ray.intersectObjects(stHits, false)[0]; shift.hover = h && h.object.userData.act ? h.object.userData.act : ""; el.gl.style.cursor = h ? "pointer" : ""; });
-  const SKEY = { Digit1: "hs", Digit2: "hl", Digit3: "is", Digit4: "il", Numpad1: "hs", Numpad2: "hl", Numpad3: "is", Numpad4: "il", KeyI: "ice", KeyE: "shot", KeyM: "whole", KeyO: "oat", KeyV: "vanilla", KeyC: "caramel", KeyK: "mocha", KeyW: "whip", KeyN: "cinnamon", KeyL: "lid", Enter: "serve", NumpadEnter: "serve", KeyX: "trash", Tab: "tab" };
-  function cafeKey(e) { // returns true when the café owns this key
+  function cafeKey(e) { // returns true when a café card owns this key
     if (!ui) return false;
-    if (ui === "shift") { if (e.code === "Escape" || e.code === "KeyP") { e.preventDefault(); pause(); return true; } const a = SKEY[e.code]; if (a && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); if (!e.repeat) { doAct(a); shiftDom(); } } return true; }
     if (e.code === "Escape") { e.preventDefault(); if (ui === "end") clockOut(false); else closeCard(false); } // no pointer lock from Esc: the browser would drop it again. The next click takes the mouse back.
     else if (e.code === "Enter" && ui === "order" && e.target && e.target.tagName === "INPUT") { e.preventDefault(); el.card.querySelector("#card-go").click(); }
     return true;
   }
   function cafeFrame(dt) {
-    cafeG.visible = shift.cam || (mode === "walk" && player.zone !== "deck" && player.zone !== "field");
-    if (!cafeG.visible) return;
+    cafeG.visible = mode === "walk" ? player.zone !== "field" : mode === "ski" && player.z < Z0 + 6; // also from the deck: you can see in through the window
+    if (!cafeG.visible) { handCup.root.visible = false; return; }
     if (state === "play") { jobTick(dt); sipTick(dt); }
     myCup.tick(dt);
     const hotCup = myCup.root.visible && myCup.st && myCup.st.kind && myCup.st.kind[0] === "h" && myCup.st.shots > 0 && !myCup.st.lid;
@@ -2579,13 +2581,17 @@ function buildRoom(THREE) {
     shiftTick(dt);
     if (time - (coffeeChip.at || 0) > 0.5) { coffeeChip.at = time; coffeeChip(); }
   }
-  const baristaObj = addProp({ id: "barista", label: "Barista-01 / Order" }, hitBox(0.7, 1.75, 0.7, HOME.x, 0.9, HOME.z), "cafe", openOrder);
-  const registerObj = addProp({ id: "register", label: "Order here" }, hitBox(0.5, 0.5, 0.5, 10.5, CTR.top + 0.2, 1.8), "cafe", openOrder);
+  // one thing to press for each job: the barista takes your order, the apron starts a shift
+  const baristaObj = addProp({ id: "barista", label: "Barista-01 / Order" }, hitBox(0.75, 1.8, 0.9, 11.0, 0.9, 1.8), "cafe", openOrder);
   const cupObj = addProp({ id: "coffee", label: "Coffee" }, hitBox(0.3, 0.34, 0.3, SHELF.x, SHELF.y + 0.1, SHELF.z), "cafe", drinkCup, { off: true });
   addProp({ id: "apron", label: "Apron / Work a shift" }, hitBox(0.2, 0.8, 0.5, CTR.x0 + 0.1, 1.4, -2.48), "cafe", openHire);
-  addProp({ id: "staffgate", label: "Staff only / Work a shift" }, hitBox(0.3, 1.0, 1.0, 10.5, 0.55, -1.9), "cafe", openHire);
   addProp({ id: "cafeboard", label: "Shift board" }, cafeBoard, "cafe", boardAct);
-  if (new URLSearchParams(location.search).has("test")) window.__cafe = { shift, job, ST, doAct, startShift, endShift, clockOut, openOrder, openHire, startJob, drinkCup, drinkName, exact, fits, tokens, shiftTick, cafeFrame, jobTick, coffeeMult, get ui() { return ui; }, get coffee() { return coffee; }, set coffee(v) { coffee = v; }, CAFEB, player, camera, cafeColliders, step: (dt) => { time += dt; cafeFrame(dt); }, draw: () => renderer.info.render.calls };
+  // behind the bar: every station, the two places on the mat, and the three places a customer waits
+  const SNAME = { hs: "Hot cup / Small", hl: "Hot cup / Large", is: "Iced cup / Small", il: "Iced cup / Large", ice: "Ice", shot: "Espresso", whole: "Whole milk", oat: "Oat milk", vanilla: "Vanilla", caramel: "Caramel", mocha: "Mocha sauce", whip: "Whipped cream", cinnamon: "Cinnamon", lid: "Lid", trash: "Bin" };
+  const stObjs = Object.keys(SNAME).map((id) => { const st = ST[id], bin = id === "trash"; return addProp({ id: "st-" + id, label: SNAME[id] }, hitBox(0.6, bin ? 0.7 : id === "shot" ? 0.62 : 0.5, st.w || 0.28, 13.3, bin ? 0.35 : BAR.top + (id === "shot" ? 0.31 : 0.25), st.z), "bar", () => act(id), { off: true, reach: 1.9 }); });
+  MATS.forEach((m, i) => stObjs.push(addProp({ id: "mat" + i, label: "Work mat / Set down or pick up" }, hitBox(0.36, 0.36, 0.4, m.x, BAR.top + 0.18, m.z), "bar", () => act("mat" + i), { off: true, reach: 1.9 })));
+  const srvObjs = WSPOT.map((w, k) => addProp({ id: "cust" + k, label: "Serve" }, hitBox(0.7, 1.7, 0.7, w[0], 0.86, w[1]), "bar", () => serveSpot(k), { off: true, reach: 2.7 }));
+  if (new URLSearchParams(location.search).has("test")) window.__cafe = { shift, job, ST, MATS, WSPOT, AISLE, act, serveSpot, startShift, endShift, clockOut, openOrder, openHire, startJob, drinkCup, drinkName, exact, fits, steps, assign, nextStep, shiftTick, cafeFrame, jobTick, coffeeMult, stObjs, srvObjs, get ui() { return ui; }, get coffee() { return coffee; }, set coffee(v) { coffee = v; }, CAFEB, player, camera, cafeColliders, step: (dt) => { time += dt; cafeFrame(dt); }, draw: () => renderer.info.render.calls };
 
   function pushOut(list) {
     for (const c of list) {
@@ -2614,6 +2620,7 @@ function buildRoom(THREE) {
       player.z = clamp(player.z, CF.z0 + RADIUS + 0.03, CF.z1 - RADIUS - 0.03); player.x = Math.min(player.x, CF.x1 - RADIUS - 0.03);
       if (player.x < CF.x0 + RADIUS) { if (player.z > AZ.z0 + 0.1 && player.z < AZ.z1 - 0.1) { zn = "arch"; player.z = clamp(player.z, AZ.z0 + AWAY, AZ.z1 - AWAY); } else player.x = CF.x0 + RADIUS; }
     }
+    if (zn === "bar") { player.x = clamp(player.x, AISLE.x0, AISLE.x1); player.z = clamp(player.z, AISLE.z0, AISLE.z1); } // working a shift: the aisle behind the counter
     if (zn === "door") { player.x = clamp(player.x, -DWAY, DWAY); if (player.z <= lim) zn = "room"; else if (player.z >= OUT0) zn = "deck"; }
     if (zn === "deck") {
       if (player.z < OUT0) { if (open && Math.abs(player.x) < 0.6) { zn = "door"; player.x = clamp(player.x, -DWAY, DWAY); } else player.z = OUT0; }
@@ -2628,7 +2635,7 @@ function buildRoom(THREE) {
     player.zone = zn;
     if (zn === "deck" || zn === "field") return pushOut(outColliders);
     if (zn === "door" || zn === "arch") return;
-    if (zn === "cafe") return pushOut(cafeColliders);
+    if (zn === "cafe" || zn === "bar") return pushOut(cafeColliders);
     for (const c of colliders) {
       const nx = Math.min(c.maxX, Math.max(c.minX, player.x)), nz = Math.min(c.maxZ, Math.max(c.minZ, player.z));
       let dx = player.x - nx, dz = player.z - nz; const d2 = dx * dx + dz * dz;
@@ -2727,7 +2734,7 @@ function buildRoom(THREE) {
     mySkis.position.set(lp.x, lp.y - HANG - 0.42, lp.z - 0.45); mySkis.rotation.set(0.12, 0, 0);
     skiHud();
   }
-  function updatePlayer(dt) { if (shift.cam) return shiftCam(); if (mode === "walk") updateWalk(dt); else if (mode === "ski") updateSki(dt); else if (mode === "fly") updateFly(dt); else updateLift(dt); }
+  function updatePlayer(dt) { if (mode === "walk") updateWalk(dt); else if (mode === "ski") updateSki(dt); else if (mode === "fly") updateFly(dt); else updateLift(dt); }
   function updateWalk(dt) {
     let f = 0, s = 0, fast = false;
     if (state === "play" && !ui) {
@@ -2737,7 +2744,7 @@ function buildRoom(THREE) {
       if (keys.has("Space") && player.ground) { player.vy = 3.3; player.ground = false; }
     }
     const len = Math.hypot(f, s); if (len > 1) { f /= len; s /= len; }
-    const sp = (fast ? 6 : 3.5) * coffeeMult(), sin = Math.sin(player.yaw), cos = Math.cos(player.yaw); // coffee: walking only
+    const sp = (fast ? 6 : 3.5) * (shift.on ? 1 : coffeeMult()), sin = Math.sin(player.yaw), cos = Math.cos(player.yaw); // coffee: walking only
     const tx = (-sin * f + cos * s) * sp, tz = (-cos * f - sin * s) * sp, k = 1 - Math.exp(-(len > 0.01 ? 10 : 13) * dt);
     player.vx += (tx - player.vx) * k; player.vz += (tz - player.vz) * k;
     player.x += player.vx * dt; player.z += player.vz * dt;
@@ -2760,13 +2767,13 @@ function buildRoom(THREE) {
   function pick(ndc, maxDist) {
     ray.setFromCamera(ndc, camera);
     const hits = ray.intersectObjects(hitMeshes, false);
-    for (const h of hits) { if (h.distance > maxDist) break; if (reachable(h.object.userData.obj)) return h.object.userData.obj; }
+    for (const h of hits) { if (h.distance > maxDist) break; const o = h.object.userData.obj; if (o.reach && h.distance > o.reach) continue; if (reachable(o)) return o; } // o.reach: you have to walk up to it
     return null;
   }
   function reachable(o) { // room objects from inside, mountain props from outside
     if (o.off || mode === "lift" || mode === "liftwait" || mode === "fly") return false;
     if (ui) return false;
-    const here = player.zone === "cafe" || (player.zone === "arch" && player.x > HALF + 0.3) ? "cafe" : player.z > HALF + 0.1 || player.zone === "field" ? "out" : "in"; // nothing is pressable through a wall
+    const here = player.zone === "bar" ? "bar" : player.zone === "cafe" || (player.zone === "arch" && player.x > HALF + 0.3) ? "cafe" : player.z > HALF + 0.1 || player.zone === "field" ? "out" : "in"; // nothing is pressable through a wall
     return (o.zone || "in") === here;
   }
   function updateTarget() {
@@ -2776,7 +2783,7 @@ function buildRoom(THREE) {
       for (const o of objects) {
         if (!reachable(o)) continue;
         tmpV.copy(o.center).sub(camera.position); const flat = Math.hypot(tmpV.x, tmpV.z);
-        if (flat > REACH + 0.4) continue;
+        if (flat > (o.reach || REACH) + 0.4) continue;
         tmpV.y = 0; tmpV.normalize();
         const dot = (tmpV.x * tmpF.x + tmpV.z * tmpF.z) / Math.max(0.2, Math.hypot(tmpF.x, tmpF.z));
         if (dot > best) { best = dot; t = o; }
@@ -2830,7 +2837,7 @@ function buildRoom(THREE) {
     const flying = mode === "fly";
     el.cross.hidden = !(playing && !TOUCH) || flying || !!ui;
     el.joy.hidden = !(playing && TOUCH) || !!ui;
-    el.card.hidden = !(playing && (ui === "order" || ui === "hire" || ui === "end")); el.shiftUi.hidden = !(playing && (ui === "shift" || ui === "end"));
+    el.card.hidden = !(playing && (ui === "order" || ui === "hire" || ui === "end")); el.shiftUi.hidden = !(playing && (shift.on || ui === "end"));
     el.flyTouch.hidden = !(playing && TOUCH && flying); el.flyHelp.hidden = !(playing && flying && fl.help);
     if (!playing) { el.prompt.hidden = true; el.open.hidden = true; }
     el.tag.hidden = !(entry && playing);
@@ -2842,8 +2849,8 @@ function buildRoom(THREE) {
   function showPanel(kind) {
     el.panelTitle.textContent = kind === "pause" ? "Paused" : CONFIG.SHOW_NAME_ON_WALL ? CONFIG.NAME : "Room";
     el.panelGoText.textContent = kind === "pause" ? "Resume" : TOUCH ? "Tap to enter" : "Click to enter";
-    el.panelQuit.hidden = !(kind === "pause" && ui === "shift");
-    el.panelLegend.textContent = ui === "shift" ? (TOUCH ? "Shift paused / The clock and the customers wait" : "Shift paused / 1-4: cup / I: ice / E: shot / M O: milk / V C K: flavour / W N: topping / L: lid / Enter: serve / X: trash / Tab: other cup") : mode === "fly" ? (TOUCH ? "Left pad: pitch and roll / Buttons: throttle, respawn, exit" : "W S: throttle / Mouse or arrows: pitch and roll / A D: roll / R: respawn / E: exit when stopped / H: help") : TOUCH ? "Left pad: move / Drag: look / Tap an object: open" : CAN_LOCK ? "WASD: move / Mouse: look / E or click: open / Shift: fast / Space: jump / Esc: pause" : "WASD: move / Drag: look / E or click: open / Shift: fast / Space: jump";
+    el.panelQuit.hidden = !(kind === "pause" && shift.on);
+    el.panelLegend.textContent = shift.on ? (TOUCH ? "Shift paused / The clock and the customers wait / Look at a station and tap Open" : "Shift paused / The clock and the customers wait / WASD: move / Click or E: use a station, serve a customer") : mode === "fly" ? (TOUCH ? "Left pad: pitch and roll / Buttons: throttle, respawn, exit" : "W S: throttle / Mouse or arrows: pitch and roll / A D: roll / R: respawn / E: exit when stopped / H: help") : TOUCH ? "Left pad: move / Drag: look / Tap an object: open" : CAN_LOCK ? "WASD: move / Mouse: look / E or click: open / Shift: fast / Space: jump / Esc: pause" : "WASD: move / Drag: look / E or click: open / Shift: fast / Space: jump";
     hud();
   }
   function begin() { // enter play (first time: glide from the idle orbit to the spawn point)
@@ -2867,7 +2874,7 @@ function buildRoom(THREE) {
     } else begin();
   }
   el.panelGo.addEventListener("click", requestEnter);
-  el.panelQuit.addEventListener("click", () => { if (ui === "shift") { endShift(true); showPanel("pause"); } });
+  el.panelQuit.addEventListener("click", () => { if (shift.on) { endShift(true); showPanel("pause"); } });
   document.addEventListener("pointerlockchange", () => {
     if (document.pointerLockElement === el.gl) begin();
     else if ((state === "play" || state === "intro") && !ui) pause();
@@ -2928,7 +2935,6 @@ function buildRoom(THREE) {
   // click = activate. Locked desktop: whatever is under the crosshair. Touch / no-lock: whatever was tapped.
   el.gl.addEventListener("click", (e) => {
     if (state !== "play") return;
-    if (ui === "shift") return shiftClick(e);
     if (ui) return;
     if (document.pointerLockElement === el.gl) return activate(target);
     if (CAN_LOCK && e.pointerType !== "touch") return relock(); // unlocked after a card: the next click takes the mouse back
@@ -3015,7 +3021,7 @@ function buildRoom(THREE) {
       if (!p || !isFinite(p.x) || !isFinite(p.z) || !isFinite(p.yaw)) return false;
       player.x = p.x; player.z = p.z; player.yaw = p.yaw; player.pitch = isFinite(p.pitch) ? p.pitch : -0.04;
       player.vx = player.vz = player.vy = 0; player.y = 0; entered = true;
-      player.zone = p.zone === "cafe" || (p.zone !== "room" && p.x > CF.x0) ? "cafe" : p.zone === "arch" ? "arch" : "room"; // sub-pages are only ever opened from indoors
+      player.zone = (p.zone === "cafe" || (p.zone !== "room" && p.x > CF.x0)) && !(p.x > CTR.x0 - 0.4) ? "cafe" : p.zone === "arch" ? "arch" : "room"; // sub-pages are only ever opened from indoors
       updatePlayer(0);
       if (TOUCH || !CAN_LOCK) { state = "play"; hud(); } else { state = "pause"; showPanel("pause"); }
       run(); return true;
@@ -3024,7 +3030,7 @@ function buildRoom(THREE) {
       if (document.pointerLockElement === el.gl) { state = "list"; document.exitPointerLock(); }
       state = "list"; tween = null; keys.clear(); resetJoy(); setTarget(null); hud(); stop();
     },
-    enterFromList() { state = entered ? "pause" : "start"; resize(); showPanel(entered ? "pause" : "start"); shadowDirty = 3; run(); if (ui !== "shift") requestEnter(); },
+    enterFromList() { state = entered ? "pause" : "start"; resize(); showPanel(entered ? "pause" : "start"); shadowDirty = 3; run(); requestEnter(); },
   };
 }
 </script>
