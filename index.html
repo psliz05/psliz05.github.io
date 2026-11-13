@@ -1669,6 +1669,19 @@ function buildRoom(THREE) {
     if (mine && !rows.some((r) => r.me && !ahead(mine.ms, r.ms))) rows.push({ initials: me || "???", ms: mine.ms, me: true }); // my result, even before it is posted
     rows.sort((p, q) => (b.desc ? q.ms - p.ms : p.ms - q.ms));
     const mi = rows.findIndex((r) => r.me); let top = rows.slice(0, 8); if (mi >= 8) top[7] = rows[mi];
+    if (b.chalk) { // the café's board is chalk on slate in a timber frame, like its menu
+      g.fillStyle = "#1c1f1d"; g.fillRect(0, 0, W, H); g.strokeStyle = "#6b4a2c"; g.lineWidth = 16; g.strokeRect(8, 8, W - 16, H - 16);
+      g.textBaseline = "alphabetic"; g.textAlign = "left"; g.fillStyle = "#f3f3ef"; g.font = `800 condensed 84px ${F_SANS}`; g.fillText(b.title, 56, 110);
+      g.font = `700 26px ${F_MONO}`; g.fillStyle = "#7fa6ec"; g.fillText(b.note, 58, 150); g.textAlign = "right"; g.fillText(SB.on ? `NO. ${String(skiDay()).padStart(3, "0")}` : "LOCAL", W - 58, 150);
+      g.fillStyle = "#f3f3ef"; g.fillRect(56, 168, W - 112, 3);
+      for (let i = 0; i < 8; i++) { const r = top[i], y = 226 + i * 52; g.textAlign = "left";
+        if (!r) { g.fillStyle = "#4a504c"; g.font = `500 36px ${F_MONO}`; g.fillText(`${i + 1}`, 64, y); g.fillRect(136, y - 11, W - 198, 2); continue; }
+        g.fillStyle = r.me ? "#7fa6ec" : "#f3f3ef"; g.font = `${r.me ? 700 : 500} 42px ${F_MONO}`;
+        g.fillText(String(1 + rows.filter((q) => ahead(q.ms, r.ms)).length), 64, y); g.fillText(r.initials, 136, y); if (r.me) g.fillText("← YOU", 136 + g.measureText(r.initials + " ").width, y);
+        const amt = show(r.ms), x0 = 136 + g.measureText(r.initials + (r.me ? " ← YOU " : " ")).width; g.textAlign = "right"; g.fillText(amt, W - 62, y);
+        const x1 = W - 62 - g.measureText(amt + " ").width; g.fillStyle = "#4a504c"; for (let x = x0 + 8; x < x1; x += 16) g.fillRect(x, y - 8, 6, 4); }
+      b.tex.t.needsUpdate = true; return;
+    }
     g.fillStyle = "#0e0e0e"; g.fillRect(0, 0, W, H);
     const flap = (ch, x, y, w, h, color) => { // one split-flap tile
       g.fillStyle = "#262624"; g.fillRect(x, y, w, h);
@@ -1693,7 +1706,8 @@ function buildRoom(THREE) {
     try {
       const r = await fetch(sbUrl(`?select=initials,ms&day=eq.${skiDay()}&game=eq.${b.game}&order=ms.${b.desc ? "desc" : "asc"},created_at.asc&limit=1000`), { headers: sbHead() });
       if (r.ok) { const seen = new Set(); b.rows = (await r.json()).filter((x) => x && /^[A-Z]{1,3}$/.test(x.initials) && Number.isFinite(x.ms) && !seen.has(x.initials) && seen.add(x.initials)); } // best run per set of initials
-    } catch (e) { /* offline: keep what we have */ }
+      else b.at = now - 35000;
+    } catch (e) { b.at = now - 35000; /* offline: keep what we have, try again in ten seconds */ }
     drawBoard(b);
   }
   async function postTime(b = SKIB) { // posts my best time of the day once initials are known
@@ -2018,7 +2032,8 @@ function buildRoom(THREE) {
     for (const z of [GZ0 + 0.03, GZ1 - 0.03]) k.b(0.08, 1.02, 0.06, TIMBER.beam, cx, 0.51, z);                                   // gate posts
     k.b(0.045, 0.62, GZ1 - GZ0 - 0.16, TIMBER.plank, cx, 0.6, (GZ0 + GZ1) / 2); k.b(0.05, 0.05, GZ1 - GZ0 - 0.14, TIMBER.beam, cx, 0.93, (GZ0 + GZ1) / 2); k.b(0.05, 0.05, GZ1 - GZ0 - 0.14, TIMBER.beam, cx, 0.3, (GZ0 + GZ1) / 2);
     k.b(0.1, 2.05, 0.1, TIMBER.beam, cx, 1.025, GZ0 - 0.08); k.b(0.14, 0.02, 0.02, LODGE.brass, CTR.x0 + 0.18, 1.78, GZ0 - 0.08);  // apron post and hook
-    k.b(0.02, 0.62, 0.34, C.signal, CTR.x0 + 0.12, 1.42, GZ0 - 0.08); k.b(0.022, 0.2, 0.22, LODGE.cream, CTR.x0 + 0.119, 1.56, GZ0 - 0.08); k.b(0.022, 0.03, 0.36, LODGE.cream, CTR.x0 + 0.119, 1.3, GZ0 - 0.08); // the apron
+    k.b(0.02, 0.62, 0.34, C.signal, CTR.x0 + 0.12, 1.46, GZ0 - 0.08); k.b(0.012, 0.2, 0.22, LODGE.cream, CTR.x0 + 0.113, 1.6, GZ0 - 0.08); k.b(0.012, 0.03, 0.36, LODGE.cream, CTR.x0 + 0.113, 1.34, GZ0 - 0.08); // the apron (the pocket and band sit on its front only)
+    k.b(0.012, 0.09, 0.37, INK, CTR.x0 + 0.116, 1.08, GZ0 - 0.08); // backing for the sign under it
     // register, tip jar, ticket printer and rail, pickup shelf
     const RZ = 1.8, ty = CTR.top;
     k.b(0.3, 0.2, 0.34, INK, cx, ty + 0.1, RZ); k.b(0.02, 0.2, 0.3, 0x2b2b30, cx + 0.12, ty + 0.3, RZ, 0, 0, 0.3); k.b(0.02, 0.1, 0.2, 0x2b2b30, cx - 0.13, ty + 0.25, RZ, 0, 0, -0.3);
@@ -2061,7 +2076,7 @@ function buildRoom(THREE) {
     // customer side: two tables with stools, a bean sack, a plant, the window to the deck
     for (const [x, z] of [[7.7, -1.8], [7.5, 5.2]]) {
       k.c(0.38, 0.38, 0.04, 14, TIMBER.plank, x, 0.76, z); k.c(0.04, 0.05, 0.72, 8, INK, x, 0.37, z); k.c(0.22, 0.24, 0.03, 12, INK, x, 0.015, z);
-      k.c(0.04, 0.035, 0.085, 10, LODGE.cream, x + 0.1, 0.8225, z - 0.08); k.c(0.06, 0.06, 0.008, 10, 0xfafaf6, x + 0.1, 0.784, z - 0.08);
+      if (z < 0) { k.c(0.04, 0.035, 0.085, 10, LODGE.cream, x + 0.1, 0.8225, z - 0.08); k.c(0.06, 0.06, 0.008, 10, 0xfafaf6, x + 0.1, 0.784, z - 0.08); } // the other table is Matthew's
       for (const [dx, dz] of [[-0.62, -0.1], [0.5, 0.42]]) { k.c(0.17, 0.17, 0.04, 12, LODGE.leather, x + dx, 0.5, z + dz); k.c(0.025, 0.03, 0.48, 6, INK, x + dx, 0.24, z + dz); k.c(0.14, 0.15, 0.02, 10, INK, x + dx, 0.01, z + dz); }
       cafeColliders.push({ minX: x - 0.3, maxX: x + 0.3, minZ: z - 0.3, maxZ: z + 0.3 });
     }
@@ -2071,7 +2086,7 @@ function buildRoom(THREE) {
     { const wx = 8.6, wy = 1.85, ww = 1.9, wh = 1.1, z = CF.z1 - 0.03; for (const [w, h, x, y] of [[ww + 0.14, 0.07, wx, wy + wh / 2 + 0.035], [ww + 0.14, 0.07, wx, wy - wh / 2 - 0.035], [0.07, wh, wx - ww / 2 - 0.035, wy], [0.07, wh, wx + ww / 2 + 0.035, wy], [0.04, wh, wx, wy], [ww, 0.04, wx, wy]]) k.b(w, h, 0.05, TIMBER.beam, x, y, z);
       k.b(ww + 0.3, 0.04, 0.14, TIMBER.beam, wx, wy - wh / 2 - 0.09, z - 0.05);
       for (const [w, h, x, y] of [[ww, 0.03, wx, wy + wh / 2 - 0.015], [ww, 0.03, wx, wy - wh / 2 + 0.015], [0.03, wh - 0.06, wx - ww / 2 + 0.015, wy], [0.03, wh - 0.06, wx + ww / 2 - 0.015, wy]]) k.b(w, h, 0.26, TIMBER.beam, x, y, CF.z1 + 0.105); } // the reveal through the wall
-    k.b(2.74, 1.76, 0.03, INK, 8.4, 1.85, CF.z0 + 0.018);                                                                                                            // board frame
+    k.b(2.78, 1.8, 0.03, TIMBER.beam, 8.4, 1.85, CF.z0 + 0.018);                                                                                                            // board frame
     // beams and pendants (their own group)
     for (const z of [-1.6, 1.3, 4.2]) top.b(CW2, 0.22, 0.18, TIMBER.beam, xc, H - 0.11, z);
     for (const z of [0, 2.2, 4.4]) { top.b(0.012, 0.5, 0.012, INK, cx, H - 0.25, z); top.c(0.06, 0.22, 0.2, 12, INK, cx, H - 0.6, z); top.c(0.19, 0.19, 0.01, 12, 0xffe2b0, cx, H - 0.704, z); }
@@ -2113,7 +2128,7 @@ function buildRoom(THREE) {
     addLabel("ICE", 0.2, 0.08, mat4(13.088, BT + 0.1, ST.ice.z, 0, FW)); addLabel("ICE", 0.2, 0.08, mat4(13.512, BT + 0.1, ST.ice.z, 0, FE));
     for (const [id, t] of [["hs", "S"], ["hl", "L"], ["is", "S"], ["il", "L"]]) addLabel(t, 0.07, 0.07, mat4(13.1, BT + 0.003, ST[id].z, -Math.PI / 2, FW));
     for (const [z, t, w] of [[(ST.hs.z + ST.hl.z) / 2, "HOT", 0.2], [(ST.is.z + ST.il.z) / 2, "ICED", 0.2], [ST.shot.z, "ESPRESSO", 0.3], [(MATS[0].z + MATS[1].z) / 2, "SET DOWN", 0.3], [ST.whip.z, "WHIP", 0.16], [ST.cinnamon.z, "CINN", 0.16], [ST.lid.z, "LIDS", 0.16]]) addLabel(t, w, 0.05, mat4(13.025, BT + 0.003, z, -Math.PI / 2, FW)); // along the front edge of the bar, read from the aisle
-    addLabel("WORK A SHIFT", 0.34, 0.07, mat4(CTR.x0 + 0.108, 1.02, GZ0 - 0.08, 0, FW), CSS.signal, CSS.plate);
+    addLabel("WORK A SHIFT", 0.34, 0.07, mat4(CTR.x0 + 0.106, 1.08, GZ0 - 0.08, 0, FW), CSS.signal, CSS.plate);
     sheet.t.needsUpdate = true;
     const lg = new THREE.BufferGeometry(); lg.setAttribute("position", new THREE.Float32BufferAttribute(lab.pos, 3)); lg.setAttribute("uv", new THREE.Float32BufferAttribute(lab.uv, 2));
     cafeG.add(new THREE.Mesh(lg, new THREE.MeshBasicMaterial({ map: sheet.t, toneMapped: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })));
@@ -2307,7 +2322,7 @@ function buildRoom(THREE) {
   }
 
   // ---------- best shift today: tips in one three-minute shift (higher is better) ----------
-  const CAFEB = { game: "cafe", tex: cafeTex, title: "BEST SHIFT TODAY", note: "3:00 SHIFT / TIPS", key: "room:cafeday", rows: [], at: -1e9, mine: jget("room:cafeday"), desc: true, fmt: money };
+  const CAFEB = { game: "cafe", tex: cafeTex, title: "BEST SHIFT TODAY", note: "TIPS IN ONE THREE-MINUTE SHIFT", chalk: true, key: "room:cafeday", rows: [], at: -1e9, mine: jget("room:cafeday"), desc: true, fmt: money };
   if (!CAFEB.mine || CAFEB.mine.day !== skiDay() || !(CAFEB.mine.ms > 0)) CAFEB.mine = null;
   drawBoard(CAFEB);
   const boardAct = () => {
@@ -2320,7 +2335,7 @@ function buildRoom(THREE) {
   // ---------- the shift: first person, behind the bar ----------
   // A customer orders, the slip prints, and you walk the line with the cup: stack, ice, espresso, milk, flavour, topping, lid, then hand it over the counter.
   const SHIFT_LEN = 180, MAX_TICKETS = 3, NAMES = ["DOT", "KIT", "UNIT 7", "PIP", "BOLT", "MOSS", "RAY", "NOVA", "TIN", "ZED", "ADA", "OTTO", "LUX", "BEEP", "CODA", "FERN", "GUS", "IVY", "JAX", "ORB"];
-  const QSPOT = [[9.72, 1.8], [9.05, 1.9], [8.4, 2.25], [7.8, 2.75], [7.3, 3.3], [6.95, 3.65], [5.6, 3.65], [5.0, 3.65]], WSPOT = [[9.72, 2.9], [9.72, 3.8], [9.72, 4.7]]; // waiting places: south of the till, clear of the slips on the rail
+  const QSPOT = [[9.72, 1.8], [9.05, 1.9], [8.4, 2.25], [7.8, 2.75], [7.3, 3.3], [6.95, 3.65], [5.6, 3.65], [5.0, 3.65]], WSPOT = [[9.72, 2.75], [9.72, 3.8], [9.72, 4.85]]; // waiting places: south of the till, clear of the slips on the rail
   const AISLE = { x0: CTR.x1 + 0.05 + RADIUS, x1: 12.95 - RADIUS, z0: CF.z0 + RADIUS + 0.03, z1: CF.z1 - RADIUS - 0.03 }; // where you can stand during a shift
   const newSlot = (kind) => ({ kind, ice: 0, shots: 0, pull: 0, milk: "", flav: "", top: "", lid: false });
   const shift = { on: false, t: 0, tips: 0, streak: 0, best: 0, served: 0, wrong: 0, walk: 0, n: 0, nextAt: 0, pairAt: -1, tickets: [], cust: [], hand: null, tray: null, trayT: 0, trayIdle: 0, mats: [null, null], use: 0, give: -1, rnd: Math.random,
@@ -2422,6 +2437,7 @@ function buildRoom(THREE) {
       camera.getWorldDirection(tmpF); giveFrom.copy(camera.position).addScaledVector(tmpF, 0.4); giveFrom.y -= 0.2; giveTo.set(c.x + 0.3, 1.12, c.z); shift.give = 0; giveCup.level = s.lv || 0; if (s.tn !== undefined) giveCup.tint.setHex(s.tn); giveCup.show(s);
       shift.tickets.splice(shift.tickets.indexOf(t), 1); leave(c, 1);
     } else {
+      const other = shift.tickets.find((q) => q !== t && exact(s, q.r)); if (other) return popHud(`That one is for ${other.cust.name}`, true); // right drink, wrong customer: no harm done
       shift.streak = 0; shift.wrong++; shift.tips = Math.max(0, shift.tips - 100); popAt(c.x, y, c.z, "Wrong order −$1.00", true); c.mood = -1; c.moodT = 0; flash("Wrong order");
     }
     shift.hand = null; shiftDom();
@@ -2571,27 +2587,48 @@ function buildRoom(THREE) {
     else if (e.code === "Enter" && ui === "order" && e.target && e.target.tagName === "INPUT") { e.preventDefault(); el.card.querySelector("#card-go").click(); }
     return true;
   }
+  let boardsAt = -1e9;
   function cafeFrame(dt) {
+    if (performance.now() - boardsAt > 15000) { boardsAt = performance.now(); for (const b of [SKIB, FLYB, CAFEB]) loadBoard(false, b); } // every board stays current without being pressed (each asks the server at most every 45 s)
     cafeG.visible = mode === "walk" ? player.zone !== "field" : mode === "ski" && player.z < Z0 + 6; // also from the deck: you can see in through the window
     if (!cafeG.visible) { handCup.root.visible = false; return; }
     if (state === "play") { jobTick(dt); sipTick(dt); }
     myCup.tick(dt);
     const hotCup = myCup.root.visible && myCup.st && myCup.st.kind && myCup.st.kind[0] === "h" && myCup.st.shots > 0 && !myCup.st.lid;
     steam.visible = hotCup; if (hotCup) { steam.position.copy(myCup.root.position); steam.position.y += 0.11; steam.rotation.y = REDUCED ? 0 : time * 0.8; steam.scale.y = REDUCED ? 1 : 1 + Math.sin(time * 3) * 0.2; }
+    mattSteam.rotation.y = REDUCED ? 0 : time * 0.8; mattSteam.scale.y = REDUCED ? 1 : 1 + Math.sin(time * 3 + 1) * 0.2;
     shiftTick(dt);
     if (time - (coffeeChip.at || 0) > 0.5) { coffeeChip.at = time; coffeeChip(); }
   }
+  // Matthew, Pat's roommate, at the table on the right as you walk in, with a black mug of hot coffee. Press him to visit his site.
+  const matt = new THREE.Group(); matt.position.set(6.88, 0, 5.1); matt.rotation.y = FACE_E; cafeG.add(matt);
+  const mattSteam = new THREE.Mesh(bake([0, 1, 2].map((i) => ({ geo: new THREE.PlaneGeometry(0.012, 0.09), color: 0xffffff, m: mat4((i - 1) * 0.016, 0.05 + i * 0.012, (i % 2) * 0.012 - 0.006, 0, i * 1.1) }))), steam.material); mattSteam.position.set(0.2, 0.87, -0.45); matt.add(mattSteam);
+  { // built facing -z, seated on the stool: khakis, a long-sleeve henley, white sneakers, brown hair and eyes
+    const m = kit(), KHAKI = 0xb9a67e, HENLEY = 0x3d4f66, SKIN = 0xe8c4a0, HAIR = 0x5a3a22, SHOE = 0xfafaf6;
+    m.b(0.34, 0.16, 0.3, KHAKI, 0, 0.6, 0.02);
+    for (const sx of [-0.09, 0.09]) { m.b(0.14, 0.13, 0.42, KHAKI, sx, 0.6, -0.2); m.b(0.12, 0.44, 0.13, KHAKI, sx, 0.34, -0.36); m.b(0.12, 0.09, 0.26, SHOE, sx, 0.045, -0.41); m.b(0.122, 0.02, 0.262, 0xdcdcd6, sx, 0.012, -0.41); }
+    m.b(0.38, 0.5, 0.22, HENLEY, 0, 0.93, 0.01, -0.08); m.b(0.05, 0.16, 0.012, 0x2f3d50, 0, 1.08, -0.118, -0.08); for (const y of [1.04, 1.09, 1.14]) m.b(0.016, 0.016, 0.006, 0xfafaf6, 0, y, -0.126 + (1.09 - y) * 0.08, -0.08);
+    for (const sx of [-1, 1]) { m.b(0.1, 0.3, 0.1, HENLEY, sx * 0.24, 1.0, -0.04, -0.3); m.b(0.09, 0.09, 0.3, HENLEY, sx * 0.21, 0.845, -0.24); m.b(0.094, 0.094, 0.03, 0x2f3d50, sx * 0.21, 0.845, -0.385); m.b(0.08, 0.075, 0.08, SKIN, sx * 0.21, 0.845, -0.43); }
+    m.b(0.1, 0.07, 0.1, SKIN, 0, 1.2, -0.01); m.b(0.2, 0.24, 0.22, SKIN, 0, 1.35, -0.03);
+    m.b(0.22, 0.07, 0.25, HAIR, 0, 1.495, -0.02); m.b(0.22, 0.2, 0.04, HAIR, 0, 1.4, 0.095); for (const sx of [-1, 1]) m.b(0.02, 0.12, 0.16, HAIR, sx * 0.105, 1.42, 0.01); m.b(0.2, 0.03, 0.03, HAIR, 0, 1.462, -0.142);
+    for (const sx of [-0.05, 0.05]) { m.b(0.034, 0.03, 0.008, 0xffffff, sx, 1.375, -0.142); m.b(0.018, 0.022, 0.008, 0x4a2f1a, sx, 1.374, -0.146); m.b(0.045, 0.01, 0.008, HAIR, sx, 1.405, -0.143); }
+    m.b(0.03, 0.04, 0.03, SKIN, 0, 1.34, -0.15); m.b(0.07, 0.01, 0.008, 0xb5796a, 0, 1.285, -0.142);
+    m.c(0.04, 0.035, 0.085, 12, 0x1a1a1a, 0.2, 0.8265, -0.45); m.c(0.033, 0.033, 0.004, 12, 0x2b170d, 0.2, 0.868, -0.45); m.b(0.012, 0.05, 0.03, 0x1a1a1a, 0.247, 0.826, -0.45); // his mug, black
+    matt.add(m.mesh(false));
+  }
+  cafeColliders.push({ minX: CF.x0, maxX: 7.14, minZ: 4.86, maxZ: 5.36 });
+  addProp({ id: "matthew", label: "Say hi to Matthew" }, matt, "cafe", () => { window.open("https://matthewmoorejr.com", "_blank", "noopener"); toast("Matthew ↗ matthewmoorejr.com opened in a new tab", 3200); });
   // one thing to press for each job: the barista takes your order, the apron starts a shift
   const baristaObj = addProp({ id: "barista", label: "Barista-01 / Order" }, hitBox(0.75, 1.8, 0.9, 11.0, 0.9, 1.8), "cafe", openOrder);
   const cupObj = addProp({ id: "coffee", label: "Coffee" }, hitBox(0.3, 0.34, 0.3, SHELF.x, SHELF.y + 0.1, SHELF.z), "cafe", drinkCup, { off: true });
-  addProp({ id: "apron", label: "Apron / Work a shift" }, hitBox(0.2, 0.8, 0.5, CTR.x0 + 0.1, 1.4, -2.48), "cafe", openHire);
+  addProp({ id: "apron", label: "Apron / Work a shift" }, hitBox(0.2, 0.84, 0.5, CTR.x0 + 0.1, 1.42, -2.48), "cafe", openHire);
   addProp({ id: "cafeboard", label: "Shift board" }, cafeBoard, "cafe", boardAct);
   // behind the bar: every station, the two places on the mat, and the three places a customer waits
   const SNAME = { hs: "Hot cup / Small", hl: "Hot cup / Large", is: "Iced cup / Small", il: "Iced cup / Large", ice: "Ice", shot: "Espresso", whole: "Whole milk", oat: "Oat milk", vanilla: "Vanilla", caramel: "Caramel", mocha: "Mocha sauce", whip: "Whipped cream", cinnamon: "Cinnamon", lid: "Lid", trash: "Bin" };
   const stObjs = Object.keys(SNAME).map((id) => { const st = ST[id], bin = id === "trash"; return addProp({ id: "st-" + id, label: SNAME[id] }, hitBox(0.6, bin ? 0.7 : id === "shot" ? 0.62 : 0.5, st.w || 0.28, 13.3, bin ? 0.35 : BAR.top + (id === "shot" ? 0.31 : 0.25), st.z), "bar", () => act(id), { off: true, reach: 1.9 }); });
   MATS.forEach((m, i) => stObjs.push(addProp({ id: "mat" + i, label: "Work mat / Set down or pick up" }, hitBox(0.36, 0.36, 0.4, m.x, BAR.top + 0.18, m.z), "bar", () => act("mat" + i), { off: true, reach: 1.9 })));
-  const srvObjs = WSPOT.map((w, k) => addProp({ id: "cust" + k, label: "Serve" }, hitBox(0.7, 1.7, 0.7, w[0], 0.86, w[1]), "bar", () => serveSpot(k), { off: true, reach: 2.7 }));
-  if (new URLSearchParams(location.search).has("test")) window.__cafe = { shift, job, ST, MATS, WSPOT, AISLE, act, serveSpot, startShift, endShift, clockOut, openOrder, openHire, startJob, drinkCup, drinkName, exact, fits, steps, assign, nextStep, shiftTick, cafeFrame, jobTick, coffeeMult, stObjs, srvObjs, get ui() { return ui; }, get coffee() { return coffee; }, set coffee(v) { coffee = v; }, CAFEB, player, camera, cafeColliders, step: (dt) => { time += dt; cafeFrame(dt); }, draw: () => renderer.info.render.calls };
+  const srvObjs = WSPOT.map((w, k) => addProp({ id: "cust" + k, label: "Serve" }, hitBox(1.3, 0.85, 0.62, 10.1, CTR.top + 0.375, w[1]), "bar", () => serveSpot(k), { off: true, reach: 3 })); // from the customer to the bar side of the counter, so the frame on the counter is theirs too and the places never overlap
+  if (new URLSearchParams(location.search).has("test")) window.__cafe = { SKIB, FLYB, shift, job, ST, MATS, WSPOT, AISLE, act, serveSpot, startShift, endShift, clockOut, openOrder, openHire, startJob, drinkCup, drinkName, exact, fits, steps, assign, nextStep, shiftTick, cafeFrame, jobTick, coffeeMult, stObjs, srvObjs, get ui() { return ui; }, get coffee() { return coffee; }, set coffee(v) { coffee = v; }, CAFEB, player, camera, cafeColliders, step: (dt) => { time += dt; cafeFrame(dt); }, draw: () => renderer.info.render.calls };
 
   function pushOut(list) {
     for (const c of list) {
