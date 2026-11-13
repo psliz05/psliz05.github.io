@@ -6,7 +6,7 @@
 <title>Patrick Sliz</title>
 <meta name="description" content="Personal site of Patrick Sliz.">
 <meta name="theme-color" content="#e6e6e1">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23141414'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%23ff4a00'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23141414'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%237fa6ec'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -20,7 +20,9 @@
     --steel: #66665f;
     --hair: #b9b9b2;
     --given: #d6d6cf;
-    --signal: #ff4a00;
+    --signal: #1f3f86;
+    --signal-hi: #7fa6ec;   /* the accent on dark surfaces */
+    --on-signal: #f3f3ef;   /* text on the accent */
     --f-sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
     --sl: env(safe-area-inset-left, 0px);
@@ -47,7 +49,7 @@
   #crosshair::before, #crosshair::after { content: ""; position: absolute; background: var(--ink); outline: 1px solid var(--plate); }
   #crosshair::before { left: 7px; top: 0; width: 1px; height: 15px; }
   #crosshair::after { left: 0; top: 7px; width: 15px; height: 1px; }
-  #crosshair.on::before, #crosshair.on::after { background: var(--signal); outline-color: var(--ink); }
+  #crosshair.on::before, #crosshair.on::after { background: var(--signal-hi); outline-color: var(--ink); }
 
   #tag { position: absolute; left: 50%; bottom: calc(74px + var(--sb)); transform: translateX(-50%); display: flex; align-items: stretch; border: 2px solid var(--ink); background: var(--plate); white-space: nowrap; }
   #tag span { padding: 8px 10px; font: 700 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; }
@@ -65,13 +67,22 @@
   #inv { position: absolute; top: calc(12px + var(--st)); left: calc(12px + var(--sl)); display: flex; gap: 6px; pointer-events: none; }
   #inv span { border: 2px solid var(--ink); background: var(--plate); padding: 6px 10px; font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; font-variant-numeric: tabular-nums; }
   #inv #inv-key { background: var(--ink); color: var(--plate); }
-  #inv #inv-waffle { background: var(--signal); color: var(--ink); }
+  #inv #inv-waffle { background: var(--signal); color: var(--on-signal); }
 
   .chip { position: absolute; top: calc(12px + var(--st)); right: calc(12px + var(--sr)); appearance: none; border: 2px solid var(--ink); background: var(--plate); padding: 6px 10px; font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; touch-action: manipulation; }
   .chip:hover { background: var(--ink); color: var(--plate); }
   :focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
 
   /* touch controls */
+  #fly-help { position: absolute; left: calc(12px + var(--sl)); top: calc(52px + var(--st)); border: 2px solid var(--ink); background: var(--plate); pointer-events: none; font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+  #fly-help b { display: block; background: var(--ink); color: var(--plate); padding: 6px 10px; font-weight: 700; }
+  #fly-help div { display: flex; border-top: 1px solid var(--hair); }
+  #fly-help div span { padding: 5px 10px; white-space: nowrap; }
+  #fly-help div span:first-child { width: 132px; border-right: 1px solid var(--hair); }
+  #fly-touch { position: absolute; right: calc(16px + var(--sr, 0px)); bottom: calc(26px + var(--sb)); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 196px; touch-action: none; }
+  #fly-touch button { appearance: none; border: 2px solid var(--ink); background: rgba(243, 243, 239, 0.8); color: var(--ink); border-radius: 0; padding: 8px 4px; font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; touch-action: none; -webkit-user-select: none; user-select: none; }
+  #fly-touch button.thr { grid-column: span 2; padding: 16px 4px; background: var(--ink); color: var(--plate); }
+  .touch #fly-help .k, html:not(.touch) #fly-help .t { display: none; }
   #joy { position: absolute; left: calc(22px + var(--sl)); bottom: calc(26px + var(--sb)); width: 124px; height: 124px; border: 2px solid var(--ink); background: rgba(243, 243, 239, 0.55); touch-action: none; }
   #joy::before, #joy::after { content: ""; position: absolute; background: var(--hair); }
   #joy::before { left: 50%; top: 8px; bottom: 8px; width: 1px; }
@@ -79,14 +90,15 @@
   #joy-knob { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; background: var(--ink); z-index: 1; will-change: transform; }
   #open { position: absolute; right: calc(22px + var(--sr)); bottom: calc(26px + var(--sb)); display: grid; justify-items: end; gap: 6px; }
   #open-label { background: var(--plate); border: 2px solid var(--ink); padding: 4px 8px; font: 700 11px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
-  #open-btn { appearance: none; border: 2px solid var(--ink); background: var(--signal); color: var(--ink); width: 124px; height: 64px; font: 800 24px/1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.04em; text-transform: uppercase; touch-action: manipulation; }
+  #open-btn { appearance: none; border: 2px solid var(--ink); background: var(--signal); color: var(--on-signal); width: 124px; height: 64px; font: 800 24px/1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.04em; text-transform: uppercase; touch-action: manipulation; }
   #open-btn:active { background: var(--ink); color: var(--plate); }
 
   /* start / pause panel */
   #panel { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(360px, calc(100% - 32px)); background: var(--plate); border: 2px solid var(--ink); border-top-width: 6px; display: grid; }
   #panel h1 { margin: 0; padding: 12px 14px 10px; font: 800 40px/0.95 var(--f-sans); font-stretch: 70%; text-transform: uppercase; letter-spacing: -0.01em; border-bottom: 2px solid var(--ink); }
   #panel .go { appearance: none; border: 0; background: var(--ink); color: var(--plate); padding: 16px 14px; font: 800 22px/1 var(--f-sans); font-stretch: 75%; letter-spacing: 0.04em; text-transform: uppercase; text-align: left; cursor: pointer; display: flex; justify-content: space-between; touch-action: manipulation; }
-  #panel .go:hover { background: var(--signal); color: var(--ink); }
+  #panel .go:hover { background: var(--signal); color: var(--on-signal); }
+  #panel .go:focus-visible { outline-color: var(--signal-hi); }
   #panel .legend { margin: 0; padding: 10px 14px; border-top: 2px solid var(--ink); color: var(--steel); font: 500 11px/1.6 var(--f-mono); letter-spacing: 0.05em; text-transform: uppercase; }
   #panel .alt { appearance: none; border: 0; border-top: 2px solid var(--ink); background: transparent; padding: 10px 14px; font: 700 12px/1.3 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; text-align: left; cursor: pointer; display: flex; justify-content: space-between; touch-action: manipulation; }
   #panel .alt:hover { background: var(--ink); color: var(--plate); }
@@ -131,6 +143,8 @@
   <div id="tag" hidden><span>Initials</span><input id="tag-in" maxlength="3" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Initials for the scoreboard"><button id="tag-post" type="button">Post</button></div>
   <div id="open" hidden><span id="open-label"></span><button id="open-btn" type="button">Open</button></div>
   <div id="toast" role="status" aria-live="polite"></div>
+  <div id="fly-help" hidden><b>Flight</b><div class="k"><span>W / S</span><span>Throttle</span></div><div class="k"><span>Mouse / Arrows</span><span>Pitch and roll, up is nose up</span></div><div class="k"><span>A / D</span><span>Roll</span></div><div class="k"><span>R</span><span>Respawn</span></div><div class="k"><span>E</span><span>Exit when stopped</span></div><div class="k"><span>H</span><span>Hide this</span></div><div class="t"><span>Left pad</span><span>Pitch and roll, up is nose up</span></div><div class="t"><span>Throttle + / −</span><span>Hold to change power</span></div></div>
+  <div id="fly-touch" hidden><button class="thr" type="button" data-k="KeyW">Throttle +</button><button class="thr" type="button" data-k="KeyS">Throttle −</button><button type="button" id="fly-respawn">Respawn</button><button type="button" id="fly-exit">Exit</button></div>
   <div id="inv" hidden><span id="inv-key" hidden>Key</span><span id="inv-waffle" hidden>Waffle token</span><span id="inv-ski" hidden></span></div>
   <button id="listbtn" class="chip" type="button" hidden>List view</button>
   <div id="panel" hidden>
@@ -201,6 +215,7 @@ const el = {
   joy: $("#joy"), knob: $("#joy-knob"), tag: $("#tag"), tagIn: $("#tag-in"), tagPost: $("#tag-post"), open: $("#open"), openLabel: $("#open-label"), openBtn: $("#open-btn"),
   toast: $("#toast"), listBtn: $("#listbtn"), panel: $("#panel"), panelTitle: $("#panel-title"), panelGo: $("#panel-go"), panelGoText: $("#panel-go-text"),
   panelLegend: $("#panel-legend"), panelList: $("#panel-list"), loader: $("#loader"), pct: $("#pct"), pctBar: $("#pctbar"), fade: $("#fade"),
+  flyHelp: $("#fly-help"), flyTouch: $("#fly-touch"), flyRespawn: $("#fly-respawn"), flyExit: $("#fly-exit"),
   inv: $("#inv"), invKey: $("#inv-key"), invWaffle: $("#inv-waffle"), invSki: $("#inv-ski"),
   list: $("#list"), listTitle: $("#list-title"), rows: $("#rows"), listEnter: $("#list-enter"), listNote: $("#list-note"),
 };
@@ -286,18 +301,22 @@ async function boot() {
 // THE ROOM
 // =====================================================================
 function buildRoom(THREE) {
-  const C = { paper: 0xe6e6e1, plate: 0xf3f3ef, ink: 0x141414, steel: 0x66665f, hair: 0xb9b9b2, given: 0xd6d6cf, signal: 0xff4a00, wall: 0xfaf5ea, floor: 0xcbcbc4, white: 0xffffff };
-  const CSS = { paper: "#e6e6e1", plate: "#f3f3ef", ink: "#141414", steel: "#66665f", hair: "#b9b9b2", given: "#d6d6cf", signal: "#ff4a00" };
+  const C = { paper: 0xe6e6e1, plate: 0xf3f3ef, ink: 0x141414, steel: 0x66665f, hair: 0xb9b9b2, given: 0xd6d6cf, signal: 0x1f3f86, signalHi: 0x7fa6ec, wall: 0xfaf5ea, floor: 0xcbcbc4, white: 0xffffff };
+  const CSS = { paper: "#e6e6e1", plate: "#f3f3ef", ink: "#141414", steel: "#66665f", hair: "#b9b9b2", given: "#d6d6cf", signal: "#1f3f86", signalHi: "#7fa6ec" };
   // world palettes (3D scene only; the HUD and the sub-pages keep the paper-and-ink set above)
   const TIMBER = { stain: 0x3a2a1f, stainLight: 0x4b3727, beam: 0x3b2a1e, wainscot: 0x7c512c, wainscotAlt: 0x6f4728, rail: 0x4a3020, plank: 0x8f5f36, honey: 0xb67d42, honeyDark: 0x9a6633, endGrain: 0xd8aa6c, chink: 0x4a3322, door: 0x8a5a33, doorPanel: 0x9f6e41, butcher: 0xc99a5b, plinth: 0x2b2622 };
   const NATURE = { horizon: 0xd9e9f6, skyMid: 0x8fc4f0, zenith: 0x2f7dd4, cloud: 0xffffff, cloudShade: 0xeaf2fa, snow: 0xe6f1ff, snowShade: 0xbfd6f1, spruce: 0x1f4d33, fir: 0x2c6a3f, firLight: 0x3c8149, trunk: 0x5a3d26, rock: 0x6d7d91, rockDark: 0x58677a, treeline: 0x2d5a3d, gateRed: 0xd62828, gateBlue: 0x1d5fbf, liftRed: 0xc8372d, steelPaint: 0x86939c, steelDark: 0x3c464e, roof: 0x3d444b, skiRed: 0xa32a22 };
   const RUG = { red: "#8e1f1f", cream: "#efe4cb", green: "#24513a", charcoal: "#2a2a2a" };
+  const LODGE = { brass: 0xb8923a, oak: 0xa9743f, oakLight: 0xb98248, manila: 0xe2c58a, manilaDark: 0xcdb078, cream: 0xefe4cb, phone: 0x2a5fb0, phoneDark: 0x1d3f7a, postRed: 0xb8322a, leather: 0x6b3f26, leatherDark: 0x4a2c1c, mortar: 0x5c5a56, stone: [0x8d8a84, 0x7b7872, 0x9a968e, 0x6f6c68], navy: 0x24406e, brain: 0xd8a7a2, bamboo: 0xc9a45c, arcade: 0x15161c, arcYellow: 0xf2b632, arcRed: 0xd23b2e, arcTeal: 0x2aa198, waffle: 0xd9a441, flame: 0xff8a2a, flameHot: 0xffd76a };
   const F_SANS = '"Archivo", "Helvetica Neue", Arial, sans-serif';
   const F_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
   const ROOM = 12, HALF = ROOM / 2, CEIL = 4, EYE = 1.6, RADIUS = 0.34, REACH = 3;
   // Outside the back door: summit deck -> slalom course -> base area, with a chairlift back up. +z is downhill.
   const DOOR = { w: 1.0, h: 2.15 }, WALL_T = 0.2, OUT0 = HALF + WALL_T + RADIUS;
   const SKY = NATURE.horizon, DX0 = -10, DX1 = 18, Z0 = HALF + 9, CW = 9, RUN = 200, DROP = 50, Z1 = Z0 + RUN, Z2 = Z1 + 36, BX0 = -14, BX1 = 19;
+  // airfield west of the deck: runway along x, apron and hangar at its east end. GAP = the opening in the west deck rope.
+  const AIR = { x0: -112, xa: -36, x1: -16, z0: 0, z1: 12, za: -3, y: 0.08, sx: -26, sz: 6 }, GAP = { z0: 9.5, z1: 12.5 }, HGR = { x0: -34, x1: -22, z0: -15, z1: -3.5 }, FB = { x: -15.5, z: -3.9, w: 5, h: 3.125 };
+  const onPave = (x, z) => z < AIR.z1 && ((x > AIR.x0 && x <= AIR.xa && z > AIR.z0) || (x > AIR.xa && x < AIR.x1 && z > AIR.za));
   const LX = 14.5, LR = 1.3, ZT = HALF + 4.5, ZB = Z1 + 13, LP = ZB - ZT, LIFT_V = 11, CHAIRS = 14, HANG = 2.7;
 
   // ---------- renderer ----------
@@ -319,8 +338,10 @@ function buildRoom(THREE) {
   const lam = (color) => new THREE.MeshLambertMaterial({ color, flatShading: true });
   const M = {
     plate: lam(C.plate), paper: lam(C.paper), given: lam(C.given), steel: lam(C.steel), hair: lam(C.hair), ink: lam(0x1b1b1b), wall: lam(C.wall), page: lam(0xfafaf6), plinth: lam(TIMBER.plinth), door: lam(TIMBER.door), doorPanel: lam(TIMBER.doorPanel),
+    brass: lam(LODGE.brass), red: lam(LODGE.arcRed), manila: lam(LODGE.manila), waffle: lam(LODGE.waffle),
     inkFlat: new THREE.MeshBasicMaterial({ color: C.ink }),
-    signalFlat: new THREE.MeshBasicMaterial({ color: C.signal }),
+    signalFlat: new THREE.MeshBasicMaterial({ color: C.signalHi }), // highlight brackets: the light tint, so they read on dark wood
+    signalHi: new THREE.MeshBasicMaterial({ color: C.signalHi }),
     signal: lam(C.signal),
   };
 
@@ -345,6 +366,32 @@ function buildRoom(THREE) {
   const ease = (k) => 1 - Math.pow(1 - Math.min(1, Math.max(0, k)), 3);
   const seg = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a))); // 0..1 progress of t inside [a,b]
   const toward = (k, want, dt, dur) => (REDUCED ? want : k + Math.sign(want - k) * Math.min(Math.abs(want - k), dt / dur)); // hover progress
+
+  // ---------- baking: many small parts -> one vertex-coloured mesh (one draw call) ----------
+  const lamV = new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true });
+  const INK = 0x1b1b1b;
+  const mat4 = (x, y, z, rx = 0, ry = 0, rz = 0, sc = 1) => new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(rx, ry, rz, "YXZ")), new THREE.Vector3(sc, sc, sc));
+  function bake(list) {
+    let n = 0;
+    const gs = list.map((p) => { const g = p.geo.index ? p.geo.toNonIndexed() : p.geo.clone(); if (p.m) g.applyMatrix4(p.m); n += g.attributes.position.count; return g; });
+    const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3), c = new THREE.Color();
+    let o = 0;
+    gs.forEach((g, i) => {
+      const cnt = g.attributes.position.count; pos.set(g.attributes.position.array, o * 3); nor.set(g.attributes.normal.array, o * 3);
+      if (list[i].colors) col.set(list[i].colors, o * 3); // part brings its own per-vertex colours
+      else { c.setHex(list[i].color); for (let k = 0; k < cnt; k++) { col[(o + k) * 3] = c.r; col[(o + k) * 3 + 1] = c.g; col[(o + k) * 3 + 2] = c.b; } }
+      o += cnt; g.dispose();
+    });
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3)); geo.setAttribute("normal", new THREE.BufferAttribute(nor, 3)); geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+    return geo;
+  }
+  // a small parts list with box / cylinder / geometry adders; mesh() bakes it
+  const kit = () => { const list = []; return { list,
+    b: (w, h, d, color, x, y, z, rx, ry, rz) => list.push({ geo: new THREE.BoxGeometry(w, h, d), color, m: mat4(x, y, z, rx, ry, rz) }),
+    c: (rt, rb, h, n, color, x, y, z, rx, ry, rz) => list.push({ geo: new THREE.CylinderGeometry(rt, rb, h, n), color, m: mat4(x, y, z, rx, ry, rz) }),
+    g: (geo, color, m) => list.push({ geo, color, m }),
+    mesh: (shadow = true) => { const m = new THREE.Mesh(bake(list), lamV); m.castShadow = shadow; m.receiveShadow = true; return m; } }; };
 
   const WIN = { z: 0.3, y: 2.75, w: 2.4, h: 1.5 }; // window opening in the left wall
   // ---------- shell: floor, walls, ceiling ----------
@@ -402,6 +449,7 @@ function buildRoom(THREE) {
 
   // ---------- lights + window ----------
   const PATCH = { x: -2.3, z: 0.9 };
+  let fireA = null, fireB = null, fireLight = null; // fireplace flames (built with the lodge decor)
   {
     scene.add(new THREE.HemisphereLight(0xfffaf2, 0xf3e6d2, 2.7)); // warm bounce from the wood indoors, near-white from above
     const sun = new THREE.DirectionalLight(0xffe6c2, 1.15);
@@ -443,6 +491,11 @@ function buildRoom(THREE) {
   function updateAmbient(time) {
     const drift = REDUCED ? 0 : Math.sin(time * 0.045) * 0.35;
     patch.position.z = PATCH.z + drift;
+    if (fireA && !REDUCED) { // flicker
+      fireA.scale.set(1 + Math.sin(time * 7.3) * 0.06, 1 + Math.sin(time * 11) * 0.13 + Math.sin(time * 17.7) * 0.07, 1);
+      fireB.scale.set(1 + Math.sin(time * 9.1 + 1) * 0.08, 1 + Math.sin(time * 13.3 + 2) * 0.16 + Math.sin(time * 21) * 0.06, 1);
+      fireLight.intensity = 5 + (Math.sin(time * 9) + Math.sin(time * 14.3)) * 0.5;
+    }
     if (!dust) return;
     const { seed, N } = dust.userData, p = dust.geometry.attributes.position.array;
     for (let i = 0; i < N; i++) {
@@ -473,48 +526,34 @@ function buildRoom(THREE) {
   }
 
   // ---------- interactive objects ----------
-  const objects = [];      // { dest, root, body, box, center, colliders, update(dt,time), act(), screen? }
+  const objects = [];      // { dest, root, body, box, center, update(dt,time,t), act(), screen? }
   const colliders = [];    // { minX, maxX, minZ, maxZ }
   const hitMeshes = [];
-  const P0 = 0.05;         // plinth height: object parts sit on y = P0
   const blobTex = canvasTex(128, 128, (g, w, h) => {
     const r = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
     r.addColorStop(0, "rgba(0,0,0,0.55)"); r.addColorStop(0.55, "rgba(0,0,0,0.28)"); r.addColorStop(1, "rgba(0,0,0,0)");
     g.fillStyle = r; g.fillRect(0, 0, w, h);
   });
-  const frameMat = () => new THREE.MeshBasicMaterial({ color: C.ink });
-
-  function addObject(dest, x, z, rot, pw, pd, build) {
-    const root = new THREE.Group(); root.position.set(x, 0, z); root.rotation.y = rot; scene.add(root);
+  // Each link is a piece of lodge furniture or a wall fixture, not an exhibit.
+  // o: { y: floor height, foot: [w, d] collider footprint in local x/z, solid: [minX, maxX, minZ, maxZ] world collider, blob: [w, d] soft floor shadow, plaque: [x, y, z, tilt] }
+  function addObject(dest, x, z, rot, o, build) {
+    const root = new THREE.Group(); root.position.set(x, o.y || 0, z); root.rotation.y = rot; scene.add(root);
     const body = new THREE.Group(); root.add(body);
-    // grounding: soft blob, plinth, painted floor frame
-    const blob = new THREE.Mesh(new THREE.PlaneGeometry(pw + 1.0, pd + 1.0), new THREE.MeshBasicMaterial({ map: blobTex.t, transparent: true, depthWrite: false, opacity: 0.5 }));
-    blob.rotation.x = -Math.PI / 2; blob.position.y = 0.003; root.add(blob);
-    const plinth = box(pw, P0, pd, M.plinth, 0, P0 / 2, 0); body.add(plinth);
-    const fm = frameMat(), fw = pw + 0.3, fd = pd + 0.3, t = 0.022;
-    for (const [w, d, fx, fz] of [[fw, t, 0, fd / 2], [fw, t, 0, -fd / 2], [t, fd, fw / 2, 0], [t, fd, -fw / 2, 0]]) {
-      const s = new THREE.Mesh(new THREE.BoxGeometry(w, 0.004, d), fm); s.position.set(fx, 0.006, fz); root.add(s);
+    if (o.blob) {
+      const blob = new THREE.Mesh(new THREE.PlaneGeometry(o.blob[0], o.blob[1]), new THREE.MeshBasicMaterial({ map: blobTex.t, transparent: true, depthWrite: false, opacity: 0.45 }));
+      blob.rotation.x = -Math.PI / 2; blob.position.y = 0.004; root.add(blob);
     }
-    // painted number on the floor
-    const numTex = canvasTex(256, 256, (g, w, h) => {
-      g.clearRect(0, 0, w, h); g.fillStyle = CSS.ink; g.font = `800 condensed 250px ${F_SANS}`; g.textBaseline = "alphabetic";
-      fitText(g, dest.no, w / 2, 216, w - 8, "center");
-    });
-    const num = decal(numTex.t, 0.62, 0.62, { transparent: true, opacity: 0.88 });
-    num.rotation.x = -Math.PI / 2; num.position.set(-fw / 2 + 0.31, 0.008, fd / 2 + 0.42); root.add(num);
-    // label plate on a stand
+    // the label: a small brass plaque mounted on or beside the object
     const label = `${dest.no} / ${dest.label.toUpperCase()}`;
     const plateTex = (bg, fg) => canvasTex(512, 160, (g, w, h) => {
       g.fillStyle = fg; g.fillRect(0, 0, w, h); g.fillStyle = bg; g.fillRect(8, 8, w - 16, h - 16);
       g.fillStyle = fg; g.font = `700 60px ${F_MONO}`; g.textBaseline = "middle";
       fitText(g, label, w / 2, h / 2 + 4, w - 56, "center");
     }).t;
-    const texOff = plateTex(CSS.plate, CSS.ink), texOn = plateTex(CSS.ink, CSS.plate);
-    const stand = new THREE.Group(); stand.position.set(fw / 2 - 0.2, 0, fd / 2 + 0.3); root.add(stand);
-    stand.add(box(0.14, 0.012, 0.14, M.ink, 0, 0.006, 0), box(0.022, 0.92, 0.022, M.ink, 0, 0.46, 0));
-    const head = new THREE.Group(); head.position.set(0, 0.95, 0); head.rotation.x = -0.6; stand.add(head);
-    head.add(box(0.46, 0.15, 0.014, M.ink, 0, 0, 0));
-    const face = decal(texOff, 0.44, 0.1375); face.position.z = 0.0085; head.add(face);
+    const texOff = plateTex(CSS.plate, CSS.ink), texOn = plateTex(CSS.signal, CSS.plate);
+    const head = new THREE.Group(); head.position.set(o.plaque[0], o.plaque[1], o.plaque[2]); head.rotation.x = o.plaque[3] || 0; root.add(head);
+    head.add(box(0.32, 0.112, 0.012, M.brass, 0, 0, 0, false));
+    const face = decal(texOff, 0.3, 0.094); face.position.z = 0.0095; head.add(face);
 
     const api = build(body) || {};
     root.updateMatrixWorld(true);
@@ -523,18 +562,20 @@ function buildRoom(THREE) {
     const hit = new THREE.Mesh(new THREE.BoxGeometry(size.x, size.y, size.z)); hit.position.copy(center); hit.visible = false; hit.updateMatrixWorld(true);
     const sb = new THREE.Box3().setFromObject(head);
     const hit2 = new THREE.Mesh(new THREE.BoxGeometry(...sb.getSize(new THREE.Vector3()).addScalar(0.06).toArray())); sb.getCenter(hit2.position); hit2.visible = false; hit2.updateMatrixWorld(true);
-    const pb = new THREE.Box3().setFromObject(plinth);
-    colliders.push({ minX: pb.min.x, maxX: pb.max.x, minZ: pb.min.z, maxZ: pb.max.z });
-    const stb = new THREE.Box3().setFromObject(stand.children[0]);
-    colliders.push({ minX: stb.min.x, maxX: stb.max.x, minZ: stb.min.z, maxZ: stb.max.z });
-    const obj = { dest, root, body, box: bb, center, frame: fm, face, texOff, texOn, t: -1, ...api };
+    if (o.foot) {
+      const fb = new THREE.Box3();
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) fb.expandByPoint(new THREE.Vector3((sx * o.foot[0]) / 2, 0, (sz * o.foot[1]) / 2).applyMatrix4(root.matrixWorld));
+      colliders.push({ minX: fb.min.x, maxX: fb.max.x, minZ: fb.min.z, maxZ: fb.max.z });
+    }
+    if (o.solid) colliders.push({ minX: o.solid[0], maxX: o.solid[1], minZ: o.solid[2], maxZ: o.solid[3] });
+    const obj = { dest, root, body, box: bb, center, frame: { color: new THREE.Color() }, face, texOff, texOn, t: -1, ...api };
     hit.userData.obj = obj; hit2.userData.obj = obj; hitMeshes.push(hit, hit2);
     objects.push(obj);
     return obj;
   }
   const destOf = (id) => DEST.find((d) => d.id === id);
 
-  // --- 01 RESEARCH: recording rig (oscilloscope + probe on a lab bench) ---
+  // --- 01 RESEARCH: a naturalist's study desk. The wood-cased monitor shows the live trace and is the zoom target. ---
   const scope = canvasTex(384, 288);
   const scopeState = { buf: new Float32Array(192), spike: -1, acc: 0 };
   const WAVE = [0.12, -0.95, -0.55, 0.38, 0.22, 0.08];
@@ -547,72 +588,100 @@ function buildRoom(THREE) {
       else if (Math.random() < 0.03) scopeState.spike = 0;
       b[b.length - 1] = v;
     }
-    g.fillStyle = CSS.ink; g.fillRect(0, 0, w, h);
-    g.fillStyle = "#2b2b29";
+    g.fillStyle = "#0c121d"; g.fillRect(0, 0, w, h);
+    g.fillStyle = "#1c2940";
     for (let x = 48; x < w; x += 48) g.fillRect(x, 0, 1, h);
     for (let y = 48; y < h; y += 48) g.fillRect(0, y, w, 1);
-    g.strokeStyle = CSS.plate; g.lineWidth = 2.5; g.lineJoin = "miter"; g.beginPath();
+    g.strokeStyle = CSS.signalHi; g.lineWidth = 2.5; g.lineJoin = "miter"; g.beginPath();
     for (let i = 0; i < b.length; i++) { const x = (i / (b.length - 1)) * w, y = h * 0.56 - b[i] * h * 0.36; i ? g.lineTo(x, y) : g.moveTo(x, y); }
     g.stroke();
     g.font = `700 20px ${F_MONO}`; g.textBaseline = "top"; g.fillStyle = CSS.hair; g.fillText("CH 01 / SIM", 12, 10);
-    if (Math.floor(performance.now() / 600) % 2) { g.fillStyle = CSS.signal; g.fillRect(w - 30, 12, 16, 16); }
+    if (Math.floor(performance.now() / 600) % 2) { g.fillStyle = CSS.signalHi; g.fillRect(w - 30, 12, 16, 16); }
     g.fillStyle = CSS.hair; g.textAlign = "right"; g.fillText("REC", w - 38, 10); g.textAlign = "left";
     scope.t.needsUpdate = true;
   }
-  addObject(destOf("research"), -2.6, -4.7, 0, 2.0, 1.1, (b) => {
-    const top = P0 + 0.9;
-    for (const [x, z] of [[-0.76, -0.33], [0.76, -0.33], [-0.76, 0.33], [0.76, 0.33]]) b.add(box(0.04, 0.86, 0.04, M.steel, x, P0 + 0.43, z));
-    b.add(box(1.6, 0.04, 0.75, M.plate, 0, top - 0.02, 0), box(1.52, 0.02, 0.6, M.given, 0, P0 + 0.2, 0), box(1.52, 0.05, 0.02, M.steel, 0, top - 0.065, 0.33), box(1.52, 0.05, 0.02, M.steel, 0, top - 0.065, -0.33));
-    // oscilloscope
-    const sc = new THREE.Group(); sc.position.set(-0.38, top, -0.04); b.add(sc);
-    for (const [x, z] of [[-0.2, -0.15], [0.2, -0.15], [-0.2, 0.15], [0.2, 0.15]]) sc.add(box(0.04, 0.02, 0.04, M.ink, x, 0.01, z));
-    sc.add(box(0.54, 0.36, 0.42, M.given, 0, 0.2, 0), box(0.32, 0.25, 0.012, M.ink, -0.085, 0.2, 0.211), box(0.3, 0.02, 0.03, M.ink, 0, 0.395, 0));
-    const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.28, 0.21), new THREE.MeshBasicMaterial({ map: scope.t }));
-    screen.position.set(-0.085, 0.2, 0.2185); sc.add(screen);
-    for (const y of [0.29, 0.215, 0.14]) { const k = cyl(0.024, 0.022, 10, M.ink, 0.185, y, 0.221); k.rotation.x = Math.PI / 2; sc.add(k); sc.add(box(0.004, 0.02, 0.004, M.plate, 0.185, y + 0.012, 0.233, false)); }
-    for (const x of [0.15, 0.185, 0.22]) sc.add(box(0.022, 0.014, 0.01, M.steel, x, 0.075, 0.214, false));
-    // probe stand + specimen dish
-    b.add(box(0.36, 0.016, 0.28, M.steel, 0.44, top + 0.008, -0.02));
-    b.add(cyl(0.012, 0.44, 8, M.ink, 0.58, top + 0.236, -0.1), box(0.05, 0.045, 0.05, M.given, 0.58, top + 0.38, -0.1), box(0.2, 0.016, 0.016, M.ink, 0.47, top + 0.38, -0.1), box(0.05, 0.07, 0.022, M.plate, 0.37, top + 0.35, -0.1));
-    b.add(cyl(0.0035, 0.2, 5, M.steel, 0.37, top + 0.215, -0.1), cyl(0.07, 0.022, 14, M.plate, 0.37, top + 0.027, -0.1), cyl(0.058, 0.004, 14, M.hair, 0.37, top + 0.04, -0.1, false));
-    const cable = new THREE.CatmullRomCurve3([new THREE.Vector3(0.37, top + 0.385, -0.1), new THREE.Vector3(0.25, top + 0.5, -0.14), new THREE.Vector3(0, top + 0.3, -0.2), new THREE.Vector3(-0.2, top + 0.2, -0.26)]);
-    b.add(mesh(new THREE.TubeGeometry(cable, 14, 0.005, 4), M.ink));
-    // lab notebook
-    const nb = new THREE.Group(); nb.position.set(0.08, top, 0.2); nb.rotation.y = 0.22; b.add(nb);
-    nb.add(box(0.19, 0.02, 0.25, M.ink, 0, 0.01, 0), box(0.18, 0.014, 0.24, M.page, 0.004, 0.011, 0, false));
-    return { screen, update(dt) { scopeState.acc += dt; if (scopeState.acc > 1 / 30) { scopeState.acc = 0; drawScope(); } } };
+  addObject(destOf("research"), -5.5, -3.4, Math.PI / 2, { foot: [1.56, 0.76], blob: [1.9, 1.1], plaque: [0.3, 0.675, 0.352] }, (b) => {
+    const k = kit(), top = 0.76;
+    // desk: top, aprons, drawer pedestal on the left, two legs on the right
+    k.b(1.5, 0.045, 0.7, TIMBER.stain, 0, top - 0.0225, 0);
+    k.b(1.4, 0.12, 0.03, TIMBER.stainLight, 0, 0.675, 0.32); k.b(1.4, 0.12, 0.03, TIMBER.stainLight, 0, 0.675, -0.32);
+    k.b(0.42, 0.62, 0.6, TIMBER.stainLight, -0.5, 0.41, 0);
+    for (const y of [0.51, 0.345, 0.18]) { k.b(0.36, 0.14, 0.012, TIMBER.stain, -0.5, y, 0.306); k.b(0.09, 0.02, 0.022, LODGE.brass, -0.5, y, 0.322); }
+    for (const [x, z] of [[-0.68, 0.27], [-0.32, 0.27], [-0.68, -0.27], [-0.32, -0.27]]) k.b(0.05, 0.1, 0.05, TIMBER.stain, x, 0.05, z);
+    for (const z of [0.29, -0.29]) k.b(0.055, 0.72, 0.055, TIMBER.stain, 0.69, 0.36, z);
+    // wood-cased monitor
+    k.b(0.46, 0.37, 0.38, TIMBER.wainscot, -0.42, top + 0.205, -0.1);
+    for (const x of [-0.6, -0.24]) k.b(0.05, 0.02, 0.3, INK, x, top + 0.01, -0.1);
+    k.b(0.34, 0.27, 0.012, INK, -0.46, top + 0.21, 0.096);
+    for (const y of [0.3, 0.2, 0.1]) k.c(0.018, 0.018, 0.02, 10, LODGE.brass, -0.245, top + y, 0.1, Math.PI / 2);
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.225), new THREE.MeshBasicMaterial({ map: scope.t }));
+    screen.position.set(-0.46, top + 0.21, 0.106); b.add(screen);
+    // brass microscope
+    const mx = 0.2, ta = 0.42;
+    k.b(0.16, 0.025, 0.22, INK, mx, top + 0.0125, -0.1);
+    k.b(0.035, 0.3, 0.04, INK, mx, top + 0.165, -0.2, -0.12);
+    k.b(0.12, 0.008, 0.12, INK, mx, top + 0.12, -0.11);
+    k.c(0.022, 0.022, 0.22, 10, LODGE.brass, mx, top + 0.3, -0.1, ta);
+    k.c(0.027, 0.027, 0.035, 10, INK, mx, top + 0.3 + 0.115 * Math.cos(ta), -0.1 + 0.115 * Math.sin(ta), ta);
+    k.c(0.012, 0.016, 0.05, 8, LODGE.brass, mx, top + 0.3 - 0.13 * Math.cos(ta), -0.1 - 0.13 * Math.sin(ta), ta);
+    k.c(0.026, 0.026, 0.02, 10, LODGE.brass, mx + 0.045, top + 0.22, -0.2, 0, 0, Math.PI / 2);
+    const stageGlow = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.004, 0.05), M.signalHi); stageGlow.position.set(mx, top + 0.128, -0.11); stageGlow.visible = false; b.add(stageGlow);
+    // brain model under a glass bell jar
+    const jx = 0.55, jz = 0.02;
+    k.c(0.105, 0.105, 0.02, 16, TIMBER.stain, jx, top + 0.01, jz);
+    k.c(0.007, 0.007, 0.06, 6, LODGE.brass, jx, top + 0.05, jz);
+    { const bg = new THREE.IcosahedronGeometry(0.058, 1); bg.scale(1.2, 0.92, 1.0); k.g(bg, LODGE.brain, mat4(jx, top + 0.125, jz)); }
+    const jar = new THREE.Mesh(new THREE.LatheGeometry([[0.092, 0], [0.092, 0.2], [0.08, 0.25], [0.05, 0.28], [0.001, 0.29]].map(([r, y]) => new THREE.Vector2(r, y)), 16), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.16, depthWrite: false, side: THREE.DoubleSide }));
+    jar.position.set(jx, top + 0.02, jz); b.add(jar);
+    // desk lamp, notebook, pen
+    const lampX = -0.02, lampZ = -0.24;
+    k.c(0.06, 0.07, 0.02, 12, LODGE.brass, lampX, top + 0.01, lampZ); k.c(0.009, 0.009, 0.34, 6, LODGE.brass, lampX, top + 0.19, lampZ);
+    k.c(0.05, 0.12, 0.1, 12, NATURE.spruce, lampX, top + 0.4, lampZ);
+    const lampDim = new THREE.Color(0xd9a55a), lampLit = new THREE.Color(0xfff0c8);
+    const lampGlow = new THREE.Mesh(new THREE.CylinderGeometry(0.105, 0.105, 0.006, 12), new THREE.MeshBasicMaterial({ color: lampDim.clone() })); lampGlow.position.set(lampX, top + 0.345, lampZ); b.add(lampGlow);
+    k.b(0.2, 0.022, 0.27, LODGE.leatherDark, 0.12, top + 0.011, 0.19, 0, 0.2);
+    k.c(0.006, 0.006, 0.15, 6, INK, 0.33, top + 0.007, 0.22, 0, 0.6, Math.PI / 2);
+    b.add(k.mesh());
+    let hov = 0;
+    return { screen, update(dt) { // hover: the lamp brightens and the microscope's stage light comes on
+      scopeState.acc += dt; if (scopeState.acc > 1 / 30) { scopeState.acc = 0; drawScope(); }
+      const want = target === this ? 1 : 0;
+      if (hov !== want) { hov = toward(hov, want, dt, 0.3); lampGlow.material.color.lerpColors(lampDim, lampLit, hov); stageGlow.visible = hov > 0.3; }
+    } };
   });
 
-  // --- 02 LINKEDIN: rotary desk telephone on a pedestal ---
-  addObject(destOf("linkedin"), -4.9, -1.5, Math.PI / 2, 0.9, 0.9, (b) => {
-    const top = P0 + 0.94;
-    b.add(box(0.5, 0.94, 0.5, M.plate, 0, P0 + 0.47, 0));
-    const ph = new THREE.Group(); ph.position.set(0, top, 0); ph.scale.setScalar(1.3); b.add(ph);
-    const sh = new THREE.Shape(); sh.moveTo(-0.11, 0); sh.lineTo(0.11, 0); sh.lineTo(0.11, 0.04); sh.lineTo(-0.11, 0.115); sh.closePath();
-    const bg = new THREE.ExtrudeGeometry(sh, { depth: 0.25, bevelEnabled: false }); bg.translate(0, 0, -0.125); bg.rotateY(-Math.PI / 2);
-    ph.add(mesh(bg, M.ink));
-    const slope = Math.atan2(0.075, 0.22);
-    const dialSeat = new THREE.Group(); dialSeat.position.set(0, 0.067, 0.03); dialSeat.rotation.x = slope; ph.add(dialSeat);
-    const dial = new THREE.Group(); dialSeat.add(dial);
-    dial.add(cyl(0.07, 0.01, 20, M.plate, 0, 0.005, 0), cyl(0.024, 0.014, 12, M.given, 0, 0.008, 0, false));
-    for (let i = 0; i < 10; i++) { const a = 0.6 + i * 0.52; dial.add(cyl(0.0105, 0.004, 8, M.ink, Math.cos(a) * 0.05, 0.0095, Math.sin(a) * 0.05, false)); }
-    dialSeat.add(box(0.008, 0.012, 0.03, M.steel, 0.066, 0.012, 0.03, false)); // finger stop
-    for (const x of [-0.075, 0.075]) ph.add(box(0.034, 0.04, 0.05, M.ink, x, 0.128, -0.082));
-    const hs = new THREE.Group(); hs.position.set(0, 0.166, -0.082); ph.add(hs);
-    hs.add(box(0.21, 0.028, 0.042, M.ink, 0, 0.004, 0), box(0.058, 0.05, 0.06, M.ink, -0.098, -0.012, 0), box(0.058, 0.05, 0.06, M.ink, 0.098, -0.012, 0));
+  // --- 02 LINKEDIN: blue rotary telephone on the wall. Hover lifts the handset; opening winds the dial. ---
+  addObject(destOf("linkedin"), -HALF, 3.4, Math.PI / 2, { plaque: [0, 1.15, 0.009] }, (b) => {
+    const k = kit(), y0 = 1.5;
+    k.b(0.3, 0.52, 0.02, TIMBER.stain, 0, y0, 0.012);
+    k.b(0.2, 0.3, 0.08, LODGE.phone, 0, y0 - 0.04, 0.062);
+    k.b(0.16, 0.035, 0.06, LODGE.phoneDark, 0, y0 + 0.13, 0.09);
+    for (const x of [-0.07, 0.07]) k.b(0.022, 0.05, 0.03, LODGE.phoneDark, x, y0 + 0.165, 0.105);
+    k.b(0.06, 0.012, 0.004, LODGE.cream, 0, y0 - 0.165, 0.105);
+    k.b(0.008, 0.03, 0.012, C.steel, 0.07, y0 - 0.085, 0.112);
+    b.add(k.mesh(false));
+    const dial = new THREE.Group(); dial.position.set(0, y0 - 0.05, 0.1025); b.add(dial);
+    { const d = kit(); d.c(0.066, 0.066, 0.008, 20, C.plate, 0, 0, 0.004, Math.PI / 2); d.c(0.022, 0.022, 0.006, 12, LODGE.phoneDark, 0, 0, 0.0105, Math.PI / 2);
+      for (let i = 0; i < 10; i++) { const a = 0.6 + i * 0.52; d.c(0.0095, 0.0095, 0.004, 8, INK, Math.cos(a) * 0.047, Math.sin(a) * 0.047, 0.0095, Math.PI / 2); }
+      dial.add(d.mesh(false)); }
+    const hs = new THREE.Group(); hs.position.set(0, y0 + 0.2, 0.105); b.add(hs);
+    { const h = kit(); h.b(0.25, 0.032, 0.04, LODGE.phone, 0, 0, 0); for (const x of [-0.1, 0.1]) h.b(0.06, 0.055, 0.06, LODGE.phone, x, -0.02, 0.004);
+      const pts = []; // coiled cord: hangs from the left end of the handset in a U and comes back to the body
+      for (let i = 0; i <= 120; i++) { const u = i / 120, a = u * Math.PI * 32, sag = Math.sin(u * Math.PI);
+        pts.push(new THREE.Vector3(-0.11 + 0.04 * u - 0.06 * sag + Math.sin(a) * 0.011, -0.05 - 0.35 * u - 0.2 * sag, -0.02 * u + Math.cos(a) * 0.011)); }
+      h.g(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 240, 0.0035, 4), LODGE.phoneDark, mat4(0, 0, 0)); hs.add(h.mesh(false)); }
     let hov = 0;
-    return { update(dt, time, t) { // hover: handset lifts off the cradle. open: the dial winds and returns.
+    return { update(dt, time, t) {
       const want = target === this ? 1 : 0;
       if (t < 0 && hov === want && want === 0) return;
-      if (hov !== want || t >= 0) shadowDirty = 2;
       hov = toward(hov, want, dt, 0.35);
       const lift = Math.max(hov * hov * (3 - 2 * hov), t >= 0 ? ease(seg(t, 0, 0.3)) - ease(seg(t, 2.1, 2.4)) : 0);
-      hs.position.y = 0.166 + lift * 0.13; hs.position.z = -0.082 + lift * 0.03; hs.rotation.z = lift * 0.38; hs.rotation.x = lift * 0.2;
-      dial.rotation.y = t >= 0 ? -(ease(seg(t, 0.25, 0.9)) * 4.6) + seg(t, 0.95, 1.9) * 4.6 : 0; // wind, then return at constant speed
+      hs.position.set(0, y0 + 0.2 + lift * 0.05, 0.105 + lift * 0.09); hs.rotation.z = lift * 0.2;
+      dial.rotation.z = t >= 0 ? -(ease(seg(t, 0.25, 0.9)) * 4.6) + seg(t, 0.95, 1.9) * 4.6 : 0; // wind, then return at constant speed
     }, dur: 2.5 };
   });
 
-  // --- 03 DAILY LOGIC: arcade cabinet ---
+  // --- 03 DAILY LOGIC: a full-colour upright arcade cabinet, angled out of the corner ---
   const arc = canvasTex(320, 320);
   const ARC = { n: 5, reg: ["AABBC", "ABBCC", "ADBCC", "DDEEC", "DEEEE"], sol: [0, 2, 4, 1, 3], acc: 1, step: 0 };
   function drawArcade() {
@@ -639,45 +708,61 @@ function buildRoom(THREE) {
     arc.t.needsUpdate = true;
   }
   drawArcade();
-  addObject(destOf("logic"), 2.6, -4.85, 0, 1.0, 1.0, (b) => {
-    const sh = new THREE.Shape();
+  addObject(destOf("logic"), 4.85, -4.85, -Math.PI / 4, { solid: [4.25, HALF, -HALF, -4.25], blob: [1.3, 1.3], plaque: [0, 0.66, 0.31] }, (b) => {
+    const k = kit(), W = 0.74, sh = new THREE.Shape();
     const pts = [[-0.36, 0], [0.3, 0], [0.3, 0.82], [0.42, 0.9], [0.42, 0.96], [0.14, 1.06], [0.06, 1.66], [0.3, 1.74], [0.3, 1.96], [-0.36, 1.96]];
     pts.forEach(([x, y], i) => (i ? sh.lineTo(x, y) : sh.moveTo(x, y))); sh.closePath();
-    const W = 0.74, geo = new THREE.ExtrudeGeometry(sh, { depth: W, bevelEnabled: false }); geo.translate(0, 0, -W / 2); geo.rotateY(-Math.PI / 2);
-    const cab = mesh(geo, M.plate, 0, P0, 0); b.add(cab);
-    for (const x of [-W / 2 - 0.006, W / 2 + 0.006]) { // dark side trim strip along the front edge
-      b.add(box(0.012, 0.82, 0.04, M.ink, x, P0 + 0.41, 0.28, false), box(0.012, 0.22, 0.04, M.ink, x, P0 + 1.85, 0.28, false));
-    }
-    const marq = canvasTex(512, 160, (g, w, h) => { g.fillStyle = CSS.ink; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 112px ${F_SANS}`; g.textBaseline = "middle"; fitText(g, "DAILY LOGIC", w / 2, h / 2 + 8, w - 48, "center"); });
-    const mq = decal(marq.t, W - 0.04, 0.2); mq.position.set(0, P0 + 1.85, 0.3015); b.add(mq);
+    const geo = new THREE.ExtrudeGeometry(sh, { depth: W, bevelEnabled: false }); geo.translate(0, 0, -W / 2); geo.rotateY(-Math.PI / 2);
+    k.g(geo, LODGE.arcade, mat4(0, 0, 0));
+    // painted side art: original geometric bands (no real game or brand)
+    const art = canvasTex(256, 512, (g, w, h) => {
+      g.fillStyle = "#1b2a52"; g.fillRect(0, 0, w, h);
+      const band = (c, y0, th) => { g.fillStyle = c; g.beginPath(); g.moveTo(0, y0); g.lineTo(w, y0 - 150); g.lineTo(w, y0 - 150 + th); g.lineTo(0, y0 + th); g.closePath(); g.fill(); };
+      band("#d23b2e", 470, 54); band("#f2b632", 404, 40); band("#2aa198", 352, 28); band("#efe4cb", 312, 10);
+      for (const [r, c] of [[54, "#f2b632"], [34, "#d23b2e"], [15, "#1b2a52"]]) { g.fillStyle = c; g.beginPath(); g.arc(w * 0.5, 110, r, 0, 7); g.fill(); }
+    });
+    const sideGeo = new THREE.ShapeGeometry(sh), uv = sideGeo.attributes.uv;
+    for (let i = 0; i < uv.count; i++) uv.setXY(i, (uv.getX(i) + 0.36) / 0.78, uv.getY(i) / 1.96);
+    const sideMat = new THREE.MeshLambertMaterial({ map: art.t, side: THREE.DoubleSide });
+    for (const x of [-W / 2 - 0.004, W / 2 + 0.004]) { const m = new THREE.Mesh(sideGeo, sideMat); m.rotation.y = -Math.PI / 2; m.position.x = x; m.receiveShadow = true; b.add(m); }
+    for (const x of [-W / 2 - 0.009, W / 2 + 0.009]) { k.b(0.01, 0.82, 0.03, LODGE.arcYellow, x, 0.41, 0.288); k.b(0.01, 0.22, 0.03, LODGE.arcYellow, x, 1.85, 0.288); k.b(0.01, 1.96, 0.03, LODGE.arcYellow, x, 0.98, -0.348); }
     const tilt = Math.atan2(0.08, 0.6);
-    const scr = new THREE.Group(); scr.position.set(0, P0 + 1.36, 0.1); scr.rotation.x = -tilt; b.add(scr);
-    scr.add(box(0.66, 0.58, 0.01, M.ink, 0, 0, 0.004, false));
-    const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.5), new THREE.MeshBasicMaterial({ map: arc.t })); screen.position.z = 0.0105; scr.add(screen);
-    const pan = new THREE.Group(); pan.position.set(0, P0 + 1.01, 0.28); pan.rotation.x = Math.atan2(0.1, 0.28); b.add(pan);
-    pan.add(box(W - 0.02, 0.006, 0.29, M.ink, 0, 0.003, 0, false));
-    const stick = new THREE.Group(); stick.position.set(-0.17, 0.006, 0); pan.add(stick);
-    stick.add(cyl(0.011, 0.07, 6, M.steel, 0, 0.035, 0), mesh(new THREE.IcosahedronGeometry(0.026, 0), M.plate, 0, 0.08, 0));
-    const btns = [0.06, 0.15, 0.24].map((x) => { const k = cyl(0.024, 0.016, 10, M.plate, x, 0.012, 0.01 - (x - 0.15) * 0.25); pan.add(k); return k; });
-    b.add(box(0.22, 0.28, 0.008, M.given, 0, P0 + 0.46, 0.302, false), box(0.05, 0.008, 0.01, M.ink, 0, P0 + 0.5, 0.306, false));
-    return { screen, update(dt, time, t) {
-      ARC.acc += dt; if (ARC.acc > 0.55) { ARC.acc = 0; ARC.step++; drawArcade(); }
+    k.b(0.66, 0.58, 0.01, INK, 0, 1.36, 0.104, -tilt);
+    k.b(0.3, 0.36, 0.008, 0x2b2b30, 0, 0.3, 0.304); k.b(0.05, 0.07, 0.006, LODGE.arcRed, -0.07, 0.36, 0.309); k.b(0.05, 0.07, 0.006, LODGE.arcYellow, 0.07, 0.36, 0.309); k.b(0.2, 0.012, 0.012, C.steel, 0, 0.2, 0.31);
+    b.add(k.mesh());
+    const marq = canvasTex(512, 160, (g, w, h) => { g.fillStyle = "#f2b632"; g.fillRect(0, 0, w, h); g.fillStyle = "#d23b2e"; g.fillRect(0, 0, w, 14); g.fillRect(0, h - 14, w, 14); g.fillStyle = "#1b2a52"; g.font = `800 condensed 112px ${F_SANS}`; g.textBaseline = "middle"; fitText(g, "DAILY LOGIC", w / 2, h / 2 + 8, w - 56, "center"); });
+    const mq = decal(marq.t, W - 0.04, 0.2); mq.position.set(0, 1.85, 0.3035); b.add(mq);
+    const scr = new THREE.Group(); scr.position.set(0, 1.36, 0.1); scr.rotation.x = -tilt; b.add(scr);
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.5), new THREE.MeshBasicMaterial({ map: arc.t })); screen.position.z = 0.014; scr.add(screen);
+    const pan = new THREE.Group(); pan.position.set(0, 1.01, 0.28); pan.rotation.x = Math.atan2(0.1, 0.28); b.add(pan);
+    { const q = kit(); q.b(W - 0.02, 0.008, 0.29, INK, 0, 0.004, 0); q.c(0.024, 0.024, 0.016, 10, LODGE.arcYellow, 0.15, 0.016, 0.01); q.c(0.024, 0.024, 0.016, 10, LODGE.phone, 0.24, 0.016, -0.0125); q.c(0.03, 0.03, 0.006, 10, C.steel, -0.17, 0.011, 0); pan.add(q.mesh(false)); }
+    const stick = new THREE.Group(); stick.position.set(-0.17, 0.008, 0); pan.add(stick);
+    { const q = kit(); q.c(0.009, 0.009, 0.07, 6, C.steel, 0, 0.035, 0); q.g(new THREE.IcosahedronGeometry(0.028, 1), LODGE.arcRed, mat4(0, 0.085, 0)); stick.add(q.mesh(false)); }
+    const btn = cyl(0.024, 0.016, 10, M.red, 0.06, 0.016, 0.0325, false); pan.add(btn);
+    let hov = 0;
+    return { screen, update(dt, time, t) { // hover: the marquee glows brighter and the attract loop speeds up
+      const want = target === this ? 1 : 0; if (hov !== want) hov = toward(hov, want, dt, 0.3);
+      ARC.acc += dt * (1 + hov * 1.6); if (ARC.acc > 0.55) { ARC.acc = 0; ARC.step++; drawArcade(); }
+      mq.material.color.setScalar(0.8 + hov * 0.2 + (REDUCED ? 0 : Math.sin(time * 7) * 0.02));
       const press = t >= 0 ? 1 - seg(t, 0.05, 0.3) : 0;
-      btns[0].position.y = 0.012 - press * 0.008; stick.rotation.z = t >= 0 ? Math.sin(seg(t, 0, 0.4) * Math.PI) * 0.3 : 0;
+      btn.position.y = 0.016 - press * 0.008; stick.rotation.z = t >= 0 ? Math.sin(seg(t, 0, 0.4) * Math.PI) * 0.3 : 0;
     }, dur: 0.5 };
   });
 
-  // --- 04 RESUME: filing cabinet; the top drawer slides out and a page lifts ---
-  if (destOf("resume")) addObject(destOf("resume"), 4.9, -1.5, -Math.PI / 2, 0.9, 1.0, (b) => {
-    const H = 1.26, D = 0.62, W = 0.5;
-    b.add(box(W, H, D, M.given, 0, P0 + H / 2, 0));
-    const ys = [0.22, 0.63, 1.04];
-    b.add(box(0.44, 0.36, 0.004, M.ink, 0, P0 + ys[2], D / 2 + 0.001, false)); // dark opening behind the top drawer
-    const front = (g) => { g.add(box(0.46, 0.38, 0.022, M.plate, 0, 0, 0), box(0.15, 0.022, 0.03, M.ink, 0, 0.09, 0.022), box(0.12, 0.05, 0.004, M.page, 0, -0.03, 0.013, false), box(0.13, 0.06, 0.003, M.ink, 0, -0.03, 0.0115, false)); };
-    for (const y of [ys[0], ys[1]]) { const g = new THREE.Group(); g.position.set(0, P0 + y, D / 2 + 0.012); front(g); b.add(g); }
-    const dr = new THREE.Group(); dr.position.set(0, P0 + ys[2], D / 2 + 0.012); front(dr); b.add(dr);
-    dr.add(box(0.42, 0.012, 0.52, M.steel, 0, -0.16, -0.27, false), box(0.012, 0.26, 0.52, M.steel, -0.21, -0.04, -0.27, false), box(0.012, 0.26, 0.52, M.steel, 0.21, -0.04, -0.27, false));
-    for (let i = 0; i < 7; i++) dr.add(box(0.39, 0.27 + (i % 2) * 0.012, 0.006, i % 3 ? M.paper : M.hair, 0, -0.02, -0.07 - i * 0.06, false));
+  // --- 04 RESUME: oak filing cabinet. Hover: the labelled drawer opens and a folder rises. Open: the folder lifts out and opens. ---
+  if (destOf("resume")) addObject(destOf("resume"), 5.62, -2.7, -Math.PI / 2, { foot: [0.62, 0.66], blob: [1.0, 1.0], plaque: [0, 1.395, 0.2, -0.35] }, (b) => {
+    const k = kit(), H = 1.3, D = 0.6, W = 0.56, ys = [0.26, 0.66, 1.06], zf = D / 2;
+    k.b(W, H - 0.06, D, LODGE.oak, 0, 0.06 + (H - 0.06) / 2, 0); k.b(W - 0.06, 0.06, D - 0.06, TIMBER.stain, 0, 0.03, 0); k.b(W + 0.04, 0.03, D + 0.04, TIMBER.stain, 0, H + 0.015, 0);
+    k.b(0.48, 0.34, 0.004, INK, 0, ys[2], zf + 0.003); // dark opening behind the top drawer
+    const front = (q, y, z) => { q.b(0.5, 0.36, 0.02, LODGE.oakLight, 0, y, z); q.b(0.15, 0.02, 0.03, LODGE.brass, 0, y + 0.1, z + 0.024); q.b(0.16, 0.07, 0.006, LODGE.brass, 0, y - 0.04, z + 0.013); q.b(0.14, 0.05, 0.004, 0xfafaf6, 0, y - 0.04, z + 0.0185); };
+    front(k, ys[0], zf + 0.012); front(k, ys[1], zf + 0.012);
+    b.add(k.mesh());
+    const dr = new THREE.Group(); dr.position.set(0, ys[2], zf + 0.012); b.add(dr);
+    { const q = kit(); front(q, 0, 0); q.b(0.44, 0.012, 0.5, LODGE.oak, 0, -0.16, -0.26); q.b(0.012, 0.26, 0.5, LODGE.oak, -0.22, -0.04, -0.26); q.b(0.012, 0.26, 0.5, LODGE.oak, 0.22, -0.04, -0.26);
+      for (let i = 0; i < 6; i++) q.b(0.4, 0.27 + (i % 2) * 0.012, 0.006, i % 3 ? LODGE.manila : LODGE.manilaDark, 0, -0.02, -0.2 - i * 0.05);
+      dr.add(q.mesh()); }
+    const tagTex = canvasTex(256, 90, (g, w, h) => { g.fillStyle = "#fafaf6"; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink; g.font = `700 54px ${F_MONO}`; g.textBaseline = "middle"; fitText(g, "RÉSUMÉ", w / 2, h / 2 + 3, w - 28, "center"); });
+    const tag = decal(tagTex.t, 0.14, 0.05); tag.position.set(0, -0.04, 0.0245); dr.add(tag);
     const pageTex = canvasTex(256, 330, (g, w, h) => {
       g.fillStyle = "#fbfbf7"; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink;
       g.font = `800 condensed 34px ${F_SANS}`; g.textBaseline = "top"; fitText(g, "RÉSUMÉ", 22, 20, w - 44);
@@ -685,22 +770,33 @@ function buildRoom(THREE) {
       g.fillStyle = CSS.hair; let y = 78;
       for (let s = 0; s < 4; s++) { g.fillStyle = CSS.steel; g.fillRect(22, y, 84, 6); y += 14; g.fillStyle = CSS.hair; for (let l = 0; l < 3; l++) { g.fillRect(22, y, w - 44 - ((l * 37 + s * 23) % 70), 4); y += 10; } y += 12; }
     });
-    const page = new THREE.Group(); page.position.set(0, -0.02, -0.1); dr.add(page);
-    const sheet = box(0.3, 0.39, 0.003, M.page, 0, 0, 0); page.add(sheet);
-    const pf = decal(pageTex.t, 0.3, 0.39); pf.position.z = 0.0022; page.add(pf);
+    const folder = new THREE.Group(); folder.position.set(0, -0.01, -0.1); dr.add(folder);
+    { const q = kit(); q.b(0.32, 0.4, 0.004, LODGE.manila, 0, 0, 0); q.b(0.1, 0.03, 0.004, LODGE.manila, 0.09, 0.213, 0); folder.add(q.mesh(false)); }
+    const pf = decal(pageTex.t, 0.28, 0.36); pf.position.z = 0.006; folder.add(pf);
+    const cover = new THREE.Group(); cover.position.set(-0.16, 0, 0.011); folder.add(cover);
+    cover.add(box(0.32, 0.4, 0.004, M.manila, 0.16, 0, 0, false));
     let hov = 0;
-    return { update(dt, time, t) { // hover: the drawer slides open. open: the page lifts out.
+    return { update(dt, time, t) { // the PDF itself opens in activate(), inside the click, so popup blockers allow it; this is only the show
       const want = target === this ? 1 : 0;
       if (t < 0 && hov === want && want === 0) return;
       if (hov !== want || t >= 0) shadowDirty = 2;
       hov = toward(hov, want, dt, 0.45);
-      const open = Math.max(hov * hov * (3 - 2 * hov), t >= 0 ? ease(seg(t, 0, 0.4)) - ease(seg(t, 2.3, 2.7)) : 0), rise = t >= 0 ? ease(seg(t, 0.3, 0.7)) - ease(seg(t, 2.0, 2.35)) : 0;
-      dr.position.z = D / 2 + 0.012 + open * 0.42; page.position.y = -0.02 + rise * 0.3; page.rotation.x = -rise * 0.22;
-    }, dur: 2.8 };
+      const hk = hov * hov * (3 - 2 * hov), act = t >= 0;
+      const open = Math.max(hk, act ? ease(seg(t, 0, 0.35)) - ease(seg(t, 2.6, 3.0)) : 0);
+      const lift = act ? ease(seg(t, 0.25, 0.75)) - ease(seg(t, 2.25, 2.65)) : 0, spread = act ? ease(seg(t, 0.7, 1.15)) - ease(seg(t, 1.95, 2.3)) : 0;
+      dr.position.z = zf + 0.012 + open * 0.38;
+      folder.position.y = -0.01 + Math.max(hk * 0.14, lift * 0.52); folder.rotation.x = -lift * 0.3;
+      cover.rotation.y = -spread * 2.3;
+    }, dur: 3.0 };
   });
 
-  // --- 05 ARTICLES: folded broadsheet on a steel lectern; unfolds while targeted, flutters on open ---
-  addObject(destOf("articles"), 4.9, 2.0, -Math.PI / 2, 0.9, 0.9, (b) => {
+  // --- 05 ARTICLES: the folded broadsheet on a coffee table on the rug; unfolds while targeted, flutters on open ---
+  addObject(destOf("articles"), 0.3, -0.2, 0, { y: 0.016, foot: [1.14, 0.64], blob: [1.5, 1.0], plaque: [0.38, 0.472, -0.2, -0.5] }, (b) => {
+    const k = kit(), TOP = 0.42;
+    k.b(1.1, 0.04, 0.6, TIMBER.plank, 0, TOP - 0.02, 0); k.b(0.98, 0.02, 0.48, TIMBER.stainLight, 0, 0.14, 0);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) k.b(0.06, TOP - 0.04, 0.06, TIMBER.stain, sx * 0.49, (TOP - 0.04) / 2, sz * 0.24);
+    k.c(0.04, 0.035, 0.085, 12, LODGE.cream, 0.4, TOP + 0.0425, 0.14); k.c(0.0408, 0.0395, 0.02, 12, C.signal, 0.4, TOP + 0.05, 0.14); k.c(0.033, 0.033, 0.002, 12, 0x3a2416, 0.4, TOP + 0.089, 0.14); k.b(0.012, 0.05, 0.03, LODGE.cream, 0.447, TOP + 0.045, 0.14); // mug
+    b.add(k.mesh());
     const PW = 0.36, PH = 0.5, NEWS = "#fbfbf7";
     // grey bars standing in for body text (no real or invented copy)
     const columns = (g, x, y, w, h, n, salt) => {
@@ -734,12 +830,10 @@ function buildRoom(THREE) {
       g.fillStyle = CSS.ink; g.fillRect(40, 708, w - 80, 2); g.fillRect(40, 730, 250, 22);
       columns(g, 40, 776, w - 80, 190, 4, 8);
     });
-    // lectern
-    b.add(box(0.5, 0.024, 0.42, M.steel, 0, P0 + 0.012, 0), box(0.06, 0.92, 0.06, M.steel, 0, P0 + 0.47, -0.04), box(0.3, 0.02, 0.2, M.ink, 0, P0 + 0.93, -0.02));
-    const top = new THREE.Group(); top.position.set(0, P0 + 1.06, 0.0); top.rotation.x = -0.8; b.add(top);
-    top.add(box(0.86, 0.64, 0.024, M.steel, 0, 0, -0.012), box(0.86, 0.03, 0.05, M.ink, 0, -0.305, 0.025));
+    const holder = new THREE.Group(); holder.position.set(-0.12, TOP + 0.004, 0.02); holder.rotation.y = 0.1; b.add(holder);
+    const top = new THREE.Group(); top.rotation.x = -Math.PI / 2; holder.add(top); // lying flat, top of the page away from the door
     // paper: spine at the group origin; closed = one page wide (centred), open = two-page spread (centred)
-    const paper = new THREE.Group(); paper.position.set(-PW / 2, 0.012, 0); top.add(paper);
+    const paper = new THREE.Group(); paper.position.set(-PW / 2, 0, 0); top.add(paper);
     const sheet = (tex, z) => { const m = decal(tex, PW, PH); m.position.set(PW / 2, 0, z); return m; };
     paper.add(box(PW, PH, 0.006, M.page, PW / 2, 0, 0.003, false), sheet(inside.t, 0.0066));
     const leaf = new THREE.Group(); leaf.position.z = 0.008; paper.add(leaf);
@@ -747,42 +841,49 @@ function buildRoom(THREE) {
     const cover = new THREE.Group(); cover.position.z = 0.0105; paper.add(cover);
     const coverBack = sheet(inside.t, -0.0008); coverBack.rotation.y = Math.PI;
     cover.add(sheet(front.t, 0.0008), coverBack);
-    let k = 0;
+    let k2 = 0;
     return { update(dt, time, t) {
       const want = target === this || t >= 0 ? 1 : 0;
-      if (k === want && t < 0) return;
-      k = REDUCED ? want : k + Math.sign(want - k) * Math.min(Math.abs(want - k), dt / 0.6);
-      const e = k * k * (3 - 2 * k);
+      if (k2 === want && t < 0) return;
+      k2 = REDUCED ? want : k2 + Math.sign(want - k2) * Math.min(Math.abs(want - k2), dt / 0.6);
+      const e = k2 * k2 * (3 - 2 * k2);
       cover.rotation.y = -e * (Math.PI - 0.07);
       paper.position.x = (-PW / 2) * (1 - e);
       leaf.rotation.y = t >= 0 && !REDUCED ? -Math.abs(Math.sin(seg(t, 0.2, 1.0) * Math.PI * 2)) * 0.8 * e : 0;
     }, dur: 1.2 };
   });
 
-  // --- 06 EMAIL: mailbox; the door drops, the flag goes up, a letter slides out ---
-  if (destOf("email")) addObject(destOf("email"), -4.9, 2.0, Math.PI / 2, 0.8, 0.9, (b) => {
-    const yb = P0 + 1.06;
-    b.add(box(0.3, 0.02, 0.3, M.steel, 0, P0 + 0.01, 0), box(0.09, 1.02, 0.09, M.steel, 0, P0 + 0.51, 0), box(0.2, 0.03, 0.42, M.steel, 0, yb - 0.015, 0));
-    const prof = () => { const s = new THREE.Shape(); s.moveTo(-0.12, 0); s.lineTo(0.12, 0); s.lineTo(0.12, 0.13); s.absarc(0, 0.13, 0.12, 0, Math.PI, false); s.lineTo(-0.12, 0); return s; };
-    const bodyGeo = new THREE.ExtrudeGeometry(prof(), { depth: 0.5, bevelEnabled: false, curveSegments: 5 }); bodyGeo.translate(0, 0, -0.25);
-    b.add(mesh(bodyGeo, M.plate, 0, yb, 0));
-    const inner = new THREE.Mesh(new THREE.ShapeGeometry(prof(), 5), M.inkFlat); inner.scale.setScalar(0.9); inner.position.set(0, yb + 0.012, 0.2512); b.add(inner);
-    const door = new THREE.Group(); door.position.set(0, yb, 0.252); b.add(door);
-    const doorGeo = new THREE.ExtrudeGeometry(prof(), { depth: 0.014, bevelEnabled: false, curveSegments: 5 });
-    door.add(mesh(doorGeo, M.given), box(0.03, 0.03, 0.02, M.ink, 0, 0.2, 0.022));
-    const flag = new THREE.Group(); flag.position.set(0.128, yb + 0.12, 0.02); b.add(flag);
-    flag.add(box(0.008, 0.028, 0.2, M.signal, 0, 0, 0.1), box(0.008, 0.085, 0.1, M.signal, 0, 0.03, 0.17), cyl(0.014, 0.012, 8, M.ink, 0, 0, 0).rotateZ(Math.PI / 2));
-    const letter = new THREE.Group(); letter.position.set(0, yb + 0.03, 0.02); b.add(letter);
-    letter.add(box(0.17, 0.006, 0.24, M.page, 0, 0, 0), box(0.03, 0.002, 0.036, M.steel, 0.055, 0.004, 0.085, false));
-    let hov = 0;
-    return { update(dt, time, t) { // hover: the door drops and the flag goes up. open: the letter slides out.
+  // --- 06 EMAIL: a mail cubby and a lodge postbox by the door. The cream envelope with the blue stamp is the cue. ---
+  if (destOf("email")) addObject(destOf("email"), -2.3, HALF, Math.PI, { plaque: [0, 1.15, 0.009] }, (b) => {
+    const k = kit(), UW = 0.92, UH = 0.62, cy = 1.56, cd = 0.16;
+    k.b(UW, UH, 0.012, TIMBER.stainLight, 0, cy, 0.008);
+    for (let i = 0; i < 4; i++) k.b(UW, 0.014, cd, TIMBER.stain, 0, cy - UH / 2 + 0.007 + (i * (UH - 0.014)) / 3, 0.014 + cd / 2);
+    for (let j = 0; j < 5; j++) k.b(0.014, UH, cd - 0.006, TIMBER.stain, -UW / 2 + 0.007 + (j * (UW - 0.014)) / 4, cy, 0.014 + (cd - 0.006) / 2);
+    const cellX = (j) => -UW / 2 + ((j + 0.5) * UW) / 4, cellY = (i) => cy - UH / 2 + ((i + 0.5) * UH) / 3;
+    [[0, 0, C.plate, 0.1], [2, 0, LODGE.cream, -0.12], [3, 0, 0x9fb8d8, 0.08], [0, 1, LODGE.cream, -0.1], [3, 1, C.plate, 0.14], [1, 2, 0xd9b7a0, 0.1], [2, 2, C.plate, -0.08], [3, 2, LODGE.cream, 0.05]].forEach(([j, i, c, lean], n) => {
+      k.b(0.16, 0.1, 0.005, c, cellX(j), cellY(i) - 0.035, 0.09, 0, 0, lean); if (n % 2) k.b(0.15, 0.09, 0.005, 0xfafaf6, cellX(j) + 0.01, cellY(i) - 0.04, 0.11, 0, 0, -lean); });
+    // postbox: red body, blue bands, brass-lipped slot
+    const px = -0.8;
+    k.b(0.34, 0.5, 0.012, TIMBER.stainLight, px, 1.42, 0.008);
+    k.b(0.3, 0.4, 0.16, LODGE.postRed, px, 1.4, 0.094); k.b(0.33, 0.05, 0.19, C.signal, px, 1.625, 0.1); k.b(0.33, 0.04, 0.19, C.signal, px, 1.2, 0.1);
+    k.b(0.21, 0.024, 0.006, INK, px, 1.52, 0.176); k.b(0.23, 0.01, 0.02, LODGE.brass, px, 1.537, 0.182);
+    k.b(0.15, 0.08, 0.004, LODGE.cream, px, 1.36, 0.1755); k.b(0.09, 0.012, 0.003, C.signal, px, 1.37, 0.179); k.b(0.06, 0.012, 0.003, C.signal, px, 1.345, 0.179);
+    b.add(k.mesh(false));
+    const env = new THREE.Group(), HOME = new THREE.Vector3(cellX(1), cellY(1) - 0.03, 0.15), SLOT = new THREE.Vector3(px, 1.52, 0.25);
+    env.position.copy(HOME); env.rotation.z = 0.08; b.add(env);
+    { const q = kit(); q.b(0.17, 0.11, 0.006, LODGE.cream, 0, 0, 0); q.b(0.03, 0.036, 0.003, C.signal, 0.058, 0.028, 0.0055); q.b(0.07, 0.006, 0.003, C.steel, -0.02, -0.005, 0.0055); q.b(0.05, 0.006, 0.003, C.steel, -0.03, -0.022, 0.0055); env.add(q.mesh(false)); }
+    let hov = 0; const pos = new THREE.Vector3();
+    return { update(dt, time, t) { // hover: the envelope slides out of its slot. open: it flies to the postbox and drops in.
       const want = target === this ? 1 : 0;
       if (t < 0 && hov === want && want === 0) return;
-      if (hov !== want || t >= 0) shadowDirty = 2;
-      hov = toward(hov, want, dt, 0.4);
-      const k = Math.max(hov * hov * (3 - 2 * hov), t >= 0 ? ease(seg(t, 0, 0.35)) - ease(seg(t, 2.3, 2.7)) : 0), out = t >= 0 ? ease(seg(t, 0.3, 0.75)) - ease(seg(t, 2.0, 2.35)) : 0;
-      door.rotation.x = k * (Math.PI / 2 - 0.05); flag.rotation.x = -k * Math.PI / 2; letter.position.z = 0.02 + out * 0.3;
-    }, dur: 2.8 };
+      hov = toward(hov, want, dt, 0.35);
+      const hk = hov * hov * (3 - 2 * hov);
+      if (t < 0 || REDUCED) { env.visible = true; env.scale.setScalar(1); env.position.set(HOME.x, HOME.y + hk * 0.012, HOME.z + hk * 0.08); env.rotation.set(0, 0, 0.08 - hk * 0.08); return; }
+      const fly = ease(seg(t, 0.05, 0.9)), drop = seg(t, 0.9, 1.25), back = seg(t, 1.9, 2.3);
+      if (back > 0) { env.visible = true; env.scale.setScalar(ease(back)); env.position.copy(HOME); env.rotation.set(0, 0, 0.08); return; }
+      pos.lerpVectors(HOME, SLOT, fly);
+      env.position.set(pos.x, pos.y + Math.sin(fly * Math.PI) * 0.1, pos.z - drop * 0.14); env.rotation.set((-fly * Math.PI) / 2, 0, 0.08 * (1 - fly)); env.scale.setScalar(1 - drop * 0.4); env.visible = drop < 1;
+    }, dur: 2.4 };
   });
 
   // =====================================================================
@@ -794,28 +895,13 @@ function buildRoom(THREE) {
     const side = Math.max(0, Math.abs(x) - (CW + 3));
     return -DROP * sm(k) + Math.sin((z - Z0) * 0.16) * 0.7 * mid + Math.min(12, side * side * 0.012) * mid;
   }
+  // far from the course the snow rolls a little; the airfield strip is kept flat
+  const wob = (x, z) => { const far = Math.max(0, Math.abs(x) - 40); if (!far) return 0;
+    const d = Math.hypot(Math.max(0, -152 - x, x + 8), Math.max(0, -10 - z, z - 14)); return Math.sin(x * 0.11 + z * 0.07) * Math.min(3, far * 0.08) * sm(d / 10); };
   const world = new THREE.Group(); scene.add(world); // always drawn: it is visible through the window
-  const lamV = new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true });
-  const INK = 0x1b1b1b;
   // static scenery is baked into one mesh: parts = { geo, color, matrix }
   const parts = [];
-  const mat4 = (x, y, z, rx = 0, ry = 0, rz = 0, sc = 1) => new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(rx, ry, rz, "YXZ")), new THREE.Vector3(sc, sc, sc));
   const B = (w, h, d, color, x, y, z, rx, ry, rz) => parts.push({ geo: new THREE.BoxGeometry(w, h, d), color, m: mat4(x, y, z, rx, ry, rz) });
-  function bake(list) {
-    let n = 0;
-    const gs = list.map((p) => { const g = p.geo.index ? p.geo.toNonIndexed() : p.geo.clone(); if (p.m) g.applyMatrix4(p.m); n += g.attributes.position.count; return g; });
-    const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3), c = new THREE.Color();
-    let o = 0;
-    gs.forEach((g, i) => {
-      const cnt = g.attributes.position.count; pos.set(g.attributes.position.array, o * 3); nor.set(g.attributes.normal.array, o * 3);
-      if (list[i].colors) col.set(list[i].colors, o * 3); // part brings its own per-vertex colours
-      else { c.setHex(list[i].color); for (let k = 0; k < cnt; k++) { col[(o + k) * 3] = c.r; col[(o + k) * 3 + 1] = c.g; col[(o + k) * 3 + 2] = c.b; } }
-      o += cnt; g.dispose();
-    });
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3)); geo.setAttribute("normal", new THREE.BufferAttribute(nor, 3)); geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
-    return geo;
-  }
   const outColliders = [];
   const solid = (x, z, hw, hd) => outColliders.push({ minX: x - hw, maxX: x + hw, minZ: z - hd, maxZ: z + hd });
   let rs = 20261111; const rnd = () => ((rs = (rs * 1664525 + 1013904223) >>> 0) / 4294967296); // fixed seed: same mountain every visit
@@ -826,8 +912,8 @@ function buildRoom(THREE) {
     const geo = new THREE.PlaneGeometry(x1 - x0, z1 - z0, nx, nz); geo.rotateX(-Math.PI / 2); geo.translate((x0 + x1) / 2, 0, (z0 + z1) / 2);
     const p = geo.attributes.position;
     for (let i = 0; i < p.count; i++) {
-      const x = p.getX(i), z = p.getZ(i), far = Math.max(0, Math.abs(x) - 40);
-      p.setY(i, hAt(x, z) - 0.04 + (far > 0 ? Math.sin(x * 0.11 + z * 0.07) * Math.min(3, far * 0.08) : 0));
+      const x = p.getX(i), z = p.getZ(i);
+      p.setY(i, hAt(x, z) - 0.04 + wob(x, z));
     }
     geo.computeVertexNormals();
     { // bright white on the flats, a faint blue on the banks
@@ -941,7 +1027,7 @@ function buildRoom(THREE) {
     }
   }
   for (const sx of [-1, 1]) rope(sx * CW, Z0, sx * CW, Z1);
-  rope(DX0, HALF + 0.3, DX0, Z0); rope(DX1, HALF + 0.3, DX1, Z0); rope(DX0, Z0, -CW, Z0); rope(CW, Z0, DX1, Z0); rope(DX0, HALF + 0.3, -HALF - 0.3, HALF + 0.3); rope(HALF + 0.3, HALF + 0.3, DX1, HALF + 0.3);
+  rope(DX0, HALF + 0.3, DX0, GAP.z0, 3.2); rope(DX0, GAP.z1, DX0, Z0, 2.5); /* the gap between them leads to the airfield */ rope(DX1, HALF + 0.3, DX1, Z0); rope(DX0, Z0, -CW, Z0); rope(CW, Z0, DX1, Z0); rope(DX0, HALF + 0.3, -HALF - 0.3, HALF + 0.3); rope(HALF + 0.3, HALF + 0.3, DX1, HALF + 0.3);
   rope(BX0, Z1, BX0, Z2); rope(BX1, Z1, BX1, Z2); rope(BX0, Z2, BX1, Z2); rope(BX0, Z1, -CW, Z1); rope(CW, Z1, BX1, Z1);
 
   // --- slalom gates, start and finish ---
@@ -960,6 +1046,7 @@ function buildRoom(THREE) {
   banner("START", ZS); banner("FINISH", ZF);
 
   // --- trees ---
+  const TREES = []; // { x, z, y, r, h } for the plane to hit
   {
     const tree = bake([
       { geo: new THREE.CylinderGeometry(0.16, 0.2, 1.2, 5), color: NATURE.trunk, m: mat4(0, 0.6, 0) },
@@ -979,7 +1066,12 @@ function buildRoom(THREE) {
       spots.push([x, z]);
     }
     const im = new THREE.InstancedMesh(tree, lamV, spots.length);
-    spots.forEach(([x, z], i) => { const far = Math.max(0, Math.abs(x) - 40); im.setMatrixAt(i, mat4(x, hAt(x, z) - 0.3 + (far > 0 ? Math.sin(x * 0.11 + z * 0.07) * Math.min(3, far * 0.08) : 0), z, 0, rnd() * 6.28, 0, 0.8 + rnd() * 1.1)); });
+    spots.forEach(([x, z], i) => { // the random numbers are drawn exactly as before, so every other tree stays where it was
+      const far = Math.max(0, Math.abs(x) - 40), y = hAt(x, z) - 0.3 + (far > 0 ? Math.sin(x * 0.11 + z * 0.07) * Math.min(3, far * 0.08) : 0), ry = rnd() * 6.28, sc = 0.8 + rnd() * 1.1;
+      const cleared = x < -7 && z > -22 && z < 27; // airfield, its approach and climb-out
+      im.setMatrixAt(i, mat4(x, cleared ? -400 : y, z, 0, ry, 0, cleared ? 0.001 : sc));
+      if (!cleared) TREES.push({ x, z, y, r: 1.5 * sc, h: 6.4 * sc });
+    });
     const tints = [0xffffff, 0xe4f1e2, 0xf3f0df, 0xd9ebdc], tc = new THREE.Color(); // a few greens, chosen by index so no random numbers are used up
     spots.forEach((sp, i) => im.setColorAt(i, tc.setHex(tints[(i * 7 + (i >> 3)) % 4])));
     im.frustumCulled = false; world.add(im);
@@ -1022,18 +1114,18 @@ function buildRoom(THREE) {
       const g = new THREE.ExtrudeGeometry(tri, { depth: T, bevelEnabled: false }); g.translate(0, 0, -T / 2); parts.push({ geo: g, color: WOOD, m: mat4(cx + sx * (W / 2 - T / 2), YB + H, cz, 0, Math.PI / 2) }); }
     for (const z of [zf, zk]) B(W, 0.34, T, WOOD, cx, YB + H + 0.1, z);                         // close the gap between the wall tops and the eaves
     B(0.3, 0.9, 0.3, NATURE.steelDark, cx + 2.0, YB + H + 1.2, cz + 1.0);                       // flue
-    B(CAB.door + 0.5, 0.06, 0.9, NATURE.liftRed, cx, YB + 2.45, zf - 0.4, 0.35);                // awning over the door
+    B(CAB.door + 0.5, 0.06, 0.9, C.signal, cx, YB + 2.45, zf - 0.4, 0.35);                // awning over the door
     { const glow = new THREE.PointLight(0xffc98a, 10, 7.5, 2); glow.position.set(cx, YB + 2.4, cz - 0.6); world.add(glow); } // warm lamp; reaches the cabin only
     // counter across the room, kitchen behind it
     const zc = cz + 0.5;
     B(W - 2 * T, 0.98, 0.55, TIMBER.stain, cx, YB + 0.49, zc); B(W - 2 * T, 0.06, 0.75, TIMBER.butcher, cx, YB + 1.01, zc - 0.05); solid(cx, zc, W / 2, 0.3);
     B(W - 2 * T - 0.4, 0.05, 0.4, TIMBER.stain, cx, YB + 1.42, zk - T - 0.25); B(W - 2 * T - 0.4, 0.9, 0.5, WOOD, cx, YB + 0.45, zk - T - 0.3); // shelf, back bench
     for (let k = 0; k < 6; k++) B(0.16, 0.2 + (k % 3) * 0.05, 0.16, k % 2 ? C.given : C.steel, cx - 2.2 + k * 0.42, YB + 1.55 + (k % 3) * 0.025, zk - T - 0.25);
-    B(0.5, 0.16, 0.42, INK, cx + 1.9, YB + 0.98, zk - T - 0.3); B(0.5, 0.05, 0.42, C.steel, cx + 1.9, YB + 1.12, zk - T - 0.3, -0.5); B(0.05, 0.05, 0.02, C.signal, cx + 1.7, YB + 0.98, zk - T - 0.52); // waffle iron
+    B(0.5, 0.16, 0.42, INK, cx + 1.9, YB + 0.98, zk - T - 0.3); B(0.5, 0.05, 0.42, C.steel, cx + 1.9, YB + 1.12, zk - T - 0.3, -0.5); B(0.05, 0.05, 0.02, C.signalHi, cx + 1.7, YB + 0.98, zk - T - 0.52); // waffle iron
     B(0.05, 0.5, 0.05, INK, cx, YB + H + 0.55, cz - 0.9); B(0.5, 0.12, 0.5, INK, cx, YB + H + 0.25, cz - 0.9);                   // lamp
     const sign = canvasTex(512, 128, (g, w, h) => { g.fillStyle = CSS.plate; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink; g.fillRect(0, 0, w, 8); g.fillRect(0, h - 8, w, 8); g.font = `800 condensed 100px ${F_SANS}`; g.textBaseline = "middle"; fitText(g, "WAFFLES", w / 2, h / 2 + 6, w - 48, "center"); });
     const d1 = decal(sign.t, 2.6, 0.65); d1.rotation.y = Math.PI; d1.position.set(cx, YB + H + 0.42, zf - 0.56); world.add(d1); B(2.7, 0.75, 0.06, INK, cx, YB + H + 0.42, zf - 0.52); for (const sx of [-1, 1]) B(0.06, 0.5, 0.06, INK, cx + sx * 1.1, YB + H + 0.1, zf - 0.5);
-    const menu = canvasTex(512, 256, (g, w, h) => { g.fillStyle = CSS.ink; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 84px ${F_SANS}`; g.textBaseline = "top"; fitText(g, "WISDOM WAFFLE", 28, 26, w - 56); g.fillRect(28, 122, w - 56, 4); g.font = `700 34px ${F_MONO}`; fitText(g, "1 WAFFLE TOKEN", 28, 148, w - 56); g.fillStyle = CSS.signal; g.font = `500 26px ${F_MONO}`; fitText(g, "ONE PER DAY / FRESH DAILY", 28, 200, w - 56); });
+    const menu = canvasTex(512, 256, (g, w, h) => { g.fillStyle = CSS.ink; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 84px ${F_SANS}`; g.textBaseline = "top"; fitText(g, "WISDOM WAFFLE", 28, 26, w - 56); g.fillRect(28, 122, w - 56, 4); g.font = `700 34px ${F_MONO}`; fitText(g, "1 WAFFLE TOKEN", 28, 148, w - 56); g.fillStyle = CSS.signalHi; g.font = `500 26px ${F_MONO}`; fitText(g, "ONE PER DAY / FRESH DAILY", 28, 200, w - 56); });
     const d2 = decal(menu.t, 2.0, 1.0); d2.rotation.y = Math.PI; d2.position.set(cx - 0.6, YB + 2.27, zk - 0.2); world.add(d2);
     B(2.12, 1.12, 0.05, INK, cx - 0.6, YB + 2.27, zk - 0.17); // board behind the menu, proud of the logs
     // benches and a table outside
@@ -1043,14 +1135,14 @@ function buildRoom(THREE) {
     // the robot: built facing -z (towards the customer)
     robot.position.set(cx + 0.4, YB + 0.01, zc + 1.0); world.add(robot);
     for (const sx of [-0.11, 0.11]) robot.add(box(0.12, 0.72, 0.12, M.steel, sx, 0.36, 0, false), box(0.16, 0.06, 0.24, M.ink, sx, 0.03, -0.03, false));
-    robot.add(box(0.5, 0.56, 0.3, M.plate, 0, 1.02, 0, false), box(0.34, 0.5, 0.012, M.given, 0, 0.96, -0.157, false), box(0.07, 0.07, 0.012, M.signal, 0.14, 1.2, -0.158, false), box(0.1, 0.08, 0.1, M.steel, 0, 1.34, 0, false));
+    robot.add(box(0.5, 0.56, 0.3, M.plate, 0, 1.02, 0, false), box(0.34, 0.5, 0.012, M.given, 0, 0.96, -0.157, false), box(0.07, 0.07, 0.012, M.signalHi, 0.14, 1.2, -0.158, false), box(0.1, 0.08, 0.1, M.steel, 0, 1.34, 0, false));
     robotHead.position.set(0, 1.38, 0); robot.add(robotHead);
-    robotHead.add(box(0.4, 0.3, 0.3, M.plate, 0, 0.15, 0, false), box(0.32, 0.1, 0.012, M.ink, 0, 0.17, -0.157, false), box(0.05, 0.05, 0.012, M.signal, -0.08, 0.17, -0.165, false), box(0.05, 0.05, 0.012, M.signal, 0.08, 0.17, -0.165, false), box(0.015, 0.16, 0.015, M.ink, 0.12, 0.38, 0, false), box(0.04, 0.04, 0.04, M.signal, 0.12, 0.47, 0, false), box(0.42, 0.05, 0.05, M.ink, 0, 0.15, 0, false));
+    robotHead.add(box(0.4, 0.3, 0.3, M.plate, 0, 0.15, 0, false), box(0.32, 0.1, 0.012, M.ink, 0, 0.17, -0.157, false), box(0.05, 0.05, 0.012, M.signalHi, -0.08, 0.17, -0.165, false), box(0.05, 0.05, 0.012, M.signalHi, 0.08, 0.17, -0.165, false), box(0.015, 0.16, 0.015, M.ink, 0.12, 0.38, 0, false), box(0.04, 0.04, 0.04, M.signalHi, 0.12, 0.47, 0, false), box(0.42, 0.05, 0.05, M.ink, 0, 0.15, 0, false));
     robot.add(box(0.1, 0.5, 0.1, M.steel, 0.31, 1.0, 0, false), box(0.11, 0.1, 0.11, M.ink, 0.31, 0.72, 0, false));       // left arm, at rest
     robotArm.position.set(-0.31, 1.24, 0); robot.add(robotArm);                                                         // right arm: shoulder pivot
     robotArm.add(box(0.1, 0.5, 0.1, M.steel, 0, -0.24, 0, false), box(0.11, 0.1, 0.11, M.ink, 0, -0.52, 0, false));
     waffle.position.set(cx + 0.05, YB + 1.045, zc - 0.12); waffle.visible = false; world.add(waffle);
-    waffle.add(box(0.3, 0.012, 0.3, M.plate, 0, 0, 0, false), box(0.2, 0.03, 0.2, M.signal, 0, 0.02, 0, false));
+    waffle.add(box(0.3, 0.012, 0.3, M.plate, 0, 0, 0, false), box(0.2, 0.03, 0.2, M.waffle, 0, 0.02, 0, false));
     for (let k = -1; k <= 1; k++) waffle.add(box(0.2, 0.006, 0.012, M.ink, 0, 0.037, k * 0.05, false), box(0.012, 0.006, 0.2, M.ink, k * 0.05, 0.037, 0, false));
   }
 
@@ -1063,6 +1155,80 @@ function buildRoom(THREE) {
     const d = decal(boardTex.t, BOARD.w, BOARD.h); d.rotation.y = Math.PI; d.position.set(0, 2 + BOARD.h / 2, -0.07); boardGroup.add(d);
     const hitBox = new THREE.Mesh(new THREE.BoxGeometry(BOARD.w, BOARD.h + 2, 0.3)); hitBox.position.y = (BOARD.h + 2) / 2 + 0.2; hitBox.visible = false; boardGroup.add(hitBox);
   }
+  // --- airfield: runway 27, apron, hangar, windsock, fuel pump, the gate from the deck ---
+  const flyTex = canvasTex(1024, 640);
+  const flyBoard = new THREE.Group(); flyBoard.position.set(FB.x, 0, FB.z); world.add(flyBoard);
+  {
+    const ASPH = 0x4d5359, PAINT = 0xeef0ea, marks = [], MB = (w, d, color, x, z) => marks.push({ geo: new THREE.BoxGeometry(w, 0.02, d), color, m: mat4(x, AIR.y + 0.002, z) });
+    const zc = (AIR.z0 + AIR.z1) / 2;
+    B(AIR.xa - AIR.x0, 0.3, AIR.z1 - AIR.z0, ASPH, (AIR.x0 + AIR.xa) / 2, AIR.y - 0.15, zc);                 // runway
+    B(AIR.x1 - AIR.xa, 0.3, AIR.z1 - AIR.za, ASPH, (AIR.xa + AIR.x1) / 2, AIR.y - 0.15, (AIR.za + AIR.z1) / 2); // apron (butts against the runway, no overlap)
+    for (let x = AIR.x0 + 9; x < AIR.x1 - 12; x += 9) MB(4.5, 0.32, PAINT, x, zc);                           // centre line
+    for (const x of [AIR.x0 + 2.5, AIR.x1 - 2.5]) for (let i = 0; i < 6; i++) MB(3, 0.7, PAINT, x, AIR.z0 + 1.35 + i * 1.86); // threshold bars
+    for (const z of [AIR.z0 + 0.35, AIR.z1 - 0.35]) MB(AIR.x1 - AIR.x0 - 1, 0.18, PAINT, (AIR.x0 + AIR.x1) / 2, z); // side stripes
+    // "27", read as you roll west: seven-segment strokes. u = to the right of travel (-z), v = ahead (-x).
+    const seg7 = (on, x0, z0) => { const L = 1.5, T = 0.36, S = { a: [0, 2 * L, 1], b: [L / 2, 1.5 * L, 0], c: [L / 2, 0.5 * L, 0], d: [0, 0, 1], e: [-L / 2, 0.5 * L, 0], g: [0, L, 1] };
+      for (const k of on) { const [u, v, hz] = S[k]; MB(hz ? T : L + T, hz ? L + T : T, PAINT, x0 - v, z0 - u); } };
+    seg7("abged", AIR.x1 - 7.5, zc + 1.5); seg7("abc", AIR.x1 - 7.5, zc - 1.5);
+    const markMat = lamV.clone(); markMat.polygonOffset = true; markMat.polygonOffsetFactor = -2; markMat.polygonOffsetUnits = -8; // paint: drawn over the asphalt it lies on
+    const mm = new THREE.Mesh(bake(marks), markMat); mm.receiveShadow = true; world.add(mm);
+    for (let x = AIR.x0; x <= AIR.xa; x += 9.5) for (const z of [AIR.z0 - 0.5, AIR.z1 + 0.5]) { B(0.3, 0.42, 0.3, C.signal, x, 0.21, z); B(0.2, 0.08, 0.2, C.signalHi, x, 0.46, z); } // edge markers
+    B(AIR.xa - DX0 + 0.2, 0.06, 3, NATURE.snowShade, (AIR.x1 + DX0) / 2 - 0.1, -0.005, (GAP.z0 + GAP.z1) / 2);   // packed-snow path from the deck gate
+    // the gate in the deck rope
+    for (const z of [GAP.z0, GAP.z1]) B(0.16, 3.3, 0.16, INK, DX0, 1.65, z);
+    B(0.2, 0.75, GAP.z1 - GAP.z0 + 0.5, INK, DX0, 2.95, (GAP.z0 + GAP.z1) / 2);
+    const gateTex = canvasTex(1024, 256, (g, w, h) => { g.fillStyle = CSS.signal; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 190px ${F_SANS}`; g.textBaseline = "middle"; if ("letterSpacing" in g) g.letterSpacing = "16px"; fitText(g, "AIRFIELD", w / 2, h / 2 + 12, w - 90, "center"); });
+    for (const sx of [-1, 1]) { const d = decal(gateTex.t, GAP.z1 - GAP.z0 + 0.3, 0.6); d.rotation.y = (sx * Math.PI) / 2; d.position.set(DX0 + sx * 0.105, 2.95, (GAP.z0 + GAP.z1) / 2); world.add(d); }
+    // fences: the walking limits of the field
+    rope(DX0, -3.3, DX0, HALF + 0.3, 3.2); rope(DX0, -3.3, HGR.x1, -3.3, 4); rope(HGR.x0, -3.3, AIR.x0 - 1.5, -3.3, 9.5); rope(AIR.x0 - 1.5, -3.3, AIR.x0 - 1.5, AIR.z1 + 1.4, 5.5); rope(DX0, AIR.z1 + 1.4, AIR.x0 - 1.5, AIR.z1 + 1.4, 9.3);
+    // hangar: timber, open to the apron
+    const hx = (HGR.x0 + HGR.x1) / 2, hz = (HGR.z0 + HGR.z1) / 2, HW = HGR.x1 - HGR.x0, HD = HGR.z1 - HGR.z0, WH = 4.5;
+    B(HW, WH, 0.25, TIMBER.plank, hx, WH / 2, HGR.z0); solid(hx, HGR.z0, HW / 2, 0.25);
+    for (const x of [HGR.x0, HGR.x1]) { B(0.25, WH, HD, TIMBER.plank, x, WH / 2, hz); solid(x, hz, 0.25, HD / 2); B(0.4, WH + 0.3, 0.4, TIMBER.beam, x, (WH + 0.3) / 2, HGR.z1 + 0.05); }
+    for (let i = 1; i < 6; i++) B(0.09, WH, 0.05, TIMBER.stain, HGR.x0 + (i * HW) / 6, WH / 2, HGR.z0 + 0.15);
+    for (const [w, y] of [[9.9, 4.85], [5.7, 5.55], [1.9, 6.2]]) B(w, 0.7, 0.25, TIMBER.plank, hx, y, HGR.z0);                // back gable
+    B(HW + 0.4, 0.5, 0.35, TIMBER.beam, hx, WH + 0.1, HGR.z1 + 0.05);
+    for (const sx of [-1, 1]) { B(6.75, 0.18, HD + 1, NATURE.roof, hx + sx * 3.05, 5.55, hz, 0, 0, -sx * 0.335); B(6.45, 0.12, HD + 0.8, NATURE.snow, hx + sx * 3.05, 5.7, hz, 0, 0, -sx * 0.335); }
+    B(HW - 0.5, 0.1, HD - 0.2, 0x6a5a48, hx, 0.03, hz + 0.1);                                                              // floor
+    B(3.2, 0.08, 0.8, TIMBER.plank, hx - 3.5, 0.95, HGR.z0 + 0.7); for (const dx of [-1.4, 1.4]) B(0.1, 0.9, 0.7, TIMBER.stain, hx - 3.5 + dx, 0.45, HGR.z0 + 0.7); // workbench
+    B(0.5, 0.3, 0.3, LODGE.postRed, hx - 4.2, 1.14, HGR.z0 + 0.7); B(2.4, 1.2, 0.04, TIMBER.stain, hx - 3.5, 2.2, HGR.z0 + 0.16);
+    for (const [dx, dz, c] of [[4.6, 1.0, C.signal], [3.7, 1.1, LODGE.postRed], [4.5, 2.0, 0x86939c]]) parts.push({ geo: new THREE.CylinderGeometry(0.33, 0.33, 0.95, 10), color: c, m: mat4(hx + dx, 0.555, HGR.z0 + dz) });
+    solid(hx - 3.5, HGR.z0 + 0.7, 1.7, 0.5); solid(hx + 4.2, HGR.z0 + 1.4, 0.9, 1.0);
+    const hTex = canvasTex(1024, 128, (g, w, h) => { g.fillStyle = CSS.ink; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 100px ${F_SANS}`; g.textBaseline = "middle"; if ("letterSpacing" in g) g.letterSpacing = "14px"; fitText(g, "HANGAR 27", w / 2, h / 2 + 6, w - 80, "center"); });
+    { const d = decal(hTex.t, 3.6, 0.45); d.position.set(hx, WH + 0.1, HGR.z1 + 0.235); world.add(d); }
+    // fuel pump and windsock
+    B(0.6, 1.4, 0.42, LODGE.postRed, -19.2, 0.78, -2.0); B(0.66, 0.16, 0.48, C.plate, -19.2, 1.56, -2.0); B(0.4, 0.3, 0.02, INK, -19.2, 1.15, -1.78); B(0.9, 0.12, 0.7, C.steel, -19.2, 0.14, -2.0); solid(-19.2, -2.0, 0.4, 0.3);
+    parts.push({ geo: new THREE.CylinderGeometry(0.06, 0.08, 6.5, 6), color: 0x86939c, m: mat4(-44, 3.25, -6) });
+    for (let i = 0; i < 4; i++) parts.push({ geo: new THREE.CylinderGeometry(0.44 - i * 0.075, 0.365 - i * 0.075, 0.6, 8, 1, true), color: i % 2 ? 0xffffff : 0xff7a1a, m: mat4(-44.35 - i * 0.59, 6.3 - i * 0.07, -6, 0, 0, Math.PI / 2 - 0.12) });
+    // flight scoreboard beside the hangar, facing the apron
+    for (const sx of [-1, 1]) { B(0.2, 4.9, 0.2, INK, FB.x + sx * (FB.w / 2 - 0.5), 2.45, FB.z - 0.18); solid(FB.x + sx * (FB.w / 2 - 0.5), FB.z - 0.18, 0.12, 0.12); }
+    B(FB.w + 0.24, FB.h + 0.24, 0.14, INK, FB.x, 1.55 + FB.h / 2, FB.z - 0.02);
+    const d = decal(flyTex.t, FB.w, FB.h); d.position.set(0, 1.55 + FB.h / 2, 0.06); flyBoard.add(d);
+    const hitBox = new THREE.Mesh(new THREE.BoxGeometry(FB.w, FB.h + 1.5, 0.3)); hitBox.position.y = (FB.h + 1.5) / 2 + 0.1; hitBox.visible = false; flyBoard.add(hitBox);
+  }
+  // the plane: an original high-wing single-prop. Local frame: nose toward -z, origin at the centre of the cabin.
+  const GEAR = 1.2, CREAM = 0xf1ead8;
+  const plane = new THREE.Group(), planeProp = new THREE.Group(); plane.rotation.order = "YXZ"; world.add(plane);
+  {
+    const k = kit(), NV = C.signal;
+    k.b(1.05, 1.15, 3.0, CREAM, 0, 0, -0.3); k.b(0.95, 0.95, 0.9, CREAM, 0, -0.08, -2.2); k.b(0.97, 0.2, 0.92, NV, 0, -0.08, -2.2); k.b(0.6, 0.6, 0.12, 0x2b2b30, 0, -0.08, -2.66);
+    k.b(0.8, 0.8, 1.5, CREAM, 0, 0.08, 1.9, 0.06); k.b(0.55, 0.55, 1.7, CREAM, 0, 0.2, 3.3, 0.1);
+    k.b(1.07, 0.18, 3.02, NV, 0, -0.1, -0.3); k.b(0.82, 0.14, 1.5, NV, 0, 0, 1.9, 0.06); k.b(0.57, 0.11, 1.7, NV, 0, 0.14, 3.3, 0.1);
+    k.b(0.9, 0.5, 0.06, 0x24303c, 0, 0.33, -1.72, -0.45); for (const sx of [-1, 1]) { k.b(0.02, 0.36, 1.5, 0x24303c, sx * 0.53, 0.3, -0.75); k.b(0.02, 0.3, 0.6, 0x24303c, sx * 0.53, 0.3, 0.55); }
+    k.b(8.4, 0.16, 1.5, CREAM, 0, 0.68, -0.55); for (const sx of [-1, 1]) { k.b(0.8, 0.17, 1.52, NV, sx * 3.82, 0.68, -0.55); k.b(0.06, 1.25, 0.08, 0x86939c, sx * 1.15, 0.05, -0.55, 0, 0, sx * 0.95); }
+    k.b(3.1, 0.09, 0.85, CREAM, 0, 0.42, 3.75); k.b(3.12, 0.1, 0.25, NV, 0, 0.42, 3.42);
+    k.b(0.09, 1.25, 0.95, CREAM, 0, 1.0, 3.72, -0.25); k.b(0.1, 0.3, 1.0, NV, 0, 1.55, 3.86, -0.25);
+    for (const sx of [-1, 1]) { k.b(0.07, 0.75, 0.1, 0x86939c, sx * 0.72, -0.72, -0.7, 0, 0, sx * 0.55); k.b(0.24, 0.3, 0.8, NV, sx * 0.93, -0.94, -0.7); k.c(0.19, 0.19, 0.12, 10, 0x1a1a1a, sx * 0.93, -1.01, -0.7, 0, 0, Math.PI / 2); }
+    k.b(0.06, 0.6, 0.06, 0x86939c, 0, -0.72, -2.25); k.b(0.2, 0.26, 0.62, NV, 0, -0.96, -2.25); k.c(0.17, 0.17, 0.1, 10, 0x1a1a1a, 0, -1.03, -2.25, 0, 0, Math.PI / 2);
+    k.g(new THREE.ConeGeometry(0.2, 0.42, 8), NV, mat4(0, -0.08, -2.92, -Math.PI / 2));
+    const body = k.mesh(false); plane.add(body);
+    const pk = kit(); pk.b(0.15, 2.1, 0.04, 0x2b2b30, 0, 0, 0); pk.b(0.16, 0.22, 0.045, 0xf2b632, 0, 0.94, 0); pk.b(0.16, 0.22, 0.045, 0xf2b632, 0, -0.94, 0);
+    planeProp.add(pk.mesh(false)); planeProp.position.set(0, -0.08, -2.8); plane.add(planeProp);
+    const reg = canvasTex(512, 128, (g, w, h) => { g.fillStyle = "#f1ead8"; g.fillRect(0, 0, w, h); g.fillStyle = CSS.signal; g.font = `700 92px ${F_MONO}`; g.textBaseline = "middle"; fitText(g, "PS-27", w / 2, h / 2 + 6, w - 30, "center"); });
+    for (const sx of [-1, 1]) { const d = decal(reg.t, 1.25, 0.3); d.rotation.y = (sx * Math.PI) / 2; d.position.set(sx * 0.412, 0.3, 1.9); plane.add(d); }
+  }
+  const planeCore = new THREE.Mesh(new THREE.BoxGeometry(1.5, 2.3, 7.2)); planeCore.position.set(0, -0.1, 0.5); planeCore.visible = false; plane.add(planeCore); // what a walker can press and bump into: the fuselage, not the wings
+  const planeShadow = new THREE.Mesh(new THREE.PlaneGeometry(9, 7), new THREE.MeshBasicMaterial({ map: blobTex.t, transparent: true, depthWrite: false, opacity: 0.4 })); planeShadow.rotation.order = "YXZ"; planeShadow.rotation.x = -Math.PI / 2; world.add(planeShadow);
   const liftGate = new THREE.Group(); liftGate.position.set(LX, YB, ZB); world.add(liftGate); // the loading area: press the lift itself
   { const hitBox = new THREE.Mesh(new THREE.BoxGeometry(4.6, 4.8, 4.4)); hitBox.position.y = 2.4; hitBox.visible = false; liftGate.add(hitBox); }
 
@@ -1099,7 +1265,7 @@ function buildRoom(THREE) {
     { geo: new THREE.BoxGeometry(0.05, 0.9, 0.05), color: INK, m: mat4(-0.85, -(HANG - 0.45), 0.12) },
     { geo: new THREE.BoxGeometry(0.05, 0.9, 0.05), color: INK, m: mat4(0.85, -(HANG - 0.45), 0.12) },
     { geo: new THREE.BoxGeometry(1.75, 0.07, 0.5), color: C.steel, m: mat4(0, -HANG, 0) },
-    { geo: new THREE.BoxGeometry(1.75, 0.62, 0.06), color: NATURE.liftRed, m: mat4(0, -HANG + 0.36, 0.27) },
+    { geo: new THREE.BoxGeometry(1.75, 0.62, 0.06), color: C.signal, m: mat4(0, -HANG + 0.36, 0.27) },
     { geo: new THREE.BoxGeometry(1.75, 0.04, 0.04), color: INK, m: mat4(0, -HANG - 0.42, -0.55) },
     { geo: new THREE.BoxGeometry(0.04, 0.45, 0.04), color: INK, m: mat4(-0.8, -HANG - 0.2, -0.4, 0.6) },
     { geo: new THREE.BoxGeometry(0.04, 0.45, 0.04), color: INK, m: mat4(0.8, -HANG - 0.2, -0.4, 0.6) },
@@ -1118,7 +1284,7 @@ function buildRoom(THREE) {
   {
     const x = LX - 5.2, z = ZB + 1.2;
     B(1.9, 2.3, 1.9, TIMBER.stainLight, x, YB + 1.15, z); B(2.3, 0.12, 2.3, NATURE.roof, x, YB + 2.36, z); B(2.1, 0.1, 2.1, NATURE.snow, x, YB + 2.47, z); B(1.2, 0.7, 0.05, C.plate, x, YB + 1.55, z - 0.96);
-    const sign = canvasTex(256, 128, (g, w, h) => { g.fillStyle = CSS.signal; g.fillRect(0, 0, w, h); g.fillStyle = CSS.ink; g.font = `800 condensed 104px ${F_SANS}`; g.textBaseline = "middle"; fitText(g, "LIFT", w / 2, h / 2 + 6, w - 40, "center"); });
+    const sign = canvasTex(256, 128, (g, w, h) => { g.fillStyle = CSS.signal; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 104px ${F_SANS}`; g.textBaseline = "middle"; fitText(g, "LIFT", w / 2, h / 2 + 6, w - 40, "center"); });
     const d = decal(sign.t, 1.5, 0.75); d.rotation.y = Math.PI; d.position.set(x, YB + 2.95, z - 0.96); world.add(d); B(1.6, 0.85, 0.06, INK, x, YB + 2.95, z - 0.92); B(0.08, 0.5, 0.08, INK, x, YB + 2.5, z - 0.92);
     solid(x, z, 0.95, 0.95);
     const hitBox = new THREE.Mesh(new THREE.BoxGeometry(1.9, 2.3, 1.9)); hitBox.position.y = 1.15; hitBox.visible = false; liftHut.add(hitBox);
@@ -1163,10 +1329,88 @@ function buildRoom(THREE) {
       inParts.push({ geo: new THREE.CylinderGeometry(0.06, 0.24, 0.2, 12), color: INK, m: mat4(x, 3.2, z) });
       glowParts.push({ geo: new THREE.CylinderGeometry(0.2, 0.2, 0.008, 12), color: 0xffd9a0, m: mat4(x, 3.092, z) });
     }
-    // crossed vintage skis on the right wall, between the cabinet and the lectern
-    I(0.02, 0.34, 0.34, TIMBER.rail, HALF - 0.012, 2.75, 0.25);
-    I(0.025, 1.75, 0.085, NATURE.skiRed, HALF - 0.045, 2.75, 0.25, 0.55); I(0.025, 1.75, 0.085, NATURE.spruce, HALF - 0.08, 2.75, 0.25, -0.55);
-    // rug: wool, Nordic border. Its top sits 16 mm above the floor, clear of every floor frame, plinth and painted number.
+    const IC = (rt, rb, h, n, color, x, y, z, rx, ry, rz) => inParts.push({ geo: new THREE.CylinderGeometry(rt, rb, h, n), color, m: mat4(x, y, z, rx, ry, rz) });
+    let ds = 5; const dr = () => ((ds = (ds * 1664525 + 1013904223) >>> 0) / 4294967296);
+    // --- stone fireplace on the right wall: the anchor of the room ---
+    {
+      const FZ = 0.3;
+      I(0.6, 1.5, 0.65, LODGE.mortar, 5.68, 0.75, FZ - 0.775); I(0.6, 1.5, 0.65, LODGE.mortar, 5.68, 0.75, FZ + 0.775); I(0.6, 0.7, 0.9, LODGE.mortar, 5.68, 1.15, FZ);
+      I(0.05, 0.8, 0.9, 0x1a1512, 5.94, 0.4, FZ);                                     // sooty back of the firebox
+      I(0.4, CEIL - 1.5, 1.5, LODGE.mortar, 5.78, 1.5 + (CEIL - 1.5) / 2, FZ);          // chimney breast
+      I(0.9, 0.08, 2.4, LODGE.stone[3], 5.53, 0.04, FZ);                              // hearth slab
+      I(0.78, 0.12, 2.5, TIMBER.beam, 5.6, 1.56, FZ);                                 // mantel
+      const stones = (x, za, zb, ya, yb) => { // stones 2-3 cm proud of the mortar, never in its plane
+        for (let y = ya; y < yb - 0.05;) { const rh = Math.min(yb - y, 0.17 + dr() * 0.1);
+          for (let z = za; z < zb - 0.05;) { const w = Math.min(zb - z, 0.2 + dr() * 0.28); I(0.05, rh - 0.022, w - 0.022, LODGE.stone[Math.floor(dr() * 4)], x, y + rh / 2, z + w / 2); z += w; }
+          y += rh; } };
+      stones(5.372, FZ - 1.1, FZ - 0.45, 0.08, 1.5); stones(5.372, FZ + 0.45, FZ + 1.1, 0.08, 1.5); stones(5.372, FZ - 0.45, FZ + 0.45, 0.8, 1.5); stones(5.572, FZ - 0.75, FZ + 0.75, 1.62, CEIL);
+      IC(0.06, 0.06, 0.62, 8, TIMBER.stain, 5.7, 0.14, FZ, Math.PI / 2, 0.15); IC(0.055, 0.055, 0.56, 8, TIMBER.beam, 5.8, 0.14, FZ + 0.03, Math.PI / 2, -0.2); IC(0.05, 0.05, 0.5, 8, TIMBER.stainLight, 5.74, 0.24, FZ, Math.PI / 2, 0.05);
+      // flames: two unlit meshes that flicker (see updateAmbient); one warm light with no shadows
+      const flame = (list) => { const f = []; for (const [dz, dx, h, r, c] of list) f.push({ geo: new THREE.ConeGeometry(r, h, 5), color: c, m: mat4(dx, h / 2, dz) }); const m = new THREE.Mesh(bake(f), new THREE.MeshBasicMaterial({ vertexColors: true })); m.position.set(5.74, 0.22, FZ); scene.add(m); return m; };
+      fireA = flame([[-0.16, 0, 0.3, 0.07, LODGE.flame], [0, 0.02, 0.42, 0.09, LODGE.flame], [0.17, 0, 0.26, 0.065, LODGE.flame], [0.08, -0.03, 0.34, 0.07, LODGE.flame]]);
+      fireB = flame([[-0.07, -0.02, 0.24, 0.05, LODGE.flameHot], [0.05, 0, 0.3, 0.055, LODGE.flameHot], [0.14, -0.02, 0.18, 0.04, LODGE.flameHot]]);
+      fireLight = new THREE.PointLight(0xff9a4a, 5, 6.5, 2); fireLight.position.set(5.2, 0.6, FZ); scene.add(fireLight);
+      colliders.push({ minX: 5.05, maxX: HALF, minZ: FZ - 1.22, maxZ: FZ + 1.22 });
+      // log basket beside it
+      I(0.5, 0.3, 0.42, LODGE.leatherDark, 5.6, 0.15, 1.95); I(0.54, 0.03, 0.46, LODGE.leather, 5.6, 0.31, 1.95);
+      for (const [dx, dy, c] of [[-0.12, 0.38, TIMBER.honeyDark], [0.02, 0.38, TIMBER.honey], [0.14, 0.38, TIMBER.honeyDark], [-0.05, 0.47, TIMBER.honey]]) { IC(0.065, 0.065, 0.4, 7, c, 5.6 + dx, dy, 1.95, Math.PI / 2); IC(0.056, 0.056, 0.41, 7, TIMBER.endGrain, 5.6 + dx, dy, 1.95, Math.PI / 2); }
+      colliders.push({ minX: 5.3, maxX: HALF, minZ: 1.7, maxZ: 2.2 });
+    }
+    // --- vintage wooden skis and bamboo poles, crossed on a plaque over the mantel ---
+    {
+      I(0.03, 0.5, 0.5, TIMBER.rail, 5.535, 2.75, 0.3);
+      const body = new THREE.Shape(); [[-0.03, -0.95], [0.03, -0.95], [0.042, -0.9], [0.036, 0], [0.044, 0.6], [0.044, 0.72], [-0.044, 0.72], [-0.044, 0.6], [-0.036, 0], [-0.042, -0.9]].forEach(([x, y], i) => (i ? body.lineTo(x, y) : body.moveTo(x, y))); body.closePath();
+      const tip = new THREE.Shape(); [[-0.044, 0], [0.044, 0], [0.03, 0.16], [0, 0.24], [-0.03, 0.16]].forEach(([x, y], i) => (i ? tip.lineTo(x, y) : tip.moveTo(x, y))); tip.closePath();
+      // local frame: the ski lies in x/y, its top faces +z (out from the wall). Each layer sits at its own depth, so nothing is coplanar.
+      for (const [rz, dz, pole] of [[0.5, 0.03, 0.85], [-0.5, 0.06, -0.85]]) {
+        const base = mat4(5.5, 2.75, 0.3, 0, -Math.PI / 2).multiply(mat4(0, 0, 0, 0, 0, rz)), at = (m) => base.clone().multiply(m), bx = (w, h, d, c, x, y, z, rx) => inParts.push({ geo: new THREE.BoxGeometry(w, h, d), color: c, m: at(mat4(x, y, z, rx)) });
+        inParts.push({ geo: new THREE.ExtrudeGeometry(body, { depth: 0.016, bevelEnabled: false }), color: TIMBER.honey, m: at(mat4(0, 0, dz)) });
+        inParts.push({ geo: new THREE.ExtrudeGeometry(tip, { depth: 0.014, bevelEnabled: false }), color: TIMBER.honey, m: at(mat4(0, 0.72, dz, 0.42)) });
+        bx(0.02, 1.25, 0.003, C.signal, 0, -0.1, dz + 0.0205);                                                   // painted stripe
+        bx(0.075, 0.03, 0.02, C.steel, 0, -0.05, dz + 0.027); bx(0.05, 0.07, 0.005, C.steel, 0, -0.34, dz + 0.0195); // toe iron, heel plate
+        for (const sx of [-1, 1]) bx(0.004, 0.3, 0.004, INK, sx * 0.034, -0.2, dz + 0.026);                        // cable
+        bx(0.09, 0.02, 0.006, LODGE.leatherDark, 0, -0.1, dz + 0.028);                                            // leather strap
+        const pb = mat4(5.5, 2.7, 0.3, 0, -Math.PI / 2).multiply(mat4(0, 0, 0, 0, 0, pole)), pat = (m) => pb.clone().multiply(m);
+        inParts.push({ geo: new THREE.CylinderGeometry(0.011, 0.009, 1.35, 6), color: LODGE.bamboo, m: pat(mat4(0, 0, 0.012)) });
+        inParts.push({ geo: new THREE.CylinderGeometry(0.014, 0.014, 0.14, 6), color: LODGE.leatherDark, m: pat(mat4(0, 0.6, 0.012)) });
+        inParts.push({ geo: new THREE.CylinderGeometry(0.05, 0.05, 0.006, 8), color: LODGE.leather, m: pat(mat4(0, -0.58, 0.012)) });
+      }
+    }
+    // --- armchair by the coffee table (decor with a collider) ---
+    {
+      const ax = -1.5, az = -0.2;
+      I(0.74, 0.22, 0.74, LODGE.leatherDark, ax, 0.13, az); I(0.6, 0.12, 0.6, LODGE.leather, ax + 0.05, 0.3, az);
+      I(0.16, 0.62, 0.74, LODGE.leather, ax - 0.31, 0.6, az, 0, 0, 0.1);
+      for (const sz of [-1, 1]) I(0.62, 0.3, 0.13, LODGE.leather, ax + 0.03, 0.42, az + sz * 0.31);
+      I(0.48, 0.08, 0.46, LODGE.cream, ax + 0.07, 0.4, az); I(0.1, 0.36, 0.4, LODGE.cream, ax - 0.2, 0.6, az, 0, 0, 0.1);
+      I(0.5, 0.02, 0.15, LODGE.navy, ax + 0.03, 0.581, az - 0.31); I(0.5, 0.2, 0.02, LODGE.navy, ax + 0.03, 0.48, az - 0.386); // throw over one arm
+      for (const dx of [-0.15, 0.03, 0.2]) I(0.03, 0.202, 0.022, LODGE.cream, ax + dx, 0.48, az - 0.387);
+      colliders.push({ minX: ax - 0.42, maxX: ax + 0.4, minZ: az - 0.42, maxZ: az + 0.4 });
+    }
+    // --- boot bench, gear cubbies and pegs by the door ---
+    {
+      const bx0 = 1.5, bw = 2.8, cx = bx0 + bw / 2, zw = HALF;
+      I(bw, 0.06, 0.44, TIMBER.plank, cx, 0.46, zw - 0.25); for (const x of [bx0 + 0.03, cx, bx0 + bw - 0.03]) I(0.06, 0.43, 0.4, TIMBER.stain, x, 0.215, zw - 0.25);
+      I(bw, 0.7, 0.012, TIMBER.stainLight, cx, 1.75, zw - 0.008);
+      for (const y of [1.4, 1.75, 2.1]) I(bw, 0.03, 0.3, TIMBER.stain, cx, y, zw - 0.165);
+      for (let i = 0; i < 5; i++) I(0.03, 0.7, 0.294, TIMBER.stain, bx0 + 0.015 + (i * (bw - 0.03)) / 4, 1.75, zw - 0.162);
+      const cellX = (i) => bx0 + ((i + 0.5) * bw) / 4, zc = zw - 0.17;
+      const boots = (x, y, c) => { for (const s of [-0.075, 0.075]) { I(0.11, 0.09, 0.26, c, x + s, y + 0.045, zc); I(0.105, 0.2, 0.13, c, x + s, y + 0.19, zc + 0.06); I(0.112, 0.02, 0.05, C.steel, x + s, y + 0.2, zc + 0.02); I(0.112, 0.02, 0.05, C.steel, x + s, y + 0.12, zc - 0.03); } };
+      const helmet = (x, y, c) => { inParts.push({ geo: new THREE.SphereGeometry(0.13, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2), color: c, m: mat4(x, y, zc) }); I(0.27, 0.03, 0.27, INK, x, y + 0.012, zc); I(0.2, 0.06, 0.03, C.signalHi, x, y + 0.07, zc - 0.125); };
+      boots(cellX(0), 1.415, LODGE.postRed); helmet(cellX(1), 1.415, LODGE.navy); boots(cellX(2), 1.415, 0x2b2b30);
+      I(0.1, 0.06, 0.18, NATURE.fir, cellX(3) - 0.07, 1.445, zc); I(0.1, 0.06, 0.18, NATURE.fir, cellX(3) + 0.07, 1.445, zc, 0, 0.3);                     // gloves
+      helmet(cellX(0), 1.765, LODGE.cream); boots(cellX(3), 1.765, LODGE.phone);
+      IC(0.05, 0.1, 0.13, 8, LODGE.postRed, cellX(1), 1.83, zc); IC(0.1, 0.1, 0.04, 8, LODGE.cream, cellX(1), 1.785, zc); inParts.push({ geo: new THREE.IcosahedronGeometry(0.035, 0), color: LODGE.cream, m: mat4(cellX(1), 1.91, zc) }); // knit hat
+      I(0.4, 0.1, 0.22, LODGE.navy, cellX(2), 1.815, zc); I(0.4, 0.03, 0.22, LODGE.cream, cellX(2), 1.88, zc);                                           // folded blanket
+      boots(bx0 + 0.5, 0.0, 0x3a2a1f); I(0.5, 0.26, 0.3, LODGE.leather, bx0 + 2.1, 0.13, zw - 0.25);                                                     // under the bench
+      // pegs with a scarf and a jacket
+      I(bw - 0.2, 0.08, 0.02, TIMBER.stain, cx, 1.2, zw - 0.012);
+      for (let i = 0; i < 5; i++) IC(0.012, 0.012, 0.09, 6, LODGE.brass, bx0 + 0.4 + i * 0.5, 1.2, zw - 0.065, Math.PI / 2);
+      I(0.1, 0.56, 0.02, LODGE.postRed, bx0 + 0.36, 0.92, zw - 0.085); I(0.1, 0.44, 0.02, LODGE.postRed, bx0 + 0.45, 0.98, zw - 0.11); for (const y of [0.7, 0.8]) I(0.102, 0.03, 0.022, LODGE.cream, bx0 + 0.36, y, zw - 0.085);
+      const jx = bx0 + 1.9; I(0.42, 0.52, 0.1, LODGE.navy, jx, 0.9, zw - 0.09); for (const sx of [-1, 1]) I(0.1, 0.46, 0.1, LODGE.navy, jx + sx * 0.26, 0.9, zw - 0.09, 0, 0, sx * 0.1); I(0.2, 0.06, 0.12, LODGE.cream, jx, 1.17, zw - 0.09); I(0.02, 0.5, 0.012, C.steel, jx, 0.9, zw - 0.146);
+      colliders.push({ minX: bx0 - 0.05, maxX: bx0 + bw + 0.05, minZ: zw - 0.5, maxZ: zw });
+    }
+    // rug: wool, Nordic border. Its top sits 16 mm above the floor; the coffee table and armchair stand on it.
     const rugTex = canvasTex(1024, 683, (g, w, h) => {
       const diamond = (x, y, r, c) => { g.fillStyle = c; g.beginPath(); g.moveTo(x, y - r); g.lineTo(x + r, y); g.lineTo(x, y + r); g.lineTo(x - r, y); g.closePath(); g.fill(); };
       g.fillStyle = RUG.charcoal; g.fillRect(0, 0, w, h);
@@ -1264,7 +1508,8 @@ function buildRoom(THREE) {
   // ---------- outside: key, door, skis, lift ----------
   const mem = (store, k, v) => { try { if (v === undefined) return store.getItem(k); store.setItem(k, v); } catch (e) { /* ignore */ } return null; };
   let hasKey = mem(localStorage, "room:key") === "1";
-  let mode = "walk"; // walk | ski | liftwait | lift
+  let mode = "walk"; // walk | ski | liftwait | lift | fly
+  const fl = { x: AIR.sx, y: AIR.y + GEAR, z: AIR.sz, yaw: Math.PI / 2, pitch: 0, roll: 0, v: 0, vy: 0, thr: 0, ground: true, sx: 0, sy: 0, dead: 0, next: 0, t: 0, timing: false, help: false, helpSeen: false, pop: -1, popT: 0, resetAt: 0, warn: false, cam: new THREE.Vector3() };
   let doorK = 0, doorState = "shut"; // shut | opening | open
   let rider = -1, camFrom = null, camT = 0, roll = 0, tilt = 0, hintAt = -9, lastHud = "";
   const race = { on: false, t: 0, hit: 0, next: 0, best: +(mem(localStorage, "room:skibest") || 0) };
@@ -1280,8 +1525,8 @@ function buildRoom(THREE) {
   }
   function skiHud(force) {
     if (mode === "walk") return;
-    const v = Math.round(Math.hypot(player.vx, player.vz) * 3.6);
-    const text = mode === "lift" || mode === "liftwait" ? "Lift" : race.on ? `Gates ${race.hit}/${GATES.length} / ${fmtRun(race.t)} / ${v} km/h` : `Skis on / ${v} km/h`;
+    const v = Math.round((mode === "fly" ? fl.v : Math.hypot(player.vx, player.vz)) * 3.6);
+    const text = mode === "fly" ? (fl.dead > 0 ? "Crashed" : `${fl.warn ? "Turn back / " : ""}${v} km/h / Alt ${Math.max(0, Math.round(fl.y - GEAR - groundAt(fl.x, fl.z)))} m / Rings ${fl.next}/${RINGS.length} / ${fmtRun(fl.t)}`) : mode === "lift" || mode === "liftwait" ? "Lift" : race.on ? `Gates ${race.hit}/${GATES.length} / ${fmtRun(race.t)} / ${v} km/h` : `Skis on / ${v} km/h`;
     if (text !== lastHud || force) { lastHud = text; el.invSki.textContent = text; }
   }
   function stowSkis(quiet) {
@@ -1326,9 +1571,13 @@ function buildRoom(THREE) {
   const deviceId = () => { let id = jget("dl2:device"); if (typeof id !== "string" || id.length < 8) { id = crypto.randomUUID ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, "0")).join(""); jset("dl2:device", id); } return id; };
   let mine = jget("room:skiday"); if (!mine || mine.day !== skiDay() || !(mine.ms > 0)) mine = null; // { day, ms, posted }: my best run today
   let entry = null; // { text } while initials are being typed
-  function drawBoard() {
-    const { g, c } = boardTex, W = c.width, H = c.height, me = myInitials();
-    let rows = SB.rows.map((r) => ({ ...r, me: !!(mine && me && r.initials === me && r.ms === mine.posted) }));
+  // one object per scoreboard: the ski run and the flight course share the drawing, loading and posting code
+  const SKIB = { game: "ski", tex: boardTex, title: "FASTEST TODAY", note: `+${PENALTY}.0 S PER MISSED GATE`, key: "room:skiday", rows: [], at: -1e9, get mine() { return mine; }, set mine(v) { mine = v; } };
+  const FLYB = { game: "flight", tex: flyTex, title: "FASTEST FLIGHTS", note: "ALL RINGS, IN ORDER", key: "room:flyday", rows: [], at: -1e9, mine: jget("room:flyday") };
+  if (!FLYB.mine || FLYB.mine.day !== skiDay() || !(FLYB.mine.ms > 0)) FLYB.mine = null;
+  function drawBoard(b = SKIB) {
+    const { g, c } = b.tex, W = c.width, H = c.height, me = myInitials(), mine = b.mine;
+    let rows = b.rows.map((r) => ({ ...r, me: !!(mine && me && r.initials === me && r.ms === mine.posted) }));
     if (mine && !rows.some((r) => r.me && r.ms <= mine.ms)) rows.push({ initials: me || "???", ms: mine.ms, me: true }); // my time, even before it is posted
     rows.sort((a, b) => a.ms - b.ms);
     const mi = rows.findIndex((r) => r.me); let top = rows.slice(0, 8); if (mi >= 8) top[7] = rows[mi];
@@ -1339,40 +1588,40 @@ function buildRoom(THREE) {
       g.fillStyle = "#0e0e0e"; g.fillRect(x, y + Math.round(h / 2) - 1, w, 2);
     };
     const word = (text, x, y, w, h, gap, color) => { [...text].forEach((ch, i) => flap(ch, x + i * (w + gap), y, w, h, color)); return x + text.length * (w + gap); };
-    word("FASTEST TODAY", 190, 26, 44, 58, 6, CSS.plate);
+    word(b.title, Math.round((W - (b.title.length * 50 - 6)) / 2), 26, 44, 58, 6, CSS.plate);
     for (let i = 0; i < 8; i++) {
-      const r = top[i], y = 108 + i * 61, col = r && r.me ? CSS.signal : CSS.plate;
+      const r = top[i], y = 108 + i * 61, col = r && r.me ? CSS.signalHi : CSS.plate;
       let x = word(r ? String(Math.min(9, 1 + rows.filter((q) => q.ms < r.ms).length)) : " ", 165, y, 52, 52, 6, col) + 28;
       x = word(r ? r.initials.padEnd(3, " ") : "   ", x, y, 52, 52, 6, col) + 28;
       word(r ? fmtRun(r.ms / 1000) : "       ", x, y, 52, 52, 6, col);
     }
     g.textAlign = "left"; g.textBaseline = "alphabetic"; g.font = `700 22px ${F_MONO}`; g.fillStyle = CSS.steel;
-    g.fillText(`+${PENALTY}.0 S PER MISSED GATE`, 165, H - 18); g.textAlign = "right"; g.fillText(SB.on ? `NO. ${String(skiDay()).padStart(3, "0")}` : "LOCAL TIMES", W - 165, H - 18); g.textAlign = "left";
-    boardTex.t.needsUpdate = true;
+    g.fillText(b.note, 165, H - 18); g.textAlign = "right"; g.fillText(SB.on ? `NO. ${String(skiDay()).padStart(3, "0")}` : "LOCAL TIMES", W - 165, H - 18); g.textAlign = "left";
+    b.tex.t.needsUpdate = true;
   }
-  async function loadBoard(force) {
-    if (!SB.on) return drawBoard();
-    const now = performance.now(); if (!force && now - SB.at < 45000) return drawBoard(); SB.at = now;
+  async function loadBoard(force, b = SKIB) {
+    if (!SB.on) return drawBoard(b);
+    const now = performance.now(); if (!force && now - b.at < 45000) return drawBoard(b); b.at = now;
     try {
-      const r = await fetch(sbUrl(`?select=initials,ms&day=eq.${skiDay()}&game=eq.ski&order=ms.asc,created_at.asc&limit=1000`), { headers: sbHead() });
-      if (r.ok) { const seen = new Set(); SB.rows = (await r.json()).filter((x) => x && /^[A-Z]{1,3}$/.test(x.initials) && Number.isFinite(x.ms) && !seen.has(x.initials) && seen.add(x.initials)); } // best run per set of initials
+      const r = await fetch(sbUrl(`?select=initials,ms&day=eq.${skiDay()}&game=eq.${b.game}&order=ms.asc,created_at.asc&limit=1000`), { headers: sbHead() });
+      if (r.ok) { const seen = new Set(); b.rows = (await r.json()).filter((x) => x && /^[A-Z]{1,3}$/.test(x.initials) && Number.isFinite(x.ms) && !seen.has(x.initials) && seen.add(x.initials)); } // best run per set of initials
     } catch (e) { /* offline: keep what we have */ }
-    drawBoard();
+    drawBoard(b);
   }
-  async function postTime() { // posts my best run of the day once initials are known
-    const who = myInitials(); drawBoard();
+  async function postTime(b = SKIB) { // posts my best time of the day once initials are known
+    const who = myInitials(), mine = b.mine; drawBoard(b);
     if (!SB.on || !who || !mine || mine.posted === mine.ms) return;
     const ms = mine.ms;
     try {
-      const r = await fetch(sbUrl(""), { method: "POST", headers: sbHead({ "Content-Type": "application/json", Prefer: "return=minimal" }), body: JSON.stringify({ day: mine.day, game: "ski", initials: who, ms, device: deviceId() }) });
+      const r = await fetch(sbUrl(""), { method: "POST", headers: sbHead({ "Content-Type": "application/json", Prefer: "return=minimal" }), body: JSON.stringify({ day: mine.day, game: b.game, initials: who, ms, device: deviceId() }) });
       if (!r.ok) return;
-      mine.posted = ms; jset("room:skiday", mine); toast(`Posted / ${who} / ${fmtRun(ms / 1000)}`); loadBoard(true);
+      mine.posted = ms; jset(b.key, mine); toast(`Posted / ${who} / ${fmtRun(ms / 1000)}`); loadBoard(true, b);
     } catch (e) { /* offline: the time stays on this device */ }
   }
   function startEntry() { entry = { text: "" }; el.tagIn.value = ""; keys.clear(); hud(); if (TOUCH || document.pointerLockElement !== el.gl) el.tagIn.focus(); }
   function endEntry(post) {
     const text = entry ? entry.text : ""; entry = null; el.tagIn.blur(); hud();
-    if (post && /^[A-Z]{1,3}$/.test(text)) { jset("dl2:initials", text); postTime(); }
+    if (post && /^[A-Z]{1,3}$/.test(text)) { jset("dl2:initials", text); postTime(SKIB); postTime(FLYB); }
   }
   el.tagIn.addEventListener("input", () => { if (!entry) return; entry.text = el.tagIn.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 3); el.tagIn.value = entry.text; if (entry.text.length === 3) endEntry(true); });
   el.tagIn.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); endEntry(true); } e.stopPropagation(); });
@@ -1384,6 +1633,202 @@ function buildRoom(THREE) {
     toast("Finish a run to post a time");
   });
   drawBoard();
+  drawBoard(FLYB);
+  addProp({ id: "flyboard", label: "Flight board" }, flyBoard, "out", () => {
+    loadBoard(true, FLYB);
+    if (FLYB.mine && !myInitials()) { startEntry(); return toast(TOUCH ? "Enter your initials to post your time" : "Type your initials, then Enter", 4000); }
+    if (FLYB.mine) { postTime(FLYB); return toast(`Your best today / ${fmtRun(FLYB.mine.ms / 1000)}`); }
+    toast("Fly the ring course to post a time");
+  });
+
+  // ---------- flight: board the plane, fly the rings in order, land on the runway or crash ----------
+  const V_TO = 22, V_MAX = 40, V_STALL = 15, BOUND = { x: -20, y: -15, z: 120, warn: 185, r: 215 };
+  const snowAt = (x, z) => (Math.abs(x) <= 150 && z >= -90 && z <= Z2 + 150 ? hAt(x, z) + wob(x, z) : -DROP - 3.5);
+  const groundAt = (x, z) => (onPave(x, z) ? AIR.y : snowAt(x, z));
+  // the course: off runway 27, left down the valley, along the ski run, round the base, back up the lift side, over the hut to the runway
+  const RINGS = [[-104, 11, 6], [-137, 21, 34], [-128, 17, 78], [-84, 5, 112], [-42, -8, 142], [-4, -28, 200], [34, -30, 274], [74, -27, 236], [64, -4, 152], [54, 20, 70], [34, 19, 20], [-36, 13, 6]].map(([x, y, z]) => ({ x, y, z }));
+  RINGS.forEach((r, i) => { const a = RINGS[Math.max(0, i - 1)], b = RINGS[Math.min(RINGS.length - 1, i + 1)], l = Math.hypot(b.x - a.x, b.z - a.z); r.nx = (b.x - a.x) / l; r.nz = (b.z - a.z) / l; });
+  RINGS[0].nx = RINGS[RINGS.length - 1].nx = -1; RINGS[0].nz = RINGS[RINGS.length - 1].nz = 0;
+  const RING_R = 5.3, ringMesh = new THREE.InstancedMesh(new THREE.TorusGeometry(5.65, 0.34, 6, 28), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), RINGS.length);
+  ringMesh.frustumCulled = false; world.add(ringMesh);
+  const chevron = new THREE.Group(); chevron.visible = false; world.add(chevron);
+  { const q = [], mk = (rz, x) => q.push({ geo: new THREE.BoxGeometry(0.4, 2.2, 0.4), color: 0xffffff, m: mat4(x, 0, 0, 0, 0, rz) }); mk(0.7, 0.68); mk(-0.7, -0.68); chevron.add(new THREE.Mesh(bake(q), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }))); }
+  const ringCol = [new THREE.Color(C.signalHi), new THREE.Color(0xffffff)];
+  function drawRings() {
+    const flying = mode === "fly";
+    RINGS.forEach((r, i) => {
+      let sc = 1;
+      if (i < fl.next) sc = i === fl.pop ? (1 + fl.popT * 2.4) * (fl.popT < 0.25 ? 1 : 0.001) : 0.001;
+      else if (flying && i === fl.next && !REDUCED) sc = 1 + Math.sin(time * 6) * 0.045;
+      ringMesh.setMatrixAt(i, mat4(r.x, sc < 0.01 ? -400 : r.y, r.z, 0, Math.atan2(r.nx, r.nz), 0, sc));
+      ringMesh.setColorAt(i, ringCol[(flying && i === fl.next) || i === fl.pop ? 1 : 0]);
+    });
+    ringMesh.instanceMatrix.needsUpdate = true; ringMesh.instanceColor.needsUpdate = true;
+    const n = RINGS[fl.next]; chevron.visible = flying && !!n && fl.dead <= 0;
+    if (n) { chevron.position.set(n.x, n.y + 8.3 + (REDUCED ? 0 : Math.sin(time * 4) * 0.35), n.z); chevron.rotation.y = Math.atan2(n.nx, n.nz); }
+  }
+  function resetRings() { fl.next = 0; fl.t = 0; fl.timing = false; fl.pop = -1; fl.resetAt = 0; drawRings(); }
+  // things the plane can hit: boxes [x0, x1, z0, z1, top, bottom], trees, lift towers and the cable
+  const FBOX = [[-6.6, 6.6, -6.6, 6.6, 5.6], [HGR.x0 - 0.5, HGR.x1 + 0.5, HGR.z0 - 0.5, HGR.z1 + 0.6, 6.8], [CAB.x - CAB.w / 2 - 0.6, CAB.x + CAB.w / 2 + 0.6, CAB.z - CAB.d / 2 - 1.2, CAB.z + CAB.d / 2 + 0.6, YB + 5.2],
+    [BOARD.x - BOARD.w / 2 - 0.2, BOARD.x + BOARD.w / 2 + 0.2, BOARD.z - 0.4, BOARD.z + 0.6, YB + 8.6], [FB.x - FB.w / 2 - 0.2, FB.x + FB.w / 2 + 0.2, FB.z - 0.5, FB.z + 0.3, 5], [LX - 6.4, LX - 4, ZB, ZB + 2.4, YB + 2.8],
+    [-CW - 0.6, CW + 0.6, ZS - 0.3, ZS + 0.3, hAt(0, ZS) + 4.5, hAt(0, ZS) + 3.3], [-CW - 0.6, CW + 0.6, ZF - 0.3, ZF + 0.3, hAt(0, ZF) + 4.5, hAt(0, ZF) + 3.3]];
+  for (const sx of [-1, 1]) for (const z of [ZS, ZF]) FBOX.push([sx * (CW + 0.35) - 0.3, sx * (CW + 0.35) + 0.3, z - 0.3, z + 0.3, hAt(0, z) + 4.5]);
+  for (const t of TOWERS) FBOX.push([LX - 1.7, LX + 1.7, t[0] - 1.2, t[0] + 1.2, t[2] + 0.8]);
+  function planeHits(x, y, z) {
+    for (const b of FBOX) if (x > b[0] && x < b[1] && z > b[2] && z < b[3] && y < b[4] && (b[5] === undefined || y > b[5])) return true;
+    if (Math.abs(x - LX) < LR + 0.5 && z > ZT && z < ZB) { const c = cableY(z); if (y < c + 0.7 && y > c - HANG - 1.6) return true; } // both cables and the chairs under them
+    for (const t of TREES) { const dy = y - t.y; if (dy > t.h || dy < -2) continue; const dx = x - t.x, dz = z - t.z, r = t.r * (1 - Math.max(0, dy) / t.h) + 0.35; if (dx * dx + dz * dz < r * r) return true; }
+    return false;
+  }
+  // explosion: a fixed pool of cubes (flash, fire, smoke), no allocation while it plays
+  const BOOM_N = 44, boom = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), BOOM_N), bits = [];
+  boom.frustumCulled = false; boom.visible = false; world.add(boom);
+  for (let i = 0; i < BOOM_N; i++) { bits.push({ p: new THREE.Vector3(), v: new THREE.Vector3(), s: 1, kind: i === 0 ? 0 : i < 29 ? 1 : 2, c: new THREE.Color() }); boom.setColorAt(i, bits[i].c); }
+  const boomAt = new THREE.Vector3(), tmpM = new THREE.Matrix4(), tmpQ = new THREE.Quaternion(), tmpS = new THREE.Vector3(), tmpP = new THREE.Vector3();
+  function drawBoom(t) { // t: seconds since the crash
+    bits.forEach((b, i) => {
+      let s = 0;
+      if (b.kind === 0) { s = t < 0.16 ? 1.5 + t * 34 : 0; tmpP.copy(boomAt); b.c.setHex(0xfff3c4); }
+      else if (b.kind === 1) { const life = Math.max(0, 1 - t / 1.1); s = b.s * life; tmpP.copy(b.v).multiplyScalar(t).add(b.p); tmpP.y -= 6 * t * t; b.c.setHex(i % 3 ? 0xff7a1a : 0xffc93a); }
+      else { const k = Math.min(1, t / 1.5); s = t < 0.08 ? 0 : b.s * (0.7 + k * 1.6) * (1 - k * k); tmpP.copy(b.v).multiplyScalar(t * 0.35).add(b.p); tmpP.y += t * 2.4; b.c.setScalar(0.34 - k * 0.1); }
+      tmpP.y = Math.max(tmpP.y, groundAt(tmpP.x, tmpP.z) + s * 0.3);
+      tmpQ.setFromAxisAngle(tmpS.set(0.3, 1, 0.2).normalize(), i * 1.3 + t * (b.kind === 1 ? 5 : 1)); tmpS.setScalar(Math.max(0.0001, s));
+      boom.setMatrixAt(i, tmpM.compose(tmpP, tmpQ, tmpS)); boom.setColorAt(i, b.c);
+    });
+    boom.instanceMatrix.needsUpdate = true; boom.instanceColor.needsUpdate = true;
+  }
+  function crash() {
+    fl.dead = 1.6; fl.timing = false; fl.v = 0; boomAt.set(fl.x, Math.max(fl.y, groundAt(fl.x, fl.z) + 0.8), fl.z);
+    bits.forEach((b, i) => { const a = i * 2.39996, up = 0.25 + ((i * 7) % 10) / 12, sp = b.kind === 1 ? 5 + ((i * 13) % 9) : 2 + ((i * 5) % 4);
+      b.p.copy(boomAt); b.v.set(Math.cos(a) * sp, up * sp * 1.3, Math.sin(a) * sp); b.s = b.kind === 1 ? 0.5 + ((i * 3) % 5) * 0.14 : 1.3 + ((i * 3) % 4) * 0.35; });
+    plane.visible = false; planeShadow.visible = false; chevron.visible = false; boom.visible = true; drawBoom(0); skiHud(true);
+  }
+  function placePlane() {
+    plane.position.set(fl.x, fl.y, fl.z); plane.rotation.set(fl.pitch, fl.yaw, -fl.roll);
+    const g = groundAt(fl.x, fl.z), alt = fl.y - GEAR - g;
+    planeShadow.visible = plane.visible && alt < 60; planeShadow.position.set(fl.x, g + 0.04, fl.z); planeShadow.rotation.y = fl.yaw; planeShadow.material.opacity = 0.42 * (1 - Math.min(1, alt / 60)); planeShadow.scale.setScalar(1 + alt * 0.012);
+  }
+  const planeCol = { minX: 0, maxX: 0, minZ: 0, maxZ: 0 }; outColliders.push(planeCol);
+  let planeObj = null, planeHit = null;
+  function parkPlane() { // refresh what a walker can bump into and press
+    placePlane(); plane.updateMatrixWorld(true);
+    if (!planeObj) return;
+    const bb = planeObj.box.setFromObject(planeCore); bb.getCenter(planeObj.center);
+    planeCol.minX = bb.min.x; planeCol.maxX = bb.max.x; planeCol.minZ = bb.min.z; planeCol.maxZ = bb.max.z;
+    planeHit.position.copy(planeObj.center); planeHit.rotation.y = fl.yaw - Math.PI / 2; planeHit.updateMatrixWorld(true); // the hit box turns with the plane
+  }
+  function respawnPlane(quiet) {
+    Object.assign(fl, { x: AIR.sx, y: AIR.y + GEAR, z: AIR.sz, yaw: Math.PI / 2, pitch: 0, roll: 0, v: 0, vy: 0, thr: 0, ground: true, sx: 0, sy: 0, dead: 0, warn: false });
+    plane.visible = true; boom.visible = false; el.fade.classList.remove("on"); resetRings(); placePlane();
+    if (mode === "fly") { chaseCam(1, true); skiHud(true); if (!quiet) toast("Respawned at the hangar"); } else parkPlane();
+  }
+  function showHelp(on) { fl.help = on; hud(); }
+  function boardPlane() {
+    if (mode !== "walk") return toast("Leave skis at the rack");
+    mode = "fly"; planeObj.off = true; planeCol.minX = planeCol.maxX = 1e6; setTarget(null); keys.clear();
+    Object.assign(fl, { v: 0, vy: 0, thr: 0, pitch: 0, roll: 0, sx: 0, sy: 0, ground: true, dead: 0, warn: false });
+    camera.near = 0.6; camera.updateProjectionMatrix(); fl.cam.copy(camera.position); resetRings(); loadBoard(false, FLYB);
+    showHelp(true); inv(); skiHud(true);
+  }
+  function exitPlane() {
+    if (mode !== "fly" || fl.dead > 0) return;
+    if (!fl.ground || fl.v > 0.6) return hint("Stop on the runway to exit");
+    mode = "walk"; planeObj.off = false; planeProp.rotation.z = 0; chevron.visible = false; fl.thr = 0; fl.v = 0; resetRings(); parkPlane();
+    const lx = -Math.cos(fl.yaw), lz = Math.sin(fl.yaw); // step out on the pilot's side
+    player.x = clamp(fl.x + lx * 3, FIELD[0] + 0.1, FIELD[1] - 0.1); player.z = clamp(fl.z + lz * 3, FIELD[2] + 0.1, FIELD[3] - 0.1);
+    player.zone = "field"; player.vx = player.vz = player.vy = 0; player.y = 0; player.ground = true; player.yaw = Math.atan2(player.x - fl.x, player.z - fl.z); player.pitch = -0.05;
+    camera.near = 0.03; camera.updateProjectionMatrix(); showHelp(false); inv(); updateWalk(0);
+  }
+  const camTo = new THREE.Vector3(), camLook = new THREE.Vector3();
+  function chaseCam(dt, snap) { // third person: behind and above, with a little lag
+    const sin = Math.sin(fl.yaw), cos = Math.cos(fl.yaw);
+    camTo.set(fl.x + sin * 12.5, fl.y + 4.2 - fl.pitch * 3, fl.z + cos * 12.5);
+    fl.cam.lerp(camTo, snap ? 1 : 1 - Math.exp(-5.5 * dt));
+    fl.cam.y = Math.max(fl.cam.y, groundAt(fl.cam.x, fl.cam.z) + 1.4);
+    camera.position.copy(fl.cam);
+    if (!REDUCED && !fl.ground && fl.v > 34) { const k = (fl.v - 34) * 0.004; camera.position.x += Math.sin(time * 61) * k; camera.position.y += Math.sin(time * 47) * k; }
+    camLook.set(fl.x - sin * 7, fl.y + 1.2 + fl.pitch * 4, fl.z - cos * 7); camera.lookAt(camLook);
+  }
+  function finishCourse() {
+    fl.timing = false; fl.resetAt = time + 3.5;
+    const ms = Math.max(5000, Math.round(fl.t * 1000)), day = skiDay(), b = FLYB;
+    if (b.mine && b.mine.day !== day) b.mine = null;
+    const best = !b.mine || ms < b.mine.ms;
+    if (best) { b.mine = { day, ms, posted: b.mine ? b.mine.posted : 0 }; jset(b.key, b.mine); }
+    toast(`Course / ${fmtRun(ms / 1000)}${best ? " / Best today" : ""}`, 3200);
+    if (best && myInitials()) postTime(b); else { drawBoard(b); if (best) setTimeout(() => { if (!myInitials()) toast("Press the board to post it", 3600); }, 3300); }
+  }
+  function updateFly(dt) {
+    if (fl.dead > 0) { // crashed: let the explosion play, fade, then put a fresh plane on the apron
+      const t = 1.6 - fl.dead; fl.dead -= dt; drawBoom(t + dt);
+      camera.position.copy(fl.cam); if (!REDUCED && t < 0.5) { const k = (0.5 - t) * 0.7; camera.position.x += Math.sin(time * 83) * k; camera.position.y += Math.sin(time * 67) * k; }
+      camera.lookAt(boomAt);
+      if (fl.dead < 0.4) el.fade.classList.add("on");
+      if (fl.dead <= 0) { respawnPlane(true); toast("Crashed / Respawned at the hangar", 3000); }
+      return;
+    }
+    let ix = 0, iy = 0, th = 0;
+    if (state === "play") {
+      ix = (keys.has("KeyD") || keys.has("ArrowRight") ? 1 : 0) - (keys.has("KeyA") || keys.has("ArrowLeft") ? 1 : 0) + joy.x + fl.sx;
+      iy = (keys.has("ArrowUp") ? 1 : 0) - (keys.has("ArrowDown") ? 1 : 0) - joy.y + fl.sy;
+      th = (keys.has("KeyW") ? 1 : 0) - (keys.has("KeyS") ? 1 : 0);
+    }
+    ix = clamp(ix, -1, 1); iy = clamp(iy, -1, 1);
+    const back = Math.exp(-0.9 * dt); fl.sx *= back; fl.sy *= back; // the mouse "stick" springs back to centre, so the plane levels itself
+    fl.thr = clamp(fl.thr + th * 0.75 * dt, 0, 1);
+    if (th > 0 && !fl.helpSeen) { fl.helpSeen = true; showHelp(false); }
+    const px = fl.x, py = fl.y, pz = fl.z, sin = Math.sin(fl.yaw), cos = Math.cos(fl.yaw);
+    if (fl.ground) {
+      fl.v = Math.max(0, fl.v + (fl.thr * 7.5 - 0.6 - fl.v * 0.05 - (th < 0 ? 6 : 0)) * dt);
+      fl.yaw -= ix * 0.9 * Math.min(1, fl.v / 5) * dt;
+      const lv = 1 - Math.exp(-8 * dt); fl.pitch -= fl.pitch * lv; fl.roll -= fl.roll * lv;
+      fl.x -= sin * fl.v * dt; fl.z -= cos * fl.v * dt; fl.y = AIR.y + GEAR; fl.vy = 0;
+      if (!onPave(fl.x, fl.z)) { if (fl.v > 9) return crash(); fl.x = px; fl.z = pz; fl.v = 0; hint("Stay on the runway"); }
+      if (fl.v > V_TO) { if (iy > 0.15) { fl.ground = false; fl.pitch = 0.1; } else hint(TOUCH ? "Pad up to lift off" : "Pull up / Arrow up or mouse"); }
+    } else {
+      const stall = fl.v < V_STALL;
+      fl.roll += (ix * 1.0 - fl.roll) * (1 - Math.exp(-3.2 * dt)); fl.pitch += ((stall ? -0.45 : iy * 0.5) - fl.pitch) * (1 - Math.exp(-2.6 * dt));
+      fl.yaw -= fl.roll * 1.45 * dt;
+      fl.v = clamp(fl.v + ((fl.thr * V_MAX - fl.v) * 0.4 - Math.sin(fl.pitch) * 7) * dt, 6, 50);
+      const cp = Math.cos(fl.pitch); fl.vy = Math.sin(fl.pitch) * fl.v - (stall ? (V_STALL - fl.v) * 1.2 : 0);
+      fl.x -= sin * cp * fl.v * dt; fl.z -= cos * cp * fl.v * dt; fl.y += fl.vy * dt;
+      if (stall) hint("Stall / Add throttle");
+      const g = groundAt(fl.x, fl.z);
+      if (fl.y - GEAR <= g) { // touchdown: gentle, level and on the pavement, or it is a crash
+        if (onPave(fl.x, fl.z) && fl.vy > -3 && Math.abs(fl.roll) < 0.26) { fl.ground = true; fl.y = g + GEAR; fl.vy = 0; } else { fl.y = g + GEAR; return crash(); }
+      } else {
+        const wx = cos * 3.9 * Math.cos(fl.roll), wz = -sin * 3.9 * Math.cos(fl.roll), wy = Math.sin(fl.roll) * 3.9 - 0.68;
+        if (planeHits(fl.x, fl.y, fl.z) || planeHits(fl.x + wx, fl.y - wy, fl.z + wz) || planeHits(fl.x - wx, fl.y + wy + 1.36, fl.z - wz) || fl.y - wy < snowAt(fl.x + wx, fl.z + wz) || fl.y + wy + 1.36 < snowAt(fl.x - wx, fl.z - wz)) return crash();
+      }
+      const d = Math.hypot(fl.x - BOUND.x, fl.y - BOUND.y, fl.z - BOUND.z);
+      if (d > BOUND.r) return crash();
+      fl.warn = d > BOUND.warn;
+    }
+    // rings: the segment flown this frame must cross the next ring's plane inside the ring
+    if (fl.timing) fl.t += dt;
+    const r = RINGS[fl.next];
+    if (r) {
+      const d0 = (px - r.x) * r.nx + (pz - r.z) * r.nz, d1 = (fl.x - r.x) * r.nx + (fl.z - r.z) * r.nz;
+      if (d0 !== d1 && d0 * d1 <= 0) { const k = d0 / (d0 - d1), hx = px + (fl.x - px) * k - r.x, hy = py + (fl.y - py) * k - r.y, hz = pz + (fl.z - pz) * k - r.z;
+        if (hx * hx + hy * hy + hz * hz < RING_R * RING_R) { if (fl.next === 0) { fl.timing = true; fl.t = 0; } fl.pop = fl.next; fl.popT = 0; fl.next++; if (fl.next === RINGS.length) finishCourse(); } }
+    }
+    if (fl.pop >= 0) { fl.popT += dt; if (fl.popT > 0.3) fl.pop = -1; }
+    if (fl.resetAt && time > fl.resetAt) resetRings(); // all rings come back once the course is done
+    planeProp.rotation.z -= (4 + fl.thr * 34 + fl.v * 0.3) * dt * (REDUCED ? 0.2 : 1);
+    player.x = fl.x; player.z = fl.z;
+    placePlane(); drawRings(); chaseCam(dt); skiHud();
+  }
+  respawnPlane(true); plane.updateMatrixWorld(true);
+  planeObj = addProp({ id: "plane", label: "Plane" }, planeCore, "out", boardPlane);
+  planeHit = hitMeshes[hitMeshes.length - 1];
+  parkPlane();
+  for (const b of el.flyTouch.querySelectorAll("[data-k]")) {
+    const k = b.dataset.k, up = (e) => { keys.delete(k); e.preventDefault(); };
+    b.addEventListener("pointerdown", (e) => { if (state === "play" && mode === "fly") keys.add(k); e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } });
+    b.addEventListener("pointerup", up); b.addEventListener("pointercancel", up);
+  }
+  el.flyRespawn.addEventListener("click", () => { if (state === "play" && mode === "fly" && fl.dead <= 0) respawnPlane(); });
+  el.flyExit.addEventListener("click", () => { if (state === "play") exitPlane(); });
   // wisdom waffles: one per day, paid for with a token earned by finishing today's three Daily Logic puzzles
   const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
   const puzzlesDone = () => ["sectors", "binary", "weights"].every((id) => { try { const v = JSON.parse(localStorage.getItem(`dl2:${todayKey()}:${id}`)); return !!(v && v.done); } catch (e) { return false; } });
@@ -1451,6 +1896,8 @@ function buildRoom(THREE) {
     }
   }
   const DWAY = DOOR.w / 2 - RADIUS + 0.12; // half-width you can stand in inside the doorway
+  // outside on foot you may stand in any of these: the deck, the gate in its west rope, the airfield, the hangar floor  [x0, x1, z0, z1]
+  const FIELD = [AIR.x0 - 1.1, DX0 - 0.9, -2.9, AIR.z1 + 1.0], WALK = [[DX0 + 0.5, DX1 - 0.5, OUT0, Z0 - 0.8], [DX0 - 1.2, DX0 + 0.8, GAP.z0 + 0.45, GAP.z1 - 0.45], FIELD, [HGR.x0 + 0.6, HGR.x1 - 0.6, HGR.z0 + 0.6, -2.5]];
   function collide() { // on foot: room <-> doorway <-> summit deck
     const lim = HALF - RADIUS - 0.03, open = doorK > 0.85;
     let zn = player.zone || "room";
@@ -1461,13 +1908,16 @@ function buildRoom(THREE) {
     if (zn === "door") { player.x = clamp(player.x, -DWAY, DWAY); if (player.z <= lim) zn = "room"; else if (player.z >= OUT0) zn = "deck"; }
     if (zn === "deck") {
       if (player.z < OUT0) { if (open && Math.abs(player.x) < 0.6) { zn = "door"; player.x = clamp(player.x, -DWAY, DWAY); } else player.z = OUT0; }
-      if (zn === "deck") {
-        player.x = clamp(player.x, DX0 + 0.5, DX1 - 0.5);
-        if (player.z > Z0 - 0.8) { player.z = Z0 - 0.8; hint("Skis required / Rack by the door"); }
-      }
+    }
+    if (zn === "deck" || zn === "field") {
+      if (player.z > Z0 - 0.8 && player.x > DX0) hint("Skis required / Rack by the door");
+      let best = null, bd = Infinity;
+      for (const r of WALK) { const cx = clamp(player.x, r[0], r[1]), cz = clamp(player.z, r[2], r[3]), d = (cx - player.x) ** 2 + (cz - player.z) ** 2; if (d < bd) { bd = d; best = [cx, cz]; } }
+      player.x = best[0]; player.z = best[1];
+      zn = player.x < DX0 - 0.2 ? "field" : "deck";
     }
     player.zone = zn;
-    if (zn === "deck") return pushOut(outColliders);
+    if (zn === "deck" || zn === "field") return pushOut(outColliders);
     if (zn === "door") return;
     for (const c of colliders) {
       const nx = Math.min(c.maxX, Math.max(c.minX, player.x)), nz = Math.min(c.maxZ, Math.max(c.minZ, player.z));
@@ -1507,6 +1957,7 @@ function buildRoom(THREE) {
     const m = 0.45;
     if (pz <= Z0) {
       player.x = clamp(player.x, DX0 + m, DX1 - m);
+      if (player.x <= DX0 + m + 0.01 && player.z > GAP.z0 && player.z < GAP.z1) hint("Leave skis at the rack");
       if (player.z < OUT0) { if (doorK > 0.85 && Math.abs(player.x) < 0.6) { player.x = clamp(player.x, -DWAY, DWAY); player.zone = "door"; stowSkis(); return updateWalk(0); } player.z = OUT0; player.vz = Math.max(0, player.vz); }
       if (player.z > Z0 && Math.abs(player.x) > CW - m) { player.z = Z0; player.vz = Math.min(0, player.vz); }
     } else if (pz <= Z1) {
@@ -1566,7 +2017,7 @@ function buildRoom(THREE) {
     mySkis.position.set(lp.x, lp.y - HANG - 0.42, lp.z - 0.45); mySkis.rotation.set(0.12, 0, 0);
     skiHud();
   }
-  function updatePlayer(dt) { if (mode === "walk") updateWalk(dt); else if (mode === "ski") updateSki(dt); else updateLift(dt); }
+  function updatePlayer(dt) { if (mode === "walk") updateWalk(dt); else if (mode === "ski") updateSki(dt); else if (mode === "fly") updateFly(dt); else updateLift(dt); }
   function updateWalk(dt) {
     let f = 0, s = 0, fast = false;
     if (state === "play") {
@@ -1603,8 +2054,8 @@ function buildRoom(THREE) {
     return null;
   }
   function reachable(o) { // room objects from inside, mountain props from outside
-    if (o.off || mode === "lift" || mode === "liftwait") return false;
-    return (o.zone || "in") === (player.z > HALF + 0.1 ? "out" : "in");
+    if (o.off || mode === "lift" || mode === "liftwait" || mode === "fly") return false;
+    return (o.zone || "in") === (player.z > HALF + 0.1 || player.zone === "field" ? "out" : "in");
   }
   function updateTarget() {
     let t = pick(CENTER, REACH);
@@ -1623,11 +2074,11 @@ function buildRoom(THREE) {
   }
   function setTarget(t) {
     if (t === target) return;
-    if (target) { target.frame.color.setHex(C.ink); target.face.material.map = target.texOff; }
+    if (target) target.face.material.map = target.texOff;
     target = t;
     brackets.visible = !!t; el.cross.classList.toggle("on", !!t);
     if (t) {
-      brackets.userData.set(t.box); t.frame.color.setHex(C.signal); t.face.material.map = t.texOn;
+      brackets.userData.set(t.box); t.face.material.map = t.texOn;
       const text = t.dest.no ? `${t.dest.no} / ${t.dest.label}` : t.dest.label;
       if (TOUCH) { el.openLabel.textContent = text; el.open.hidden = false; }
       else { el.promptLabel.textContent = text; el.prompt.hidden = false; }
@@ -1664,8 +2115,10 @@ function buildRoom(THREE) {
   // ---------- HUD / panel ----------
   function hud() {
     const playing = state === "play";
-    el.cross.hidden = !(playing && !TOUCH);
+    const flying = mode === "fly";
+    el.cross.hidden = !(playing && !TOUCH) || flying;
     el.joy.hidden = !(playing && TOUCH);
+    el.flyTouch.hidden = !(playing && TOUCH && flying); el.flyHelp.hidden = !(playing && flying && fl.help);
     if (!playing) { el.prompt.hidden = true; el.open.hidden = true; }
     el.tag.hidden = !(entry && playing);
     el.listBtn.hidden = !(playing || state === "pause" || state === "start") || (playing && CAN_LOCK);
@@ -1676,7 +2129,7 @@ function buildRoom(THREE) {
   function showPanel(kind) {
     el.panelTitle.textContent = kind === "pause" ? "Paused" : CONFIG.SHOW_NAME_ON_WALL ? CONFIG.NAME : "Room";
     el.panelGoText.textContent = kind === "pause" ? "Resume" : TOUCH ? "Tap to enter" : "Click to enter";
-    el.panelLegend.textContent = TOUCH ? "Left pad: move / Drag: look / Tap an object: open" : CAN_LOCK ? "WASD: move / Mouse: look / E or click: open / Shift: fast / Space: jump / Esc: pause" : "WASD: move / Drag: look / E or click: open / Shift: fast / Space: jump";
+    el.panelLegend.textContent = mode === "fly" ? (TOUCH ? "Left pad: pitch and roll / Buttons: throttle, respawn, exit" : "W S: throttle / Mouse or arrows: pitch and roll / A D: roll / R: respawn / E: exit when stopped / H: help") : TOUCH ? "Left pad: move / Drag: look / Tap an object: open" : CAN_LOCK ? "WASD: move / Mouse: look / E or click: open / Shift: fast / Space: jump / Esc: pause" : "WASD: move / Drag: look / E or click: open / Shift: fast / Space: jump";
     hud();
   }
   function begin() { // enter play (first time: glide from the idle orbit to the spawn point)
@@ -1719,6 +2172,12 @@ function buildRoom(THREE) {
       return;
     }
     if (GAME_KEYS.has(e.code)) e.preventDefault();
+    if (mode === "fly") { // flying: R respawn, E exit (when stopped), H help; everything else is read each frame
+      if (e.code === "Escape") { if (!CAN_LOCK) pause(); return; }
+      if (e.repeat) return;
+      if (e.code === "KeyR") { if (fl.dead <= 0) respawnPlane(); } else if (e.code === "KeyH") showHelp(!fl.help); else if (e.code === "KeyE") exitPlane(); else keys.add(e.code);
+      return;
+    }
     if (e.code === "KeyE" && !e.repeat) activate(target);
     else if (e.code === "Escape" && !CAN_LOCK) pause();
     else keys.add(e.code);
@@ -1727,6 +2186,7 @@ function buildRoom(THREE) {
   window.addEventListener("blur", () => { keys.clear(); resetJoy(); });
   document.addEventListener("mousemove", (e) => {
     if (document.pointerLockElement !== el.gl || (state !== "play" && state !== "intro")) return;
+    if (mode === "fly") { fl.sx = clamp(fl.sx + e.movementX * 0.0035, -1, 1); fl.sy = clamp(fl.sy - e.movementY * 0.0035, -1, 1); return; } // the mouse is the stick: up = nose up
     player.yaw -= e.movementX * 0.0022;
     player.pitch = Math.max(-PITCH_MAX, Math.min(PITCH_MAX, player.pitch - e.movementY * 0.0022));
   });
@@ -1742,6 +2202,7 @@ function buildRoom(THREE) {
     if (e.pointerId !== look.id) return;
     const dx = e.clientX - look.x, dy = e.clientY - look.y; look.x = e.clientX; look.y = e.clientY; look.moved += Math.abs(dx) + Math.abs(dy);
     if (state !== "play") return;
+    if (mode === "fly") { fl.sx = clamp(fl.sx + dx * 0.006, -1, 1); fl.sy = clamp(fl.sy - dy * 0.006, -1, 1); return; }
     const k = 0.0052 * (camera.fov / 70);
     player.yaw -= dx * k; player.pitch = Math.max(-PITCH_MAX, Math.min(PITCH_MAX, player.pitch - dy * k));
   });

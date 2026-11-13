@@ -6,7 +6,7 @@
 <title>Research / Patrick Sliz</title>
 <meta name="description" content="Research experience of Patrick Sliz.">
 <meta name="theme-color" content="#e6e6e1">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23141414'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%23ff4a00'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23141414'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%237fa6ec'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -18,7 +18,9 @@
     --steel: #66665f;
     --hair: #b9b9b2;
     --given: #d6d6cf;
-    --signal: #ff4a00;
+    --signal: #1f3f86;
+    --signal-hi: #7fa6ec;
+    --on-signal: #f3f3ef;
     --f-sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
     color-scheme: light;
@@ -251,10 +253,10 @@
     g.fillStyle = "#f3f3ef";
     for (const s of spikes) g.fillRect(Math.round(s.x), pad + s.r * rh + 1, 2, Math.max(2, rh - 2));
     if (key.on) { // one key-shaped burst hides in the raster
-      g.fillStyle = key.taken ? "#ff4a00" : "#f3f3ef";
+      g.fillStyle = key.taken ? "#7fa6ec" : "#f3f3ef";
       KEY.forEach((row, r) => { for (let c = 0; c < row.length; c++) if (row[c] === "1") g.fillRect(Math.round(key.x) + c * KPX, key.y + r * KPX, KPX, KPX); });
     }
-    g.fillStyle = "#ff4a00"; g.fillRect(W - 3, 0, 3, H); // write head
+    g.fillStyle = "#7fa6ec"; g.fillRect(W - 3, 0, 3, H); // write head (light accent: it sits on ink)
   }
   // ---- hidden key: click it to unlock the door in the room (kept in localStorage as "room:key") ----
   const KEY = ["0111000000000", "1000111111111", "1000100001001", "0111000001001"], KPX = 3, KW = 13 * KPX, KH = 4 * KPX;

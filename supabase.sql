@@ -4,15 +4,15 @@
 create table if not exists public.scores (
   id          bigint generated always as identity primary key,
   day         int  not null check (day >= 1),
-  game        text not null check (game in ('sectors', 'binary', 'weights', 'ski')),
+  game        text not null check (game in ('sectors', 'binary', 'weights', 'ski', 'flight')),
   initials    text not null check (initials ~ '^[A-Z]{1,3}$'),
   ms          int  not null check (ms between 5000 and 3600000),
   device      text not null check (char_length(device) between 8 and 64),
   created_at  timestamptz not null default now()
 );
 
--- One time per device per puzzle per day. Ski runs (game = 'ski') may be posted again when you beat your own time.
-create unique index if not exists scores_one_per_device on public.scores (day, game, device) where game <> 'ski';
+-- One time per device per puzzle per day. Ski runs and flights (game = 'ski' / 'flight') may be posted again when you beat your own time.
+create unique index if not exists scores_one_per_device on public.scores (day, game, device) where game not in ('ski', 'flight');
 
 create index if not exists scores_day_game_ms on public.scores (day, game, ms, created_at);
 
@@ -41,8 +41,5 @@ grant select (day, game, initials, ms, created_at) on public.scores to anon;
 grant insert (day, game, initials, ms, device) on public.scores to anon;
 
 -- ---------------------------------------------------------------------------------------------------
--- Already ran the first version of this file? Run only these four lines to add the ski scoreboard:
---   alter table public.scores drop constraint if exists scores_game_check;
---   alter table public.scores add constraint scores_game_check check (game in ('sectors', 'binary', 'weights', 'ski'));
---   alter table public.scores drop constraint if exists scores_day_game_device_key;
---   create unique index if not exists scores_one_per_device on public.scores (day, game, device) where game <> 'ski';
+-- Already ran an earlier version of this file? Run supabase-migration.sql instead: it adds the ski and
+-- flight scoreboards to an existing table and is safe to run more than once.

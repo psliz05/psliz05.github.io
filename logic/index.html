@@ -5,11 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Daily Logic</title>
 <meta name="description" content="Three daily logic puzzles by Patrick Sliz.">
+<meta name="theme-color" content="#e6e6e1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23141414'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%237fa6ec'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  /* Layout: a single printed spec sheet. Hard rules, square corners, one signal color for errors. Single light theme by design. */
+  /* Layout: a single printed spec sheet. Hard rules, square corners, a dark-blue accent, red for errors only. Single light theme by design. */
   :root {
     --paper: #e6e6e1;
     --plate: #f3f3ef;
@@ -17,7 +19,10 @@
     --steel: #66665f;
     --hair: #b9b9b2;
     --given: #d6d6cf;
-    --signal: #ff4a00;
+    --signal: #1f3f86;
+    --signal-hi: #7fa6ec;   /* the accent on dark surfaces */
+    --on-signal: #f3f3ef;   /* text on the accent */
+    --error: #c62828;       /* rule violations only: blue would read as selected, not wrong */
     --tone-0: #f3f3ef;
     --tone-1: #e2e2dc;
     --tone-2: #d2d2ca;
@@ -59,6 +64,7 @@
   .board { position: relative; width: 100%; max-width: 440px; margin: 0 auto; display: grid; background: var(--plate); user-select: none; -webkit-user-select: none; touch-action: manipulation; }
   .cell { appearance: none; border: 0; padding: 0; margin: 0; aspect-ratio: 1; display: grid; place-items: center; background: transparent; cursor: pointer; position: relative; min-width: 0; font: 700 clamp(18px, 6vw, 28px) var(--f-mono); }
   .cell:focus-visible, .tab:focus-visible, .ctl:focus-visible { outline: 3px solid var(--signal); outline-offset: -3px; z-index: 2; }
+  .tab[aria-selected="true"]:focus-visible, .amark a:focus-visible { outline-color: var(--signal-hi); }
   .board.solved .cell { cursor: default; }
   .board.draggable { touch-action: none; }
 
@@ -69,23 +75,23 @@
   .b-sectors .cell.bl { border-left: 3px solid var(--ink); }
   .b-sectors .cell[data-v="x"]::after { content: "×"; font: 500 clamp(14px, 4.4vw, 20px) var(--f-mono); color: var(--steel); }
   .b-sectors .cell[data-v="q"]::after { content: ""; width: 44%; height: 44%; background: var(--ink); }
-  .b-sectors .cell.bad[data-v="q"]::after { background: var(--signal); }
+  .b-sectors .cell.bad[data-v="q"]::after { background: var(--error); }
 
   /* Binary */
   .b-binary { border: 2px solid var(--ink); }
   .b-binary .cell { border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
   .b-binary .cell.r-end { border-right: 0; } .b-binary .cell.b-end { border-bottom: 0; }
   .b-binary .cell.given { background: var(--given); cursor: default; }
-  .b-binary .cell.bad { color: var(--signal); }
+  .b-binary .cell.bad { color: var(--error); }
   .joint { position: absolute; width: 18px; height: 18px; transform: translate(-50%, -50%); background: var(--plate); border: 1.5px solid var(--ink); display: grid; place-items: center; font: 700 12px/1 var(--f-mono); pointer-events: none; z-index: 1; }
-  .joint.bad { border-color: var(--signal); color: var(--signal); }
+  .joint.bad { border-color: var(--error); color: var(--error); }
 
   /* Weights */
   .b-weights { background: transparent; }
   .b-weights .lab { display: grid; place-items: center; font: 500 13px var(--f-mono); color: var(--steel); aspect-ratio: 1; min-width: 0; }
   .b-weights .clue { display: grid; place-items: center; font: 700 15px var(--f-mono); aspect-ratio: 1; min-width: 0; border: 2px solid transparent; }
   .b-weights .clue.ok { background: var(--ink); color: var(--plate); }
-  .b-weights .clue.over { border-color: var(--signal); color: var(--signal); }
+  .b-weights .clue.over { border-color: var(--error); color: var(--error); }
   .b-weights .cell { background: var(--plate); border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
   .b-weights .cell.l-edge { border-left: 2px solid var(--ink); } .b-weights .cell.r-edge { border-right: 2px solid var(--ink); }
   .b-weights .cell.t-edge { border-top: 2px solid var(--ink); } .b-weights .cell.b-edge { border-bottom: 2px solid var(--ink); }
@@ -107,7 +113,7 @@
 
   .summary { border: 2px solid var(--ink); background: var(--plate); display: grid; }
   .summary pre { margin: 0; padding: 12px; font: 500 13px/1.6 var(--f-mono); white-space: pre; overflow-x: auto; }
-  .summary .token { border-top: 2px solid var(--ink); background: var(--signal); color: var(--ink); padding: 9px 12px; font: 700 12px var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+  .summary .token { border-top: 2px solid var(--ink); background: var(--signal); color: var(--on-signal); padding: 9px 12px; font: 700 12px var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; }
   .summary .row { display: grid; grid-template-columns: 1fr auto; border-top: 2px solid var(--ink); align-items: stretch; }
   .summary .next { font: 500 12px var(--f-mono); text-transform: uppercase; letter-spacing: 0.04em; padding: 11px 12px; color: var(--steel); }
   .summary .ctl { border-left: 2px solid var(--ink); }
@@ -126,7 +132,7 @@
   /* views: puzzles / archive / leaderboard */
   .amark { display: flex; justify-content: space-between; gap: 12px; background: var(--ink); color: var(--plate); padding: 8px 12px; font: 700 12px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: -16px; }
   .amark a { color: var(--plate); text-decoration: none; }
-  .amark a:hover { color: var(--signal); }
+  .amark a:hover { color: var(--signal-hi); }
   .views { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 2px solid var(--ink); margin-bottom: -18px; }
   .views a { background: var(--plate); color: var(--ink); text-decoration: none; padding: 8px 10px; border-left: 2px solid var(--ink); font: 700 12px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; min-width: 0; overflow: hidden; text-overflow: clip; }
   .views a:first-child { border-left: 0; }
