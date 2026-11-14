@@ -812,7 +812,7 @@ function buildRoom(THREE) {
     arc.t.needsUpdate = true;
   }
   drawArcade();
-  addObject(destOf("logic"), 4.85, -4.85, -Math.PI / 4, { solid: [4.25, HALF, -HALF, -4.25], blob: [1.3, 1.3], plaque: [0, 0.66, 0.31] }, (b) => {
+  const logicObj = addObject(destOf("logic"), -4.86, -4.0, Math.PI / 4, { y: -3, blob: [1.3, 1.3], plaque: [0, 0.66, 0.31] }, (b) => { // in the game room: the corner by the dartboard
     const k = kit(), W = 0.74, sh = new THREE.Shape();
     const pts = [[-0.36, 0], [0.3, 0], [0.3, 0.82], [0.42, 0.9], [0.42, 0.96], [0.14, 1.06], [0.06, 1.66], [0.3, 1.74], [0.3, 1.96], [-0.36, 1.96]];
     pts.forEach(([x, y], i) => (i ? sh.lineTo(x, y) : sh.moveTo(x, y))); sh.closePath();
@@ -1563,8 +1563,6 @@ function buildRoom(THREE) {
     for (const py of [0.58, 1.55]) leaf.add(box(DOOR.w - 0.26, py < 1 ? 0.8 : 0.9, 0.012, M.doorPanel, DOOR.w / 2, py, sz * 0.027, false));
     leaf.add(box(0.14, 0.03, 0.05, M.ink, DOOR.w - 0.16, 1.02, sz * 0.05, false), box(0.05, 0.14, 0.012, M.ink, DOOR.w - 0.1, 1.02, sz * 0.03, false));
   }
-  const padlock = new THREE.Group(); padlock.position.set(DOOR.w - 0.1, 1.22, -0.05); leaf.add(padlock);
-  padlock.add(box(0.1, 0.085, 0.035, M.signal, 0, 0, 0, false), box(0.014, 0.07, 0.014, M.ink, -0.028, 0.07, 0, false), box(0.014, 0.07, 0.014, M.ink, 0.028, 0.07, 0, false), box(0.07, 0.014, 0.014, M.ink, 0, 0.105, 0, false), box(0.02, 0.03, 0.004, M.ink, 0, -0.005, -0.019, false));
   leaf.add(box(0.07, 0.03, 0.02, M.ink, DOOR.w - 0.1, 1.335, -0.035, false)); // hasp
 
   // props: things you can press that are not links
@@ -1627,7 +1625,6 @@ function buildRoom(THREE) {
 
   // ---------- outside: key, door, skis, lift ----------
   const mem = (store, k, v) => { try { if (v === undefined) return store.getItem(k); store.setItem(k, v); } catch (e) { /* ignore */ } return null; };
-  let hasKey = mem(localStorage, "room:key") === "1";
   let mode = "walk"; // walk | ski | liftwait | lift | fly
   const fl = { x: AIR.sx, y: AIR.y + GEAR, z: AIR.sz, yaw: Math.PI / 2, pitch: 0, roll: 0, v: 0, vy: 0, thr: 0, ground: true, sx: 0, sy: 0, dead: 0, next: 0, t: 0, timing: false, help: false, helpSeen: false, pop: -1, popT: 0, resetAt: 0, warn: false, cam: new THREE.Vector3() };
   let doorK = 0, doorState = "shut"; // shut | opening | open
@@ -1640,7 +1637,7 @@ function buildRoom(THREE) {
   function showWorld() { world.visible = true; }
   function inv() {
     const playing = state === "play" || state === "pause";
-    el.invKey.hidden = !hasKey; el.invSki.hidden = mode === "walk"; el.invWaffle.hidden = !(puzzlesDone() && !waffleEaten());
+    el.invKey.hidden = true; el.invSki.hidden = mode === "walk"; el.invWaffle.hidden = !(puzzlesDone() && !waffleEaten());
     el.invCoffee.hidden = !lastCoffee;
     el.inv.hidden = !playing || shift.on || ui === "end" || (el.invKey.hidden && el.invSki.hidden && el.invWaffle.hidden && el.invCoffee.hidden);
   }
@@ -1657,17 +1654,15 @@ function buildRoom(THREE) {
   }
   const doorObj = addProp({ id: "door", label: "Door" }, leaf, "in", function () {
     if (doorState !== "shut") return;
-    if (!hasKey) { this.tries = (this.tries || 0) + 1; this.t = 0; toast(this.tries > 2 ? "Locked / Keys are kept with the research" : "Locked / This door requires a key"); return; }
-    doorState = "opening"; this.t = 0; this.off = true; setTarget(null); showWorld(); mem(sessionStorage, "room:door", "1"); toast("Unlocked");
-  }, { dur: 1.9, update(dt, time, t) {
+    doorState = "opening"; this.t = 0; this.off = true; setTarget(null); showWorld(); mem(sessionStorage, "room:door", "1");
+  }, { dur: 1.4, update(dt, time, t) {
     if (doorState === "shut") { leaf.position.x = -DOOR.w / 2 + (t >= 0 && !REDUCED ? Math.sin(t * 46) * 0.008 * (1 - seg(t, 0, 0.45)) : 0); return; } // rattle
     if (doorState !== "opening") return;
-    if (REDUCED || t < 0) t = 1.9;
-    const drop = seg(t, 0, 0.55); padlock.position.y = 1.22 - drop * drop * 1.3; padlock.rotation.z = drop * 1.4; padlock.visible = drop < 1;
-    doorK = ease(seg(t, 0.5, 1.8)); leaf.rotation.y = -doorK * 1.85;
-    if (t >= 1.85) { doorK = 1; leaf.rotation.y = -1.85; padlock.visible = false; doorState = "open"; }
+    if (REDUCED || t < 0) t = 1.4;
+    doorK = ease(seg(t, 0, 1.3)); leaf.rotation.y = -doorK * 1.85;
+    if (t >= 1.35) { doorK = 1; leaf.rotation.y = -1.85; doorState = "open"; }
   } });
-  if (hasKey && mem(sessionStorage, "room:door") === "1") { doorState = "open"; doorK = 1; leaf.rotation.y = -1.85; padlock.visible = false; doorObj.off = true; showWorld(); }
+  if (mem(sessionStorage, "room:door") === "1") { doorState = "open"; doorK = 1; leaf.rotation.y = -1.85; doorObj.off = true; showWorld(); }
   addProp({ id: "skis", label: "Skis" }, rackSkis, "out", () => {
     if (mode !== "walk") return stowSkis();
     mode = "ski"; rackSkis.visible = false; mySkis.visible = true; player.vx = player.vz = 0; race.on = false; loadBoard();
@@ -2668,7 +2663,8 @@ function buildRoom(THREE) {
   // =====================================================================
   // THE GAME ROOM: stairs down along the name wall to a dim oak basement
   // =====================================================================
-  const baseColliders = [], BWALK = [[ST2.x0 - 0.6, ST2.x1 + 0.02, ST2.z0 + RADIUS + 0.03, BASE.wall - 0.05 - RADIUS - 0.03], [ST2.x1, BASE.x1 - RADIUS - 0.03, BASE.z0 + RADIUS + 0.03, BASE.wall + 0.4], [BASE.x0 + RADIUS + 0.03, BASE.x1 - RADIUS - 0.03, BASE.wall + 0.05 + RADIUS + 0.03, BASE.z1 - RADIUS - 0.03]];
+  logicObj.zone = "base";
+  const baseColliders = [{ minX: -5.6, maxX: -4.3, minZ: -4.75, maxZ: -3.45 }], BWALK = [[ST2.x0 - 0.6, ST2.x1 + 0.02, ST2.z0 + RADIUS + 0.03, BASE.wall - 0.05 - RADIUS - 0.03], [ST2.x1, BASE.x1 - RADIUS - 0.03, BASE.z0 + RADIUS + 0.03, BASE.wall + 0.4], [BASE.x0 + RADIUS + 0.03, BASE.x1 - RADIUS - 0.03, BASE.wall + 0.05 + RADIUS + 0.03, BASE.z1 - RADIUS - 0.03]];
   const baseG = new THREE.Group(); scene.add(baseG);
   const baseDyn = new THREE.Group(); baseG.add(baseDyn); // balls, cards, chips: drawn only once you are on the way down
   const OAK = [0x4a3220, 0x55391f, 0x43301f, 0x5a3d24], OAKD = 0x2c1d13, FELT = 0x1f5a3c, WALLG = 0x24372e, BRASS = LODGE.brass;
@@ -2678,7 +2674,7 @@ function buildRoom(THREE) {
     const plane = (w, h, color, x, y, z, rx, ry) => k.g(new THREE.PlaneGeometry(w, h), color, mat4(x, y, z, rx, ry));
     // floor boards and a low dark ceiling with joists
     for (let i = 0; i < D / 0.25 - 1e-6; i++) plane(W, 0.25, OAK[(i * 7 + (i >> 2)) % 4], xc, BY, BASE.z0 + 0.125 + i * 0.25, -Math.PI / 2);
-    plane(W, D, 0x241810, xc, BY + H, (BASE.z0 + BASE.z1) / 2, Math.PI / 2);
+    plane(W, BASE.z1 - BASE.wall, 0x241810, xc, BY + H, (BASE.wall + BASE.z1) / 2, Math.PI / 2); plane(BASE.x1 - ST2.x1, BASE.wall - BASE.z0, 0x241810, (ST2.x1 + BASE.x1) / 2, BY + H, (BASE.z0 + BASE.wall) / 2, Math.PI / 2); // ceiling: the room and the landing, not the stairwell, which is open to the lodge above
     for (let z = BASE.wall + 0.9; z < BASE.z1; z += 1.3) k.b(W, 0.2, 0.16, OAKD, xc, BY + H - 0.1, z);
     // walls: dark boards to shoulder height, deep green above, a rail between
     const wall = (len, x, z, ry) => { const n = Math.round(len / 0.32), bw = len / n, ux = Math.cos(ry), uz = -Math.sin(ry);
@@ -2693,10 +2689,13 @@ function buildRoom(THREE) {
     // the stairwell: steps, its two side walls, the end of the dividing wall
     const run = (ST2.x1 - ST2.x0) / ST2.n, rise = -BY / ST2.n, zs = (ST2.z0 + BASE.wall - 0.05) / 2, ws = BASE.wall - 0.05 - ST2.z0;
     for (let i = 0; i < ST2.n; i++) { k.b(run, 0.6, ws, OAK[i % 4], ST2.x0 + run * (i + 0.5), -rise * (i + 1) - 0.3, zs); k.b(0.03, 0.04, ws, OAKD, ST2.x0 + run * i + 0.015, -rise * (i + 1) + 0.02 - 0.019, zs); }
-    plane(ST2.x1 - ST2.x0, -BY, 0x3a2a1e, (ST2.x0 + ST2.x1) / 2, BY / 2, ST2.z0 + 0.002, 0, 0);                         // north side of the well
+    plane(ST2.x1 - ST2.x0, -BY, 0x3a2a1e, (ST2.x0 + ST2.x1) / 2, BY / 2, ST2.z0, 0, 0);                         // north side of the well
     plane(ST2.x1 - ST2.x0, -BY - 0.02, 0x3a2a1e, (ST2.x0 + ST2.x1) / 2, BY / 2 - 0.01, BASE.wall - 0.05, 0, Math.PI);   // south side of the well
-    k.b(0.1, -BY - 0.02, 0.1, OAKD, ST2.x1 - 0.05, BY / 2 - 0.01, BASE.wall);                                         // the post where the dividing wall ends
-    plane(0.1, -BY, OAKD, ST2.x0 + 0.001, BY / 2, zs, 0, Math.PI / 2);
+    k.b(0.16, -BY - 0.02, 0.16, OAKD, ST2.x1 - 0.04, BY / 2 - 0.01, BASE.wall);                                         // the post where the dividing wall ends
+    k.b(0.12, 1.0, ws + 0.1, OAK[0], ST2.x0 - 0.06, -0.5, zs);                                                             // the riser under the edge of the lodge floor: the back of the well as you climb
+    { const X0 = BASE.x0 - 0.03, X1 = BASE.x1 + 0.03, Z0b = BASE.z0 - 0.03, Z1b = BASE.z1 + 0.03, DK = 0x0d0907; // a dark shell just outside every wall, so no seam can ever show daylight
+      plane(X1 - X0, -BY + 0.1, DK, (X0 + X1) / 2, BY / 2, Z0b, 0, 0); plane(X1 - X0, -BY + 0.1, DK, (X0 + X1) / 2, BY / 2, Z1b, 0, Math.PI); plane(Z1b - Z0b, -BY + 0.1, DK, X0, BY / 2, (Z0b + Z1b) / 2, 0, Math.PI / 2); plane(Z1b - Z0b, -BY + 0.1, DK, X1, BY / 2, (Z0b + Z1b) / 2, 0, -Math.PI / 2);
+      plane(X1 - X0, Z1b - Z0b, DK, (X0 + X1) / 2, BY - 0.03, (Z0b + Z1b) / 2, -Math.PI / 2); plane(ST2.x0 - 0.1 - X0, BASE.wall - Z0b, DK, (X0 + ST2.x0 - 0.1) / 2, BY + H + 0.02, (Z0b + BASE.wall) / 2, Math.PI / 2); }
     for (const z of [ST2.z0 + 0.06, BASE.wall - 0.11]) k.b(Math.hypot(ST2.x1 - ST2.x0, BY) , 0.05, 0.05, BRASS, (ST2.x0 + ST2.x1) / 2, BY / 2 + 0.95, z, 0, 0, Math.atan2(BY, ST2.x1 - ST2.x0)); // handrails
     const m = k.mesh(false); m.receiveShadow = false; baseG.add(m);
     baseColliders.push({ minX: BASE.x0, maxX: ST2.x1, minZ: BASE.wall - 0.05, maxZ: BASE.wall + 0.05 });
@@ -2708,8 +2707,6 @@ function buildRoom(THREE) {
     r.b(ST2.x1 - ST2.x0, 0.16, 0.02, TIMBER.stain, (ST2.x0 + ST2.x1) / 2, -0.081, ST2.z1 - 0.011); r.b(0.02, 0.16, ST2.z1 - ST2.z0, TIMBER.stain, ST2.x1 - 0.011, -0.081, (ST2.z0 + ST2.z1) / 2); // the cut edge of the floor
     scene.add(r.mesh());
     colliders.push({ minX: ST2.x0, maxX: ST2.x1 + 0.1, minZ: ST2.z1 - 0.02, maxZ: ST2.z1 + 0.1 }, { minX: ST2.x1, maxX: ST2.x1 + 0.1, minZ: ST2.z0, maxZ: ST2.z1 + 0.1 });
-    const sign = canvasTex(512, 128, (g, w, h) => { g.fillStyle = CSS.ink; g.fillRect(0, 0, w, h); g.fillStyle = CSS.plate; g.font = `800 condensed 84px ${F_SANS}`; g.textBaseline = "middle"; fitText(g, "GAME ROOM ↓", w / 2, h / 2 + 6, w - 40, "center"); });
-    { const d = decal(sign.t, 0.6, 0.15); d.position.set(ST2.x0 - 0.036, 0.72, zr); d.rotation.y = -Math.PI / 2; scene.add(d); }
     // light: three warm pools and very little else
     for (const [x, y, z, c, i, d] of [[-2.3, BY + 1.95, -1.0, 0xffe2b0, 11, 7], [3.3, BY + 1.9, -0.6, 0xffd7a0, 9, 6.5], [0.6, BY + 2.1, 1.7, 0xff7a5a, 5, 7]]) { const l = new THREE.PointLight(c, 0, d, 2); l.position.set(x, y, z); l.userData.i = i; scene.add(l); baseLights.push(l); }
   }
@@ -2731,8 +2728,9 @@ function buildRoom(THREE) {
     k.b(L + 0.2, 0.26, W + 0.2, OAK[2], px, py - 0.18, pz); for (const sx of [-1, 1]) for (const sz of [-1, 1]) k.b(0.16, py - BY - 0.3, 0.16, OAKD, px + sx * (L / 2 - 0.05), BY + (py - BY - 0.3) / 2, pz + sz * (W / 2 - 0.05));
     for (const i of [-2, -1, 1, 2]) for (const sz of [-1, 1]) k.b(0.03, 0.004, 0.03, LODGE.cream, px + i * (L / 5), py + 0.0525, pz + sz * (W / 2 + RW / 2 + 0.01), 0, Math.PI / 4); // sights on the rail
     baseColliders.push({ minX: px - L / 2 - RW - 0.03, maxX: px + L / 2 + RW + 0.03, minZ: pz - W / 2 - RW - 0.03, maxZ: pz + W / 2 + RW + 0.03 });
-    k.b(1.5, 0.14, 0.42, 0x1c4a33, px, BY + 2.02, pz); k.b(1.54, 0.03, 0.46, BRASS, px, BY + 2.1, pz); for (const sx of [-0.55, 0.55]) k.b(0.015, 0.8, 0.015, BRASS, px + sx, BY + 2.5, pz);
-    glow.push({ geo: new THREE.PlaneGeometry(1.44, 0.36), color: 0xfff0cf, m: mat4(px, BY + 1.948, pz, Math.PI / 2) });
+    { const lk = kit(); lk.b(1.5, 0.14, 0.42, 0x1c4a33, px, BY + 2.02, pz); lk.b(1.54, 0.03, 0.46, BRASS, px, BY + 2.1, pz); for (const sx of [-0.55, 0.55]) lk.b(0.015, 0.8, 0.015, BRASS, px + sx, BY + 2.5, pz);
+      const lm = lk.mesh(false); lm.receiveShadow = false; const lg = new THREE.Mesh(new THREE.PlaneGeometry(1.44, 0.36), new THREE.MeshBasicMaterial({ color: 0xfff0cf, fog: false })); lg.rotation.x = Math.PI / 2; lg.position.set(px, BY + 1.948, pz);
+      POOL.lamp = new THREE.Group(); POOL.lamp.add(lm, lg); baseG.add(POOL.lamp); } // the lamp over the table: it lifts out of the way while you play, so you can look straight down
     robot(px + 0.75, BY, pz - 1.3, Math.PI, 0x4f8f86, 1.02); k.c(0.012, 0.007, 1.4, 6, 0xd9b77a, px + 1.05, BY + 0.72, pz - 1.28); // the house player, CUE-8, and its cue
     baseColliders.push({ minX: px + 0.45, maxX: px + 1.15, minZ: pz - 1.55, maxZ: pz - 1.08 });
     // poker table, five stools, four regulars
@@ -2779,7 +2777,7 @@ function buildRoom(THREE) {
     ui = null; gkeys.clear(); fromPose.pos.copy(camera.position); fromPose.quat.copy(camera.quaternion); if (!REDUCED) tween = { t: 0, dur: 0.5, follow: true };
     for (const t of el.gTags) t.hidden = true; el.gPower.hidden = true; hud(); el.gl.focus({ preventScroll: true }); if (lock) relock();
   }
-  function gameCam(dt, x, y, z, lx, ly, lz) { gcam.t = REDUCED ? 1 : Math.min(1, gcam.t + dt / 0.6); const k = ease(gcam.t); gcam.pos.set(x, y, z); gcam.look.set(lx, ly, lz); gcam.q.setFromRotationMatrix(gcam.m.lookAt(gcam.pos, gcam.look, UP)); camera.position.lerpVectors(gcam.from.pos, gcam.pos, k); camera.quaternion.slerpQuaternions(gcam.from.quat, gcam.q, k); }
+  function gameCam(dt, x, y, z, lx, ly, lz, up = UP) { gcam.t = REDUCED ? 1 : Math.min(1, gcam.t + dt / 0.6); const k = ease(gcam.t); gcam.pos.set(x, y, z); gcam.look.set(lx, ly, lz); gcam.q.setFromRotationMatrix(gcam.m.lookAt(gcam.pos, gcam.look, up)); camera.position.lerpVectors(gcam.from.pos, gcam.pos, k); camera.quaternion.slerpQuaternions(gcam.from.quat, gcam.q, k); }
   const btn = (id, text, key, go) => `<button type="button" data-a="${id}"${go ? ' class="go"' : ""}>${text}${key && !TOUCH ? `<kbd>${key}</kbd>` : ""}</button>`;
   el.gBottom.addEventListener("click", (e) => { const b = e.target.closest("button[data-a]"); if (!b || state !== "play") return; if (ui === "pool") poolBtn(b.dataset.a); else if (ui === "poker") pkBtn(b.dataset.a); });
   function gameKey(e) {
@@ -2875,6 +2873,7 @@ function buildRoom(THREE) {
     el.gBottom.innerHTML = `<div class="gbtns">${TOUCH && pool.phase === "aim" ? `<button type="button" id="g-shoot" class="go">Hold to shoot</button>` : ""}${pool.phase === "over" ? btn("rack", "Rack them again", "R", true) : btn("rack", "Rack again", "")}${btn("leave", "Leave table", "Esc")}</div>`;
     const sh = el.gBottom.querySelector("#g-shoot"); if (sh) { sh.addEventListener("pointerdown", (e) => { e.preventDefault(); poolCharge(true); }); for (const t of ["pointerup", "pointercancel", "pointerleave"]) sh.addEventListener(t, () => poolCharge(false)); }
   }
+  const POOL_UP = new THREE.Vector3(0, 0, -1), POOL_UP_TALL = new THREE.Vector3(1, 0, 0);
   function poolFrame(dt, active) {
     const c = pool.b[0], r = POOL.r;
     if (active) {
@@ -2883,13 +2882,17 @@ function buildRoom(THREE) {
       else if (pool.phase === "bot") { pool.think -= dt; let d = pool.plan.ang - pool.aim; d = Math.atan2(Math.sin(d), Math.cos(d)); pool.aim += d * Math.min(1, dt * 5); pool.power = pool.think < 0.6 ? pool.plan.pow * (1 - pool.think / 0.6) : 0; if (pool.think <= 0) poolShoot(pool.plan.ang, pool.plan.pow); }
       else if (pool.phase === "roll") { let moving = false; const n = Math.max(1, Math.ceil(dt * 300)); for (let i = 0; i < n; i++) moving = poolStep(dt / n) || moving; if (!moving) poolResolve(); }
       if (pool.strike >= 0) { pool.strike += dt / 0.25; if (pool.strike >= 1) pool.strike = -1; }
-      gameCam(dt, POOL.x, BY + 2.38, POOL.z + 1.72, POOL.x, POOL.y, POOL.z + 0.2); poolDom();
+      { // straight down, so the angles read true. The table is fitted to the screen; on a tall screen it turns to stand upright.
+        const tall = camera.aspect < 1, th = Math.tan((camera.fov * Math.PI) / 360), a = camera.aspect, hw = POOL.L / 2 + 0.24, hh = POOL.W / 2 + 0.24;
+        const d = Math.min(-BY - 0.25 - (POOL.y - BY), 1.14 * (tall ? Math.max(hw / th, hh / (th * a)) : Math.max(hh / th, hw / (th * a)))), off = tall ? 0 : -0.07 * d;
+        gameCam(dt, POOL.x, POOL.y + d, POOL.z + off, POOL.x, POOL.y, POOL.z + off, tall ? POOL_UP_TALL : POOL_UP); }
+      poolDom();
       el.gPower.hidden = !(pool.charging || pool.phase === "bot"); el.gPower.firstElementChild.style.width = `${Math.round(pool.power * 100)}%`;
     }
     for (const b of pool.b) { tmpM.makeTranslation(POOL.x + b.x, b.out ? -400 : POOL.y + r, POOL.z + b.z); ballMesh.setMatrixAt(b.id, tmpM); tmpM.makeRotationX(-Math.PI / 2).setPosition(POOL.x + b.x + 0.012, b.out ? -400 : POOL.y + 0.002, POOL.z + b.z + 0.012); ballShade.setMatrixAt(b.id, tmpM); }
     ballMesh.instanceMatrix.needsUpdate = true; ballShade.instanceMatrix.needsUpdate = true;
     const aiming = active && (pool.phase === "aim" || pool.phase === "bot") && c && !c.out; aimLine.visible = objLine.visible = ghost.visible = false; cueStick.visible = aiming || (active && pool.strike >= 0);
-    if (POOL.cone) POOL.cone.visible = !active;
+    if (POOL.cone) POOL.cone.visible = !active; POOL.lamp.visible = !active;
     if (!c) return;
     const dx = Math.cos(pool.aim), dz = Math.sin(pool.aim), wx = POOL.x + c.x, wz = POOL.z + c.z, y = POOL.y + r;
     if (aiming && (pool.turn === "you" || pool.think < 1.1)) { const hit = poolRay(c.x, c.z, dx, dz), t = hit.t; aimLine.visible = ghost.visible = true;
